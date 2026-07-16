@@ -165,6 +165,36 @@
               </aside>
             </section>
 
+            <section class="panel chat-panel" id="chat">
+              <div class="panel-head">
+                <div>
+                  <p class="eyebrow">Talk To Sheldon</p>
+                  <h3>Operator Chat</h3>
+                </div>
+                <span id="chat-status" class="chat-status">Ready</span>
+              </div>
+              <div id="chat-log" class="chat-log" aria-live="polite">
+                <article class="chat-message assistant">
+                  <div class="chat-avatar">
+                    <img src="/branding/sheldon.png" alt="Sheldon" />
+                  </div>
+                  <div class="chat-bubble">
+                    <strong>Sheldon</strong>
+                    <p>Portal chat is online. Ask me what to inspect, route, build, or remember next.</p>
+                  </div>
+                </article>
+              </div>
+              <form id="chat-form" class="chat-form">
+                <textarea
+                  id="chat-input"
+                  rows="3"
+                  placeholder="Ask Sheldon anything about Hermes..."
+                  aria-label="Message Sheldon"
+                ></textarea>
+                <button id="chat-send" class="button primary" type="submit">Send</button>
+              </form>
+            </section>
+
             <section class="panel projects-panel" id="projects">
               <div class="panel-head">
                 <div>

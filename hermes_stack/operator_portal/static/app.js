@@ -3,7 +3,10 @@ const state = {
   runs: [],
   dispatches: [],
   alerts: [],
+  chatMessages: [],
+  chatSessionId: "",
   loading: false,
+  chatLoading: false,
 };
 
 const elements = {
@@ -23,6 +26,11 @@ const elements = {
   metricBlocked: document.querySelector("#metric-blocked"),
   metricCompleted: document.querySelector("#metric-completed"),
   activeProjects: document.querySelector("#active-projects"),
+  chatForm: document.querySelector("#chat-form"),
+  chatInput: document.querySelector("#chat-input"),
+  chatLog: document.querySelector("#chat-log"),
+  chatSend: document.querySelector("#chat-send"),
+  chatStatus: document.querySelector("#chat-status"),
   queueTable: document.querySelector("#queue-table"),
   agentTeam: document.querySelector("#agent-team"),
   activityFeed: document.querySelector("#activity-feed"),
@@ -63,6 +71,10 @@ function escapeHtml(value) {
     .replaceAll("'", "&#39;");
 }
 
+function nl2br(value) {
+  return escapeHtml(value).replaceAll("\n", "<br />");
+}
+
 function relativeTime(value) {
   if (!value) {
     return "n/a";
@@ -82,6 +94,96 @@ function relativeTime(value) {
     return rtf.format(diffHours, "hour");
   }
   return rtf.format(Math.round(diffHours / 24), "day");
+}
+
+function setChatStatus(label, tone = "ready") {
+  if (!elements.chatStatus) {
+    return;
+  }
+  elements.chatStatus.textContent = label;
+  elements.chatStatus.dataset.tone = tone;
+}
+
+function appendChatMessage(role, content) {
+  if (!elements.chatLog) {
+    return;
+  }
+  const message = {
+    role,
+    content: String(content || "").trim(),
+  };
+  if (!message.content) {
+    return;
+  }
+  state.chatMessages.push(message);
+  const isUser = role === "user";
+  const article = document.createElement("article");
+  article.className = `chat-message ${isUser ? "user" : "assistant"}`;
+  article.innerHTML = `
+    <div class="chat-avatar">
+      ${
+        isUser
+          ? "<span>You</span>"
+          : '<img src="/branding/sheldon.png" alt="Sheldon" />'
+      }
+    </div>
+    <div class="chat-bubble">
+      <strong>${isUser ? "You" : "Sheldon"}</strong>
+      <p>${nl2br(message.content)}</p>
+    </div>
+  `;
+  elements.chatLog.append(article);
+  elements.chatLog.scrollTop = elements.chatLog.scrollHeight;
+}
+
+function setChatLoading(loading) {
+  state.chatLoading = loading;
+  if (elements.chatInput) {
+    elements.chatInput.disabled = loading;
+  }
+  if (elements.chatSend) {
+    elements.chatSend.disabled = loading;
+    elements.chatSend.textContent = loading ? "Thinking..." : "Send";
+  }
+}
+
+async function sendChatMessage(content) {
+  const outgoing = String(content || "").trim();
+  if (!outgoing || state.chatLoading) {
+    return;
+  }
+
+  appendChatMessage("user", outgoing);
+  if (elements.chatInput) {
+    elements.chatInput.value = "";
+  }
+  setChatLoading(true);
+  setChatStatus("Sheldon is thinking", "busy");
+
+  try {
+    const active = activeProject();
+    const payload = {
+      profile: "operator",
+      project_id: active?.project_id || "",
+      session_id: state.chatSessionId,
+      messages: state.chatMessages.slice(-12),
+    };
+    const response = await fetchJson("/api/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    state.chatSessionId = response.session_id || state.chatSessionId;
+    appendChatMessage("assistant", response.content || "I received the message, but no response text came back.");
+    setChatStatus(response.session_id ? "Session linked" : "Ready", "ready");
+  } catch (error) {
+    const message = String(error.message || error);
+    appendChatMessage("assistant", `I could not reach the operator gateway cleanly: ${message}`);
+    setChatStatus("Gateway error", "error");
+  } finally {
+    setChatLoading(false);
+    elements.chatInput?.focus();
+  }
 }
 
 function statusTone(status) {
@@ -516,5 +618,15 @@ elements.refreshButton.addEventListener("click", () => {
   loadDashboard();
 });
 elements.activeProjects.addEventListener("click", handleProjectAction);
+elements.chatForm?.addEventListener("submit", (event) => {
+  event.preventDefault();
+  sendChatMessage(elements.chatInput?.value || "");
+});
+elements.chatInput?.addEventListener("keydown", (event) => {
+  if (event.key === "Enter" && !event.shiftKey) {
+    event.preventDefault();
+    elements.chatForm?.requestSubmit();
+  }
+});
 
 loadDashboard();
