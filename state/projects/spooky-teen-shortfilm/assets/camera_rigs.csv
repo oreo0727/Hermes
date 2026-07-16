@@ -1,0 +1,11 @@
+shot_id,lens_mm,cam_pos_xyz,cam_rot_xyz,focus_target,notes
+sf01,35,"[0,1.6,6.5]","[-5,0,0]",camp_ring_center,Wide lockoff across ring; horizon low third
+sf02,50,"[0,1.4,1.2]","[-10,0,0]",match_tip,Insert; slight push 3% over 12f
+sf03,35,"[0,1.7,7.0]","[-6,20,0]",empty_chair,Focus pull from group to empty chair over 18f
+sf04,50,"[-0.6,1.5,3.2]","[-8,-10,0]",group_faces,Phones-only; shallow DOF f/2.8 emulated
+sf05,85,"[0.8,1.55,1.1]","[-12,8,0]",phone_ui,Battery persists OTS; strong bokeh; lock at 0.8m
+sf06,35,"[-3.5,1.4,5.0]","[-6,15,0]",stone_stack,Show birch notch + stones; slight parallax
+sf07,85,"[1.2,1.6,1.6]","[-10,0,0]",phone_ui,Live Photo scroll; silhouette mid-bg
+sf08,100,"[0,1.0,0.6]","[-15,0,0]",ember,Macro coal; handheld micro-wobble 0.2%
+sf09,35,"[2.0,1.7,6.0]","[-6,-15,0]",treeline_edge,Boundary read; wind tease on coals
+sf10,70,"[0,1.6,6.5]","[-4,10,0]",hand_pocket,Long-lens dawn push 5%

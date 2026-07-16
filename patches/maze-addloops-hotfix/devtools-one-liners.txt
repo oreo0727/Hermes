@@ -1,0 +1,62 @@
+// Paste this into DevTools Console on the broken Maze Forest page, then press Enter.
+(function(){
+  try {
+    // 1) Define a safe addLoops and override any existing implementation
+    var addLoopsSafe = (function(){
+      function inBounds(x, y, rows, cols){ return y>=0 && y<rows && x>=0 && x<cols; }
+      function inferValues(grid, rows, cols){
+        try{
+          var y0=Math.max(0,Math.floor(rows*0.25)),y1=Math.min(rows,Math.ceil(rows*0.75));
+          var x0=Math.max(0,Math.floor(cols*0.25)),x1=Math.min(cols,Math.ceil(cols*0.75));
+          var counts=new Map();
+          for (var y=y0;y<y1;y++){ var row=grid[y]; if(!row) break; for(var x=x0;x<x1;x++){ var v=row[x]; counts.set(v,(counts.get(v)||0)+1); } }
+          var modeVal=0,modeCount=-1; counts.forEach(function(c,k){ if(c>modeCount){ modeCount=c; modeVal=k; } });
+          var floorVal=(modeVal===0||modeVal===false)?0:0; var wallVal=floorVal===0?1:1; return {floorVal,wallVal};
+        }catch(e){ return {floorVal:0,wallVal:1}; }
+      }
+      return function addLoopsSafe(grid, rows, cols, density){
+        try{
+          if(!Array.isArray(grid)||!rows||!cols) return 0;
+          var v=inferValues(grid,rows,cols),floorVal=v.floorVal,wallVal=v.wallVal;
+          var DIRS=[[1,0],[-1,0],[0,1],[0,-1]];
+          var total=Math.max(1,Math.floor((rows*cols)*(typeof density==='number'?density:0.05)));
+          var added=0, attempts=0, maxAttempts=total*20;
+          while(added<total && attempts++<maxAttempts){
+            var x=1+Math.floor(Math.random()*Math.max(1,cols-2));
+            var y=1+Math.floor(Math.random()*Math.max(1,rows-2));
+            var row=grid[y]; if(!row||row[x]!==floorVal) continue;
+            var d=DIRS[(Math.random()*DIRS.length)|0],dx=d[0],dy=d[1];
+            var mx=x+dx,my=y+dy,nx=x+dx*2,ny=y+dy*2;
+            if(!inBounds(nx,ny,rows,cols)) continue;
+            var midRow=grid[my], nextRow=grid[ny]; if(!midRow||!nextRow) continue;
+            var mid=midRow[mx], next=nextRow[nx];
+            if(mid===wallVal && next===floorVal){ midRow[mx]=floorVal; added++; }
+          }
+          console.log('[DevToolsHotfix] addLoopsSafe applied; added loops:', added);
+          return added;
+        }catch(e){ console.warn('[DevToolsHotfix] addLoopsSafe suppressed error:', e&&e.message?e.message:e); return 0; }
+      }
+    })();
+
+    // Override common attachment points
+    if (window.MazeGen && typeof window.MazeGen.addLoops === 'function') {
+      window.MazeGen.addLoops = addLoopsSafe;
+    }
+    if (typeof window.addLoops === 'function') {
+      window.addLoops = addLoopsSafe;
+    }
+    // Also stash it globally in case the generator looks it up later
+    window.addLoopsSafe = addLoopsSafe;
+
+    // 2) Attempt to restart the current level safely
+    var restarted=false;
+    if (typeof window.restartLevel === 'function') { window.restartLevel(); restarted=true; }
+    else if (typeof window.startLevel === 'function') { window.startLevel(); restarted=true; }
+    else if (window.game && typeof window.game.restart === 'function') { window.game.restart(); restarted=true; }
+    else if (typeof window.generateLevel === 'function') { window.generateLevel(); restarted=true; }
+
+    console.log('[DevToolsHotfix] addLoops guarded and level '+(restarted?'restarted':'not restarted (no restart hook found)'));
+  } catch(e) {
+    console.warn('[DevToolsHotfix] failed to apply:', e && e.message ? e.message : e);
+  }
+})();

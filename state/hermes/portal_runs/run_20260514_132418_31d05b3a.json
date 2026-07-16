@@ -1,0 +1,85 @@
+{
+  "run_id": "run_20260514_132418_31d05b3a",
+  "profile_key": "operator",
+  "profile_label": "Operator",
+  "project_id": "aetherion-maze",
+  "status": "completed",
+  "phase": "completed",
+  "created_at": "2026-05-14T17:24:18.119686+00:00",
+  "updated_at": "2026-05-14T17:24:21.992552+00:00",
+  "started_at": "2026-05-14T17:24:18.120388+00:00",
+  "completed_at": "2026-05-14T17:24:21.992560+00:00",
+  "last_checkpoint_at": "2026-05-14T17:24:21.992552+00:00",
+  "latest_checkpoint": "Background run completed successfully.",
+  "objective_preview": "Reply with exactly: pong",
+  "latest_user_message": "Reply with exactly: pong",
+  "attachment_count": 0,
+  "prepared_updates": [],
+  "output": "pong",
+  "error": "",
+  "request_body": {
+    "model": "operator",
+    "messages": [
+      {
+        "role": "system",
+        "content": "Bound project context: aetherion-maze / Aetherion Maze Games. Summary: Maze Forest + Narrative Maze HTML5 prototypes. Project root: /home/james/Hermes/state/projects/aetherion-maze. Treat this as the canonical delivery target unless the user explicitly overrides it."
+      },
+      {
+        "role": "system",
+        "content": "You are Sheldon."
+      },
+      {
+        "role": "user",
+        "content": "Reply with exactly: pong"
+      }
+    ],
+    "stream": false
+  },
+  "checkpoints": [
+    {
+      "at": "2026-05-14T17:24:18.119700+00:00",
+      "status": "queued",
+      "phase": "queued",
+      "message": "Background run accepted by the portal and queued for dispatch."
+    },
+    {
+      "at": "2026-05-14T17:24:18.120394+00:00",
+      "status": "running",
+      "phase": "dispatching",
+      "message": "Dispatching this run to the selected Hermes specialist."
+    },
+    {
+      "at": "2026-05-14T17:24:18.141043+00:00",
+      "status": "running",
+      "phase": "awaiting_response",
+      "message": "Hermes accepted the run and is working in the background."
+    },
+    {
+      "at": "2026-05-14T17:24:21.992552+00:00",
+      "status": "completed",
+      "phase": "completed",
+      "message": "Background run completed successfully."
+    }
+  ],
+  "response_raw": {
+    "id": "chatcmpl-2630537456994451b13ee1299d207",
+    "object": "chat.completion",
+    "created": 1778779458,
+    "model": "operator",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "pong"
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 9192,
+      "completion_tokens": 117,
+      "total_tokens": 9309
+    }
+  }
+}

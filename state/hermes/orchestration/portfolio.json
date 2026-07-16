@@ -1,0 +1,22 @@
+{
+  "schema_version": "1",
+  "updated_at": "2026-07-15T23:23:54.198188+00:00",
+  "active_project_id": "pixel3a-os-rebuild",
+  "project_queue": [
+    {
+      "project_id": "pixel3a-os-rebuild",
+      "state": "active",
+      "last_activated_at": "2026-06-09T15:17:04.742324+00:00",
+      "reason": "Focused from the Hermes v2 sample-aligned deck.",
+      "session_bindings": [
+        {
+          "profile_key": "operator",
+          "session_id": "20260609_091430_af2e82c2",
+          "platform": "discord",
+          "chat_id": "1475867670359314502",
+          "updated_at": "2026-06-09T14:27:55.415467+00:00"
+        }
+      ]
+    }
+  ]
+}

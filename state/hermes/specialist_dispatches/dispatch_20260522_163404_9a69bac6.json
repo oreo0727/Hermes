@@ -1,0 +1,156 @@
+{
+  "dispatch_id": "dispatch_20260522_163404_9a69bac6",
+  "source": "operator-bridge",
+  "profile": "creative-dev",
+  "project_id": "spooky-teen-shortfilm",
+  "status": "failed",
+  "created_at": "2026-05-22T20:34:04.107494+00:00",
+  "updated_at": "2026-05-22T20:38:05.641964+00:00",
+  "completed_at": "2026-05-22T20:38:05.641964+00:00",
+  "prompt_preview": "You are creative-dev for project 'spooky-teen-shortfilm' (Campfire Repeat: 3D woods, five teens, cell service dies; relighting the campfire snaps time back 5 minutes). Deliver rough storyboards before 3D lookdev.\n\nGoal\u2026",
+  "output_preview": "I inspected the live storyboard package, verified presence and dimensions, and ran a visual QA pass against the brief and manifest. The 10 PNGs and a contact sheet are already present under the requested path, with an existing captions CSV.\n\nWhat I checked\n- Inputs loaded: storyboard_manifest_v0.csv, storyboard_brief.\u2026",
+  "error_preview": "The response still hands execution or verification back to the operator. The response claims visual success without citing a screenshot or capture.",
+  "work_order": {
+    "schema_version": "1",
+    "created_at": "2026-05-22T20:34:04.124032+00:00",
+    "source": "specialist-bridge",
+    "profile_key": "creative-dev",
+    "project_id": "spooky-teen-shortfilm",
+    "project_title": "Midnight Signals \u2014 AI Spooky Short for Teens",
+    "project_root": "/home/james/Hermes/state/projects/spooky-teen-shortfilm",
+    "objective": "You are creative-dev for project 'spooky-teen-shortfilm' (Campfire Repeat: 3D woods, five teens, cell service dies; relighting the campfire snaps time back 5 minutes). Deliver rough storyboards before 3D lookdev.\n\nGoal\n- Create 10 rough storyboard frames (PNG), readable beats, grayscale or flat color OK.\n- 16:9 master framing with center-safe composition (we will derive vertical later).\n\nDeliverables & Paths\n- Save frames to: /home/james/Hermes/state/projects/spooky-teen-shortfilm/storyboards/v0/\n  - Filenames: storyboard_f01.png ... storyboard_f10.png\n- Generate a 3x4 or 4x3 contact sheet: storyboard_contact_v0.png\n- Optional captions file alongside: storyboard_captions_v0.csv\n\nUse These Inputs\n- Brief: storyboards/storyboard_brief.md\n- Manifest (10 frames with shot refs, windows, must-includes): storyboards/storyboard_manifest_v0.csv\n- Beats: beats_campfire-repeat.md\n- Shot list: shot_list_v0_campfire-repeat.md\n- VO outline: vo_script_outline_campfire-repeat.md\n- Style cues: lookdev/shader_ramps.md (for lighting mood only; boards can stay simple)\n\nCreative Guardrails\n- Sub\u2013Rated R/PG-13: suspense over gore.\n- Phone battery persistence and the loop rule must be visually legible in at least one frame.\n- Distinct teen silhouettes (hoodie, beanie, flannel, puffer, varsity) \u2014 readable in moonlight.\n\nAcceptance for v0\n- 10 PNGs present with clear blocking/lighting intent.\n- Contact sheet present.\n- Center-safe action.\n\nWhen done, print an index of produced files with dimensions. If you need to synthesize visuals, use quick sketch/paint or your image tools; fidelity can be low as long as beats read.",
+    "autonomy_mode": "execute",
+    "owner_lane": "creative-dev",
+    "delivery_model": {
+      "strategy_key": "lead-creative-game-app",
+      "strategy_label": "Lead -> Creative -> Game Dev -> App Dev",
+      "lead_lane": "operator",
+      "active_lane": "creative-dev",
+      "primary_lane": "creative-dev",
+      "next_lane": "app-dev",
+      "lane_sequence": [
+        "operator",
+        "creative-dev",
+        "app-dev"
+      ],
+      "specialist_sequence": [
+        "creative-dev",
+        "app-dev"
+      ],
+      "control_mode": "orchestrated",
+      "delivery_target": "Concept + board pack (v0)",
+      "primary_artifact": "artifacts/contact_sheet_animatic_v0.png, animatic/animatic_v0_timeline.csv, tools/build_animatic_ffmpeg.sh",
+      "strict_dispatch": true,
+      "acceptance": [
+        "Sub-R rating guardrails enforced; animated 2D stylized look; deliverables: style_bible.md, shot_list_v0.md, vo_script_v0.md"
+      ],
+      "capability_gaps": [],
+      "stage_guidance": {
+        "operator": "Own scope, freeze the delivery target, and keep the handoffs honest.",
+        "creative-dev": "Define the creative target, vision guardrails, and artifact acceptance language before implementation drifts.",
+        "app-dev": "Own the app, tooling, portal, and review-loop support needed to make the chosen artifact reviewable and repeatable."
+      },
+      "handoff_contract": [
+        "freeze one primary delivery target before downstream implementation expands scope",
+        "treat creative-dev as the vision and acceptance guardrail for downstream lanes",
+        "treat game-dev as the owner of the playable implementation path once the vision is frozen",
+        "treat app-dev as the owner of portal, tooling, packaging, and review-loop support after the build path is clear",
+        "require each lane to leave a concrete handoff for the next lane instead of sending the operator back into open-ended review"
+      ]
+    },
+    "lead_lane": "operator",
+    "active_lane": "creative-dev",
+    "next_lane": "app-dev",
+    "lane_sequence": [
+      "operator",
+      "creative-dev",
+      "app-dev"
+    ],
+    "recommended_lanes": [
+      "operator",
+      "app-dev"
+    ],
+    "expected_deliverables": [
+      "creative package or direction"
+    ],
+    "verification_required": [
+      "separate implemented, verified, and assumed"
+    ],
+    "project_status": "active",
+    "project_owner": "operator",
+    "project_now": "Animatic v0 placeholders generated (22 slates); contact sheet exported. ffmpeg unavailable on host, so frames + build script ready for later render.",
+    "project_next": "Begin Blender lookdev: block camp set, fire/fog rigs, toon shader ramps; generate 3\u20134 rendered styleframes for approval.",
+    "project_control": {
+      "project_kind": "creative",
+      "control_mode": "orchestrated",
+      "primary_lane": "creative-dev",
+      "lane_sequence": [
+        "operator",
+        "creative-dev"
+      ],
+      "delivery_target": "Concept + board pack (v0)",
+      "primary_artifact": "artifacts/contact_sheet_animatic_v0.png, animatic/animatic_v0_timeline.csv, tools/build_animatic_ffmpeg.sh",
+      "strict_dispatch": true,
+      "acceptance": [
+        "Sub-R rating guardrails enforced; animated 2D stylized look; deliverables: style_bible.md, shot_list_v0.md, vo_script_v0.md"
+      ],
+      "capability_gaps": []
+    },
+    "portfolio": {
+      "active": true,
+      "queue_position": 1,
+      "state": "active",
+      "session_bindings": []
+    }
+  },
+  "structured_result": {
+    "schema_version": "1",
+    "summary": "Verified existing storyboard v0 pack (10 frames + contact sheet + captions). Loop rule reads. Battery persistence not visually legible; f03 needs a center-safe OTS phone UI with clear time and %; f02 motif needs a slight upward nudge.",
+    "implemented": [
+      "Loaded and reviewed manifest, brief, beats, shot list, VO, and shader ramps.",
+      "Verified existence and dimensions of 10 PNG frames and contact sheet.",
+      "Vision QA on contact sheet and key frames (f01, f02, f03, f07, f08)."
+    ],
+    "verified": [
+      "Frames present: storyboard_f01.png \u2026 storyboard_f10.png (all 1280x720).",
+      "Contact sheet present: storyboard_contact_v0.png (1280x540).",
+      "Captions file present: storyboard_captions_v0.csv.",
+      "Loop/relight visually suggested (concentric ripples, ember-to-flare progression).",
+      "Distinct teen silhouettes readable in multiple frames; center-safe generally respected."
+    ],
+    "assumed": [
+      "1280x720 drafting resolution is acceptable for v0 per brief.",
+      "3x4 contact sheet is acceptable even with two non-frame slots (12-tile grid)."
+    ],
+    "blocked": [
+      "Local image tooling missing (no PIL/Pillow, no ImageMagick), so I could not patch f03/f02 or regenerate the contact sheet during this run."
+    ],
+    "risks": [
+      "Battery persistence requirement is unmet visually; reviewers may flag story logic readability.",
+      "Minor center-safe drift on f02 may complicate later 4:3/crop derivations if not corrected now."
+    ],
+    "next_actions": [
+      "Install lightweight image tooling (Pillow) in the environment.",
+      "Patch f03: add center-safe OTS phone UI with large '12:00 AM' and persistent '%', plus OTS shoulder; update caption remains the same.",
+      "Adjust f02: nudge ignition ripple motif upward ~10\u201315% to fit inside safe guide.",
+      "Regenerate storyboard_contact_v0.png from the 10 frames (3x4 grid; fill last 2 tiles as reserved).",
+      "Re-run visual QA to confirm battery persistence and center-safe compliance.",
+      "Hand off updated v0 pack to app-dev for portal packaging/review loop."
+    ],
+    "artifacts": [
+      "/home/james/Hermes/state/projects/spooky-teen-shortfilm/storyboards/v0/storyboard_f01.png",
+      "/home/james/Hermes/state/projects/spooky-teen-shortfilm/storyboards/v0/storyboard_f02.png",
+      "/home/james/Hermes/state/projects/spooky-teen-shortfilm/storyboards/v0/storyboard_f03.png",
+      "/home/james/Hermes/state/projects/spooky-teen-shortfilm/storyboards/v0/storyboard_f04.png",
+      "/home/james/Hermes/state/projects/spooky-teen-shortfilm/storyboards/v0/storyboard_f05.png",
+      "/home/james/Hermes/state/projects/spooky-teen-shortfilm/storyboards/v0/storyboard_f06.png",
+      "/home/james/Hermes/state/projects/spooky-teen-shortfilm/storyboards/v0/storyboard_f07.png",
+      "/home/james/Hermes/state/projects/spooky-teen-shortfilm/storyboards/v0/storyboard_f08.png",
+      "/home/james/Hermes/state/projects/spooky-teen-shortfilm/storyboards/v0/storyboard_f09.png",
+      "/home/james/Hermes/state/projects/spooky-teen-shortfilm/storyboards/v0/storyboard_f10.png",
+      "/home/james/Hermes/state/projects/spooky-teen-shortfilm/storyboards/v0/storyboard_contact_v0.png",
+      "/home/james/Hermes/state/projects/spooky-teen-shortfilm/storyboards/v0/storyboard_captions_v0.csv"
+    ],
+    "handoff_needed": false
+  }
+}

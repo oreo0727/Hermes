@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Narrative Maze Prototype</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles-theme.css" />
+</head>
+<body>
+  <div id="app">
+    <canvas id="game" width="960" height="960" aria-label="Narrative Maze"></canvas>
+
+    <!-- HUD (top-left, portrait + hearts + coin/key counters) -->
+    <div id="hudTL" aria-label="HUD">
+      <div class="portrait">
+        <div class="ring" aria-hidden="true"></div>
+        <div class="inner" aria-hidden="true"></div>
+      </div>
+      <div class="hearts" aria-label="Health">
+        <span class="heart" title="Heart 1"></span>
+        <span class="heart" title="Heart 2"></span>
+        <span class="heart" title="Heart 3"></span>
+      </div>
+      <div class="counters" aria-label="Counters">
+        <div class="row"><span class="icon coin" aria-hidden="true"></span><span class="label" id="coins">0</span></div>
+        <div class="row"><span class="icon key" aria-hidden="true"></span><span class="label" id="keys">0/2</span></div>
+      </div>
+    </div>
+
+    <!-- Narrative overlay (accessible modal dialog) -->
+    <div id="storyOverlay" class="hidden" role="dialog" aria-modal="true" aria-live="polite" aria-labelledby="storyTitle" aria-describedby="storyText" tabindex="-1">
+      <div id="storyBox" role="document">
+        <h2 id="storyTitle" class="sr-only">Story</h2>
+        <div id="storyText"></div>
+        <div id="storyChoices"></div>
+        <button id="storyContinue" class="primary hidden">Continue</button>
+      </div>
+    </div>
+
+    <!-- Live region for short updates (screen readers) -->
+    <div id="srStatus" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+  </div>
+
+  <!-- Ship mode: diagnostics gated OFF by default -->
+  <script>try{ localStorage.setItem('mf_debug','0'); window.MF_DEBUG=0; }catch(e){}</script>
+  <!-- <script src="src/diag.js?v=3"></script> -->
+
+  <!-- Game scripts (non-module, attach to window) -->
+  <script src="src/generator.js?v=4"></script>
+  <script src="src/input.js?v=4"></script>
+  <script src="src/renderer.js?v=4"></script>
+  <script src="src/systems/narrative.js?v=4"></script>
+  <script src="src/game.js?v=4"></script>
+
+  <script>
+    window.addEventListener('DOMContentLoaded', function(){
+      if(window.Game && typeof window.Game.start === 'function'){
+        window.Game.start(document.getElementById('game'));
+      }
+    });
+  </script>
+</body>
+</html>

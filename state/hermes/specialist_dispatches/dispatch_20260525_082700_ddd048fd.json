@@ -1,0 +1,270 @@
+{
+  "dispatch_id": "dispatch_20260525_082700_ddd048fd",
+  "source": "operator-bridge",
+  "profile": "creative-dev",
+  "project_id": "spooky-teen-shortfilm",
+  "status": "failed",
+  "created_at": "2026-05-25T12:27:00.694857+00:00",
+  "updated_at": "2026-05-26T14:53:11.355991+00:00",
+  "completed_at": "2026-05-26T14:53:11.355991+00:00",
+  "prompt_preview": "You are Creative Dev on project 'spooky-teen-shortfilm' (Midnight Signals \u2014 AI Spooky Short for Teens). The operator has approved moving from Storyboards v3 into Styleframes v1. Your job: deliver an initial styleframes\u2026",
+  "output_preview": "Implemented styleframes v1 as a placeholder pack due to unavailable image-generation and missing image tooling. Delivered a 3x2 contact sheet with clear PLACEHOLDER labeling and color-coded overlays that indicate intended lighting/grade per beat, a manifest mapping to the v3 storyboard sources, and a detailed stylefra\u2026",
+  "error_preview": "Dispatch marked failed after 1579m without completion. The operator bridge likely exited before finalizing the record.",
+  "supervisor": {
+    "status": "running",
+    "attempt_count": 2,
+    "max_attempts": 3,
+    "decision": "",
+    "critique": []
+  },
+  "attempts": [
+    {
+      "attempt_number": 1,
+      "prompt_preview": "You are Creative Dev on project 'spooky-teen-shortfilm' (Midnight Signals \u2014 AI Spooky Short for Teens). The operator has approved moving from Storyboards v3 into Styleframes v1. Your job: deliver an initial styleframes\u2026",
+      "output_preview": "Implemented styleframes v1 as a placeholder pack due to unavailable image-generation and missing image tooling. Delivered a 3x2 contact sheet with clear PLACEHOLDER labeling and color-coded overlays that indicate intended lighting/grade per beat, a manifest mapping to the v3 storyboard sources, and a detailed stylefra\u2026",
+      "structured_result": {
+        "schema_version": "1",
+        "summary": "Delivered Styleframes v1 placeholder pack (contact sheet + manifest + brief) aligned to f02,f05,f07,f08,f09,f10 with annotated lighting/grade overlays; model image-gen and local image tooling unavailable.",
+        "implemented": [
+          "styleframes/styleframes_contact_v1.png (3x2, PLACEHOLDER overlays)",
+          "styleframes/styleframes_manifest_v1.csv (frame_id, source, notes)",
+          "styleframes/styleframes_notes_v1.md (palette, lens/DOF, grain, grade/LUT, layer cues)"
+        ],
+        "verified": [
+          "Existence and PNG IHDR of contact sheet: 2020x864",
+          "Existence of CSV and MD files in styleframes/",
+          "Frame targets align to f02,f05,f07,f08,f09,f10"
+        ],
+        "assumed": [
+          "Image-generation not available in current lane/environment",
+          "Exact per-panel geography will be preserved when final photo-real styleframes are produced",
+          "Overlay placements communicate lighting intent sufficiently for review at this stage"
+        ],
+        "blocked": [
+          "Photographic character render quality for styleframes (image-gen/edit tools not available)",
+          "Direct extraction/annotation on top of v3 PNGs (no PIL/ImageMagick/ffmpeg available)"
+        ],
+        "risks": [
+          "Placeholders may under-communicate subtle geography (tent/sign placement) without actual image redraws",
+          "Palette/grade balance may need fine adjustments once faces and materials are rendered",
+          "Reviewers might conflate placeholder sheet with final styleframes despite labeling"
+        ],
+        "next_actions": [
+          "Enable image-gen or provide edit-capable tooling, then redraw the six frames as true styleframes using the brief (export as styleframes_v1.1 and regenerate contact).",
+          "Optional (app-dev): add a lightweight review surface that displays the v1 contact, brief, and lets operator approve notes before image-gen.",
+          "When tools are available: preserve geography (tent back-center, lantern left FG, sign right, central fire), enforce warm key + cool rim, phones-only darkness (f08), and dawn pocket glow (f10)."
+        ],
+        "artifacts": [
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/styleframes_contact_v1.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/styleframes_manifest_v1.csv",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/styleframes_notes_v1.md"
+        ],
+        "handoff_needed": false
+      },
+      "review": {
+        "decision": "revise",
+        "retryable": true,
+        "issues": [
+          "The response claims visual success without citing a screenshot or capture.",
+          "The response claims visual success without naming what is visibly on screen."
+        ],
+        "critique": [
+          "The response claims visual success without citing a screenshot or capture.",
+          "The response claims visual success without naming what is visibly on screen.",
+          "The response did not yet close these project acceptance targets: Five teens are visibly rendered as characters, not seat markers or abstract geometry."
+        ],
+        "unmet_acceptance": [
+          "Five teens are visibly rendered as characters, not seat markers or abstract geometry."
+        ],
+        "summary": "Delivered Styleframes v1 placeholder pack (contact sheet + manifest + brief) aligned to f02,f05,f07,f08,f09,f10 with annotated lighting/grade overlays; model image-gen and local image tooling unavailable.",
+        "artifacts": [
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/styleframes_contact_v1.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/styleframes_manifest_v1.csv",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/styleframes_notes_v1.md"
+        ],
+        "structured_result": {
+          "schema_version": "1",
+          "summary": "Delivered Styleframes v1 placeholder pack (contact sheet + manifest + brief) aligned to f02,f05,f07,f08,f09,f10 with annotated lighting/grade overlays; model image-gen and local image tooling unavailable.",
+          "implemented": [
+            "styleframes/styleframes_contact_v1.png (3x2, PLACEHOLDER overlays)",
+            "styleframes/styleframes_manifest_v1.csv (frame_id, source, notes)",
+            "styleframes/styleframes_notes_v1.md (palette, lens/DOF, grain, grade/LUT, layer cues)"
+          ],
+          "verified": [
+            "Existence and PNG IHDR of contact sheet: 2020x864",
+            "Existence of CSV and MD files in styleframes/",
+            "Frame targets align to f02,f05,f07,f08,f09,f10"
+          ],
+          "assumed": [
+            "Image-generation not available in current lane/environment",
+            "Exact per-panel geography will be preserved when final photo-real styleframes are produced",
+            "Overlay placements communicate lighting intent sufficiently for review at this stage"
+          ],
+          "blocked": [
+            "Photographic character render quality for styleframes (image-gen/edit tools not available)",
+            "Direct extraction/annotation on top of v3 PNGs (no PIL/ImageMagick/ffmpeg available)"
+          ],
+          "risks": [
+            "Placeholders may under-communicate subtle geography (tent/sign placement) without actual image redraws",
+            "Palette/grade balance may need fine adjustments once faces and materials are rendered",
+            "Reviewers might conflate placeholder sheet with final styleframes despite labeling"
+          ],
+          "next_actions": [
+            "Enable image-gen or provide edit-capable tooling, then redraw the six frames as true styleframes using the brief (export as styleframes_v1.1 and regenerate contact).",
+            "Optional (app-dev): add a lightweight review surface that displays the v1 contact, brief, and lets operator approve notes before image-gen.",
+            "When tools are available: preserve geography (tent back-center, lantern left FG, sign right, central fire), enforce warm key + cool rim, phones-only darkness (f08), and dawn pocket glow (f10)."
+          ],
+          "artifacts": [
+            "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/styleframes_contact_v1.png",
+            "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/styleframes_manifest_v1.csv",
+            "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/styleframes_notes_v1.md"
+          ],
+          "handoff_needed": false
+        },
+        "profile_key": "creative-dev"
+      },
+      "completed_at": "2026-05-25T12:33:43.465992+00:00"
+    }
+  ],
+  "work_order": {
+    "schema_version": "1",
+    "created_at": "2026-05-25T12:27:00.713636+00:00",
+    "source": "specialist-bridge",
+    "profile_key": "creative-dev",
+    "project_id": "spooky-teen-shortfilm",
+    "project_title": "Midnight Signals \u2014 AI Spooky Short for Teens",
+    "project_root": "/home/james/Hermes/state/projects/spooky-teen-shortfilm",
+    "objective": "You are Creative Dev on project 'spooky-teen-shortfilm' (Midnight Signals \u2014 AI Spooky Short for Teens). The operator has approved moving from Storyboards v3 into Styleframes v1. Your job: deliver an initial styleframes pack (v1) that locks visual tone before full animatic.\n\nInputs:\n- Reference-grounded Storyboards v3 frames: /home/james/Hermes/state/projects/spooky-teen-shortfilm/storyboards/v3/storyboard_f01.png .. f10.png\n- Contact sheet: /home/james/Hermes/state/projects/spooky-teen-shortfilm/storyboards/storyboard_contact_v3.png\n- Captions: /home/james/Hermes/state/projects/spooky-teen-shortfilm/storyboards/storyboard_captions_v3.csv\n- Reference and acceptance (from project control):\n  \u2022 Five teens visibly rendered as characters (not placeholders).\n  \u2022 Mirror the camp reference: tent back-center, lantern left FG, right-side sign, central fire, moonlit forest palette.\n  \u2022 Lighting: warm fire key + cool moon rim; phones-only darkness reads.\n  \u2022 PG\u201113 tone: suspense over gore.\n\nDeliverables (write to the project root paths):\n1) styleframes/styleframes_contact_v1.png (6-up contact sheet)\n2) styleframes/styleframes_manifest_v1.csv (frame_id,source,notes)\n3) styleframes/styleframes_notes_v1.md (brief: palette, lens/DOF, grain, grade/LUT, layer cues)\n\nFrame targets (align to boards): f02 First strike, f05 All together, f07 Live Photo find, f08 Phones only, f09 Almost ignition, f10 Dawn pocket glow.\n\nConstraints:\n- If model image-gen is unavailable, generate a precise styleframes brief + placeholder contact sheet extracted from v3 with annotated overlays to indicate the intended grade/lighting \u2014 but clearly label placeholders. Do not claim final styleframes without photographic character render quality.\n- Keep filenames and versioning exactly as specified.\n- Report blockers explicitly; do not silently skip deliverables.\n\nOn completion, print a short DONE summary with created/updated file paths.",
+    "autonomy_mode": "execute",
+    "owner_lane": "creative-dev",
+    "delivery_model": {
+      "strategy_key": "lead-creative-game-app",
+      "strategy_label": "Lead -> Creative -> Game Dev -> App Dev",
+      "lead_lane": "operator",
+      "active_lane": "creative-dev",
+      "primary_lane": "creative-dev",
+      "next_lane": "app-dev",
+      "lane_sequence": [
+        "operator",
+        "creative-dev",
+        "app-dev"
+      ],
+      "specialist_sequence": [
+        "creative-dev",
+        "app-dev"
+      ],
+      "control_mode": "orchestrated",
+      "delivery_target": "Reference-grounded storyboard redraw pack",
+      "primary_artifact": "/home/james/Hermes/state/projects/spooky-teen-shortfilm/storyboards/storyboard_contact_v3.png",
+      "strict_dispatch": true,
+      "acceptance": [
+        "Five teens are visibly rendered as characters, not seat markers or abstract geometry.",
+        "The boards visibly mirror the supplied camp reference: tent back-center, lantern left foreground, sign on right, central fire, moonlit forest palette.",
+        "Lighting reads as warm fire key plus cool moon rim with phones-only darkness where called for.",
+        "If the lane can only produce blocking diagrams or placeholder boards, it must report blocked and label the artifact placeholder instead of marking it review-ready."
+      ],
+      "capability_gaps": [],
+      "stage_guidance": {
+        "operator": "Own scope, freeze the delivery target, and keep the handoffs honest.",
+        "creative-dev": "Define the creative target, vision guardrails, and artifact acceptance language before implementation drifts.",
+        "app-dev": "Own the app, tooling, portal, and review-loop support needed to make the chosen artifact reviewable and repeatable."
+      },
+      "handoff_contract": [
+        "freeze one primary delivery target before downstream implementation expands scope",
+        "treat creative-dev as the vision and acceptance guardrail for downstream lanes",
+        "treat game-dev as the owner of the playable implementation path once the vision is frozen",
+        "treat app-dev as the owner of portal, tooling, packaging, and review-loop support after the build path is clear",
+        "require each lane to leave a concrete handoff for the next lane instead of sending the operator back into open-ended review"
+      ]
+    },
+    "lead_lane": "operator",
+    "active_lane": "creative-dev",
+    "next_lane": "app-dev",
+    "lane_sequence": [
+      "operator",
+      "creative-dev",
+      "app-dev"
+    ],
+    "recommended_lanes": [
+      "operator",
+      "app-dev"
+    ],
+    "expected_deliverables": [
+      "creative package or direction"
+    ],
+    "verification_required": [
+      "separate implemented, verified, and assumed",
+      "for reference-driven storyboard work, either produce image-grounded frames or explicitly report that the lane is blocked; do not substitute abstract diagrams and call them done",
+      "state whether the delivered artifact is a blocking diagram, placeholder board, clean storyboard, or image-grounded redraw",
+      "do not mark storyboard work review-ready if the output is still circles, boxes, icons, or other schematic placeholders instead of visibly rendered figures, props, and lighting beats"
+    ],
+    "project_status": "boards v3 ready for review",
+    "project_owner": "operator",
+    "project_now": "Reference-grounded storyboard pack v3 has been generated from the user-provided campfire image and is ready for review.",
+    "project_next": "Review storyboard v3 for shot continuity and choose whether to move into styleframes/animatic assembly.",
+    "project_control": {
+      "project_kind": "creative",
+      "control_mode": "orchestrated",
+      "primary_lane": "creative-dev",
+      "lane_sequence": [
+        "operator",
+        "creative-dev"
+      ],
+      "delivery_target": "Reference-grounded storyboard redraw pack",
+      "primary_artifact": "/home/james/Hermes/state/projects/spooky-teen-shortfilm/storyboards/storyboard_contact_v3.png",
+      "strict_dispatch": true,
+      "acceptance": [
+        "Five teens are visibly rendered as characters, not seat markers or abstract geometry.",
+        "The boards visibly mirror the supplied camp reference: tent back-center, lantern left foreground, sign on right, central fire, moonlit forest palette.",
+        "Lighting reads as warm fire key plus cool moon rim with phones-only darkness where called for.",
+        "If the lane can only produce blocking diagrams or placeholder boards, it must report blocked and label the artifact placeholder instead of marking it review-ready."
+      ],
+      "capability_gaps": []
+    },
+    "portfolio": {
+      "active": true,
+      "queue_position": 1,
+      "state": "active",
+      "session_bindings": []
+    }
+  },
+  "structured_result": {
+    "schema_version": "1",
+    "summary": "Delivered Styleframes v1 placeholder pack (contact sheet + manifest + brief) aligned to f02,f05,f07,f08,f09,f10 with annotated lighting/grade overlays; model image-gen and local image tooling unavailable.",
+    "implemented": [
+      "styleframes/styleframes_contact_v1.png (3x2, PLACEHOLDER overlays)",
+      "styleframes/styleframes_manifest_v1.csv (frame_id, source, notes)",
+      "styleframes/styleframes_notes_v1.md (palette, lens/DOF, grain, grade/LUT, layer cues)"
+    ],
+    "verified": [
+      "Existence and PNG IHDR of contact sheet: 2020x864",
+      "Existence of CSV and MD files in styleframes/",
+      "Frame targets align to f02,f05,f07,f08,f09,f10"
+    ],
+    "assumed": [
+      "Image-generation not available in current lane/environment",
+      "Exact per-panel geography will be preserved when final photo-real styleframes are produced",
+      "Overlay placements communicate lighting intent sufficiently for review at this stage"
+    ],
+    "blocked": [
+      "Photographic character render quality for styleframes (image-gen/edit tools not available)",
+      "Direct extraction/annotation on top of v3 PNGs (no PIL/ImageMagick/ffmpeg available)"
+    ],
+    "risks": [
+      "Placeholders may under-communicate subtle geography (tent/sign placement) without actual image redraws",
+      "Palette/grade balance may need fine adjustments once faces and materials are rendered",
+      "Reviewers might conflate placeholder sheet with final styleframes despite labeling"
+    ],
+    "next_actions": [
+      "Enable image-gen or provide edit-capable tooling, then redraw the six frames as true styleframes using the brief (export as styleframes_v1.1 and regenerate contact).",
+      "Optional (app-dev): add a lightweight review surface that displays the v1 contact, brief, and lets operator approve notes before image-gen.",
+      "When tools are available: preserve geography (tent back-center, lantern left FG, sign right, central fire), enforce warm key + cool rim, phones-only darkness (f08), and dawn pocket glow (f10)."
+    ],
+    "artifacts": [
+      "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/styleframes_contact_v1.png",
+      "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/styleframes_manifest_v1.csv",
+      "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/styleframes_notes_v1.md"
+    ],
+    "handoff_needed": false
+  }
+}

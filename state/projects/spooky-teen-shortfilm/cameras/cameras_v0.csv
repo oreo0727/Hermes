@@ -1,0 +1,12 @@
+shot,lens_mm,aperture,fov_notes,camera_height_m,move,type
+1,35,2.8,Wide camp establish; fog rows readable,1.6,lockoff,establish
+2,85,4.0,Macro match + flare ripple; shallow DOF,1.5,slight push insert,insert
+3,50,2.8,Phone OTS; UI readable; fire bokeh,1.6,static,insert
+4,35,2.8,Birch + stones; a bit of parallax,1.6,small pan right,medium
+5,35,4.0,Graphic montage coverage; consistent horizon,1.6,editorial montage,montage
+6,35,2.8,Emphasize empty chair via focus pull,1.6,focus pull,wide
+7,50,2.8,Phone Live Photo OTS; silhouette registers only in motion,1.6,static,insert
+8,35,1.8,Phones-only faces; near-black BG,1.6,static,medium-close
+9,85,2.8,Near-ignition coal macro; fingers resist,0.8,static,macro
+10,50,2.8,Boundary argument; shape halts at darkness edge,1.6,static,wide/medium
+11,85,2.8,Dawn pocket glow; long lens compression,1.6,slow push,long-lens

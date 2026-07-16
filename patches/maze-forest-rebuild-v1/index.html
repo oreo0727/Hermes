@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" data-game="maze-forest">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Maze Forest (Rebuild v1)</title>
+  <link rel="stylesheet" href="styles.css?v=1"/>
+  <script>try{ localStorage.setItem('mf_debug','1'); window.MF_DEBUG=1; }catch(e){}</script>
+  <script src="src/diag.js?v=1"></script>
+</head>
+<body>
+  <div id="gameRoot">
+    <canvas id="game" width="720" height="720" aria-label="Maze Forest game area"></canvas>
+    <div id="hudTL" aria-hidden="false">
+      <div class="hud-row">
+        <div class="hud-title">Maze Forest</div>
+        <div class="hud-spacer"></div>
+        <div id="hudLevel">Level 1</div>
+        <div id="hudHearts" aria-live="polite" title="Hearts">❤❤❤</div>
+      </div>
+      <div class="hud-row small">Arrows/WASD to move • R restart • Esc close dialogs</div>
+    </div>
+  </div>
+
+  <script src="src/generator.js?v=1"></script>
+  <script src="src/input.js?v=1"></script>
+  <script src="src/renderer.js?v=1"></script>
+  <script src="src/game.js?v=1"></script>
+</body>
+</html>

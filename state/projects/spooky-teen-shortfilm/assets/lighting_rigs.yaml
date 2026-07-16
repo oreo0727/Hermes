@@ -1,0 +1,64 @@
+moon_key:
+  type: environment
+  hdri: "moonlit_forest_2k.hdr"  # placeholder HDRI; rotate to match treeline
+  intensity: 0.12
+  color: [0.06, 0.12, 0.18]
+  notes: "Cool ambient base; add slight fog god rays with planes."
+
+fire_fill:
+  type: area_emissive
+  shape: disk
+  position: [0, 0.7, 0]  # local to ring center
+  radius_m: 0.35
+  intensity: 800.0
+  color_ramp: [[0.0, [1.0,0.65,0.47]],[0.6,[1.0,0.42,0.24]],[1.0,[1.0,0.23,0.12]]]
+  flicker:
+    function: sine+noise
+    base_hz: 1.6
+    noise_amp: 0.35
+    noise_hz: 7.5
+
+rim_kickers:
+  - name: rim_left
+    type: spot
+    position: [-2.0, 1.8, 1.0]
+    target: [0,1.4,0]
+    cone_deg: 35
+    intensity: 35.0
+    color: [0.48,0.70,1.0]
+  - name: rim_right
+    type: spot
+    position: [2.2, 1.8, 1.0]
+    target: [0,1.4,0]
+    cone_deg: 35
+    intensity: 30.0
+    color: [1.0,0.68,0.40]
+
+phones_key:
+  type: emissive_rects
+  devices: 4
+  color: [0.70, 0.90, 1.0]
+  intensity_each: 25.0
+  falloff: soft
+
+fog:
+  world_density: 0.02
+  planes:
+    - z: 2.0
+      height: 1.2
+      density: 0.06
+    - z: 4.0
+      height: 1.4
+      density: 0.05
+
+lantern_practical:
+  type: point
+  position: [-1.8, 0.35, 1.3]
+  intensity: 150.0
+  color: [0.98, 0.90, 0.65]
+  radius_m: 0.18
+
+notes: |
+  Use fog planes for Eevee speed; switch to low world volume if Cycles needed.
+  Fire flicker drives emissive and subtle camera exposure for time-pop.
+  Keep key-to-fill around 6:1; moon rim ~0.15 of fire; lantern ~0.35 of fire.

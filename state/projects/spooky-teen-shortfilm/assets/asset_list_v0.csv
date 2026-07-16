@@ -1,0 +1,22 @@
+category,name,notes,priority
+characters/teens,Ava (decisive),Primary; hoodie silhouette; cool accent,high
+characters/teens,Jay (techy),Primary; beanie silhouette; neutral/dark tone,high
+characters/teens,Noor (empathetic),Primary; puffer silhouette; soft warm accent,high
+characters/teens,Eli (comic relief),Primary; flannel silhouette; warm accent,high
+characters/teens,Maya (observer),Primary; varsity silhouette; subtle contrast,high
+props/camp,Fire ring (stone circle),Hero prop; baked normals; soot variations,high
+props/camp,Chairs/log stumps (x5),One becomes missing; variants,high
+props/camp,Backpacks (x5),Color pops; mid-poly,medium
+props/camp,Mugs/bottles (x3),Prop drift between loops,medium
+props/camp,Lighter + matchbook,Hero inserts; emissive sprite for strike,high
+environment,Ground plane + leaf scatter,Low poly; decals for variance,high
+environment,Birch marker + stone stack,Birch notch + stones persist across loops,high
+environment,Tree rows (conifer/deciduous),Geo Nodes scatter; LOD; fog planes,high
+environment,Tent silhouettes (2),Background interest,low
+devices,Phones (x5),Screen shader; emissive planes; UI in comp,high
+devices,Power bank,For smash beat; fractured variant,medium
+audio,SFX library (wind, insects, ember, match, plastic crack),Royalty-free pack,high
+audio,Music motif cues,Original or licensed-safe,high
+fx,Ember particle system,Sprite-based + turbulence,high
+fx,Fog planes/volumetrics,Layered for depth; god rays,high
+look,Toon/NPR shader ramps,Skin/cloth/bark/stone spec/diffuse ramps,high

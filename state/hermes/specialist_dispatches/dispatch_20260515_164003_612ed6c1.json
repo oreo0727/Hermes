@@ -1,0 +1,13 @@
+{
+  "dispatch_id": "dispatch_20260515_164003_612ed6c1",
+  "source": "operator-bridge",
+  "profile": "game-dev",
+  "project_id": "aetherion-maze",
+  "status": "completed",
+  "created_at": "2026-05-15T20:40:03Z",
+  "updated_at": "2026-05-15T20:44:42Z",
+  "completed_at": "2026-05-15T20:44:42Z",
+  "prompt_preview": "Task: Wire real player sprites and basic animations in the Godot 4 maze project, replacing the yellow-circle fallback.\n\nProject root: ~/Hermes/state/projects/aetherion-maze/godot-maze\nWeb export dir: ~/Hermes/state/proj\u2026",
+  "output_preview": "Work completed for Project aetherion-maze \u2014 wired real player and enemy sprites with basic animations, updated scenes to use SpriteFrames resources, verified headless boot clean, and exported the Web build.\n\nWhat I changed and added\n1) Copied frame PNGs into the Godot project and imported\n- Source frames:\n  ~/Hermes/s\u2026",
+  "error_preview": ""
+}

@@ -1,0 +1,13 @@
+{
+  "dispatch_id": "dispatch_20260515_173630_60021f5e",
+  "source": "operator-bridge",
+  "profile": "game-dev",
+  "project_id": "aetherion-maze",
+  "status": "failed",
+  "created_at": "2026-05-15T21:36:30Z",
+  "updated_at": "2026-05-16T17:54:45.241956+00:00",
+  "completed_at": "2026-05-16T17:54:45.241956+00:00",
+  "prompt_preview": "Operator directive: Agentically finish the Aetherion Maze Godot game to a shippable v1.0 with functional core loop and cozy presentation. Prioritize correctness and polish over breadth. Deliver an updated Web export and\u2026",
+  "output_preview": "",
+  "error_preview": "Dispatch marked failed after 1218m without completion. The operator bridge likely exited before finalizing the record."
+}

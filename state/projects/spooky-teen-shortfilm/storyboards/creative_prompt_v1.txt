@@ -1,0 +1,34 @@
+You are creative-dev for project 'spooky-teen-shortfilm' (Campfire Repeat: 3D woods, five teens, cell service dies; relighting the campfire snaps time back 5 minutes). Create a clean storyboard redraw using the provided reference image for style/mood.
+
+Reference (use as inspiration for lighting/composition/palette):
+- /home/james/Hermes/state/hermes/profiles/operator/cache/images/img_a9022810b6e5.png
+
+Goal
+- Produce 10 clean storyboard frames (PNG), clearly drawn (lo-fi is fine but not blocky), with readable silhouettes, lighting cues (warm fire, moon rim, lantern), and key props (tent, sign, lantern, logs, backpacks, bedroll, roasting stick).
+- 16:9 master framing with center-safe composition (for later vertical crops).
+- The result must look visibly grounded in the provided campfire reference image. Do not output abstract circles, boxes, icon charts, or other schematic stand-ins and call them a redraw.
+
+Use These Inputs (already in project root):
+- storyboards/storyboard_manifest_v0.csv (shot refs & must-includes)
+- beats_campfire-repeat.md (beats)
+- shot_list_v0_campfire-repeat.md (22-shot plan)
+- vo_script_outline_campfire-repeat.md (timing cues)
+- lookdev/shader_ramps.md (lighting mood only)
+
+Deliverables & Paths (MANDATORY)
+- Save frames to: /home/james/Hermes/state/projects/spooky-teen-shortfilm/storyboards/v1/
+  - Filenames: storyboard_f01.png ... storyboard_f10.png (1920x1080 recommended; min 1280x720)
+- Generate a contact sheet: /home/james/Hermes/state/projects/spooky-teen-shortfilm/storyboards/storyboard_contact_v1.png (3x4 or 4x3 grid)
+- Include minimal captions under each frame (can be baked into PNG or separate CSV): storyboard_captions_v1.csv
+
+Acceptance (quality gate)
+- 10 PNG frames exist with clear blocking/lighting intent; reference lighting split is visible (fire key, lantern practical left FG, moon rim); key props appear where relevant.
+- Contact sheet exists at the exact path above and composes all 10 frames.
+- Return a file index with dimensions for each PNG and the absolute path to the contact sheet (no claims without file paths).
+- Five teens must be visibly rendered as characters, not seat markers or generic geometry.
+- If you cannot produce image-grounded boards with the available tools, stop and return `blocked` with the exact capability gap instead of generating schematic placeholders.
+- If any output is still placeholder or schematic, label it as such in-file and in the summary; do not mark it review-ready.
+
+Notes
+- Emphasize beats: battery persists OTS; marker persists; missing chair; phones-only darkness; Live Photo silhouette during motion; dawn button.
+- Do not hand execution back; produce files and show their paths.

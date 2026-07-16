@@ -1,0 +1,11 @@
+// 1) Make canvas crisp
+(()=>{ const c=document.getElementById('game'); if(!c) return; const x=c.getContext('2d'); if(!x) return; x.imageSmoothingEnabled=false; try{x.imageSmoothingQuality='low';}catch(e){} c.style.imageRendering='pixelated'; console.log('Crisp: image smoothing OFF + CSS pixelated'); })();
+
+// 2) Softer vignette (draws a gentle overlay now)
+(()=>{ const c=document.getElementById('game'); const x=c&&c.getContext('2d'); if(!x) return; const w=c.width,h=c.height; const cx=w/2,cy=h/2; const r=Math.hypot(cx,cy)*0.90; const g=x.createRadialGradient(cx,cy,r*0.25,cx,cy,r); g.addColorStop(0,'rgba(0,0,0,0)'); g.addColorStop(1,'rgba(0,0,0,0.35)'); x.save(); x.fillStyle=g; x.fillRect(0,0,w,h); x.restore(); console.log('Vignette overlay drawn'); })();
+
+// 3) Calm busy floor (dark multiply tint over full board)
+(()=>{ const c=document.getElementById('game'); const x=c&&c.getContext('2d'); if(!x) return; x.save(); x.globalCompositeOperation='multiply'; x.fillStyle='rgba(0,0,0,0.10)'; x.fillRect(0,0,c.width,c.height); x.restore(); console.log('Floor tint applied'); })();
+
+// 4) Brighter exit hint at the center of the visible canvas (demo)
+(()=>{ const c=document.getElementById('game'); const x=c&&c.getContext('2d'); if(!x) return; const cx=c.width*0.75, cy=c.height*0.25; const r=(Math.min(c.width,c.height)/20); const g=x.createRadialGradient(cx,cy,0,cx,cy,r*1.15); g.addColorStop(0,'rgba(255,220,60,0.6)'); g.addColorStop(1,'rgba(255,220,60,0)'); x.save(); x.globalCompositeOperation='screen'; x.globalAlpha=0.30; x.fillStyle=g; x.beginPath(); x.arc(cx,cy,r*1.15,0,Math.PI*2); x.fill(); x.restore(); console.log('Demo exit glow painted (not bound to real exit)'); })();

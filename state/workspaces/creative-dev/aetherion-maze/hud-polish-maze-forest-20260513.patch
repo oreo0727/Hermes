@@ -1,0 +1,21 @@
+*** Begin Patch
+*** Update File: /home/james/Hermes/state/projects/aetherion-maze/maze-forest/styles.css
+@@
+-#hudTL{position:absolute; top:-24px; left:-24px; display:grid; grid-template-columns:56px auto; grid-template-rows:auto auto; column-gap:10px; row-gap:6px; align-items:center; z-index:3; pointer-events:none; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.45)); font-family:'Baloo 2', Fredoka, Nunito, Inter, system-ui, sans-serif;}
++#hudTL{position:absolute; top:0; left:0; transform: translate(calc(-100% - 12px), -12px); display:grid; grid-template-columns:auto 56px; grid-template-rows:auto auto; column-gap:8px; row-gap:4px; align-items:center; z-index:3; pointer-events:none; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.45)); font-family:'Baloo 2', Fredoka, Nunito, Inter, system-ui, sans-serif;}
+@@
+-#hudTL::before{ content:''; position:absolute; left:48px; top:-2px; right:-2px; bottom:-2px; border-radius:8px; background: rgba(27,38,50,0.25); box-shadow: inset 0 0 0 1px rgba(255,255,255,0.08), inset 0 1px 0 rgba(255,255,255,0.06), inset 0 -1px 0 rgba(0,0,0,0.2); opacity: calc(var(--hud-chip) * 1.0); pointer-events:none; }
++#hudTL::before{ content:''; position:absolute; left:-2px; top:-2px; right: calc(56px + 8px); bottom:-2px; border-radius:8px; background: rgba(27,38,50,0.22); box-shadow: inset 0 0 0 1px rgba(255,255,255,0.08), inset 0 1px 0 rgba(255,255,255,0.06), inset 0 -1px 0 rgba(0,0,0,0.2); opacity: calc(var(--hud-chip) * 1.0); pointer-events:none; }
+@@
+-#hudTL .portrait{position:relative; width:56px; height:56px; grid-row:1 / span 2;}
++#hudTL .portrait{position:relative; width:56px; height:56px; grid-row:1 / span 2; grid-column:2;}
+@@
+-#hudTL .hearts{display:flex; gap:6px}
++#hudTL .hearts{display:flex; gap:4px}
+@@
+-#hudTL .counters{display:flex; gap:12px; font-weight:900; font-size:20px; letter-spacing:0.2px; text-shadow:0 2px 0 rgba(0,0,0,0.55)}
++#hudTL .counters{display:flex; gap:8px; font-weight:900; font-size:20px; letter-spacing:0.2px; text-shadow:0 2px 0 rgba(0,0,0,0.55)}
+@@
+-#hudTL .icon{display:inline-block; width:var(--hud-icon-size); height:var(--hud-icon-size); background-repeat:no-repeat; background-size:100% 100%; background-position:center; text-align:center; opacity:0.98; margin-right:6px; font-size:0; vertical-align:-3px}
++#hudTL .icon{display:inline-block; width:var(--hud-icon-size); height:var(--hud-icon-size); background-repeat:no-repeat; background-size:100% 100%; background-position:center; text-align:center; opacity:0.98; margin-right:4px; font-size:0; vertical-align:-3px}
+*** End Patch

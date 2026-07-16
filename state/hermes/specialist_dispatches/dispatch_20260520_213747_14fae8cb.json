@@ -1,0 +1,123 @@
+{
+  "dispatch_id": "dispatch_20260520_213747_14fae8cb",
+  "source": "operator-bridge",
+  "profile": "app-dev",
+  "project_id": "aetherion-maze",
+  "status": "completed",
+  "created_at": "2026-05-21T01:37:47.519045+00:00",
+  "updated_at": "2026-05-21T01:41:39.682872+00:00",
+  "completed_at": "2026-05-21T01:41:39.682872+00:00",
+  "prompt_preview": "Delivery strategy: Lead -> Creative -> Game Dev -> App Dev\nStage 3/3: app-dev\nProject: aetherion-maze / Aetherion Maze Games\nPrimary objective: Converge Aetherion Maze under one lead-owned path that runs creative-dev fi\u2026",
+  "output_preview": "Implemented an operator-friendly review portal, stable target path, and packaging scripts around the Godot Web build \u2014 with live preflight verification.\n\nWhat I did\n- Portal: Added a top-level review portal (index.html) that clearly exposes the canonical \u201cPlay\u201d route and a debug link, and marks legacy prototypes as re\u2026",
+  "error_preview": "",
+  "work_order": {
+    "schema_version": "1",
+    "created_at": "2026-05-21T01:37:47.543823+00:00",
+    "source": "specialist-bridge",
+    "profile_key": "app-dev",
+    "project_id": "aetherion-maze",
+    "project_title": "Aetherion Maze Games",
+    "project_root": "/home/james/Hermes/state/projects/aetherion-maze",
+    "objective": "Delivery strategy: Lead -> Creative -> Game Dev -> App Dev\nStage 3/3: app-dev\nProject: aetherion-maze / Aetherion Maze Games\nPrimary objective: Converge Aetherion Maze under one lead-owned path that runs creative-dev first, then game-dev, then app-dev, with one primary delivery target and no parallel rebuild drift.\nCurrent project summary: Aetherion Maze review lane with Godot web export, legacy prototype references, and Hermes operator tracking.\nCurrent tracking now: n/a\n\nStage contract:\nTighten the tooling, packaging, portal, and review loop around the chosen implementation path. Reduce operator ambiguity and make the artifact reviewable without ceremony.\n\nPrior handoff context:\n- creative-dev: Creative target frozen on the Godot 4 web export. Cozy HUD/theme, vignette, palette, and input cadence are now guardrails. Legacy HTML/Canvas prototypes are reference-only. Acceptance language is codified and a concrete handoff to game-dev is in place.\n- creative-dev next: {'lane': 'game-dev', 'action': 'Re-export the Godot Web build to /godot-web/ per acceptance-guardrails, verify HUD theme application, icon crispness (18\u201320px), vignette ordering (below HUD), input pacing (no diagonals; steady cooldown), mobile D-pad \u226544px, and deliver a short QA note of verified guardrails and any deviations.', 'references': ['/home/james/Hermes/state/workspaces/creative-dev/aetherion-maze/handoff-game-dev.md', '/home/james/Hermes/state/workspaces/creative-dev/aetherion-maze/vision-freeze.md', '/home/james/Hermes/state/workspaces/creative-dev/aetherion-maze/acceptance-guardrails.md']}\n- game-dev: Converged on the Godot 4 Web build and re-exported to the single target path. Adjusted HUD icon sizes to hit the creative guardrail (18\u201320 px \u2192 set to 20 px), kept vignette below HUD, gated noisy camera logs behind ?debug=1, verified export integrity, and spun up a local review route to preflight. No parallel rebuilds were created; legacy HTML/Canvas prototypes remain reference-only.\n\nRequired output:\n- concise human summary\n- machine-readable json block with summary, implemented, verified, assumed, blocked, risks, next_actions, artifacts, handoff_needed",
+    "autonomy_mode": "execute",
+    "owner_lane": "app-dev",
+    "delivery_model": {
+      "strategy_key": "lead-creative-game-app",
+      "strategy_label": "Lead -> Creative -> Game Dev -> App Dev",
+      "lead_lane": "operator",
+      "active_lane": "app-dev",
+      "next_lane": "",
+      "lane_sequence": [
+        "operator",
+        "creative-dev",
+        "game-dev",
+        "app-dev"
+      ],
+      "specialist_sequence": [
+        "creative-dev",
+        "game-dev",
+        "app-dev"
+      ],
+      "stage_guidance": {
+        "operator": "Own scope, freeze the delivery target, and keep the handoffs honest.",
+        "creative-dev": "Define the creative target, vision guardrails, and artifact acceptance language before implementation drifts.",
+        "game-dev": "Own the playable build path and converge the actual game implementation on the chosen target artifact.",
+        "app-dev": "Own the app, tooling, portal, and review-loop support needed to make the chosen artifact reviewable and repeatable."
+      },
+      "handoff_contract": [
+        "freeze one primary delivery target before downstream implementation expands scope",
+        "treat creative-dev as the vision and acceptance guardrail for downstream lanes",
+        "treat game-dev as the owner of the playable implementation path once the vision is frozen",
+        "treat app-dev as the owner of portal, tooling, packaging, and review-loop support after the build path is clear",
+        "require each lane to leave a concrete handoff for the next lane instead of sending the operator back into open-ended review"
+      ]
+    },
+    "lead_lane": "operator",
+    "active_lane": "app-dev",
+    "next_lane": "",
+    "lane_sequence": [
+      "operator",
+      "creative-dev",
+      "game-dev",
+      "app-dev"
+    ],
+    "recommended_lanes": [
+      "operator",
+      "creative-dev",
+      "game-dev"
+    ],
+    "expected_deliverables": [
+      "code changes",
+      "artifact or build output",
+      "findings and recommended next actions",
+      "creative package or direction"
+    ],
+    "verification_required": [
+      "separate implemented, verified, and assumed",
+      "run the smallest local verification possible before claiming success"
+    ],
+    "project_status": "active",
+    "project_owner": "app-dev",
+    "project_now": "game-dev: Converged on the Godot 4 Web build and re-exported to the single target path. Adjusted HUD icon sizes to hit the creative guardrail (18\u201320 px \u2192 set to 20 px), kept vignette below HUD, gated noisy camera logs behind ?debug=1, verified export integrity, and spun up a local review route to preflight. No parallel rebuilds were created; legacy HTML/Canvas prototypes remain reference-only.",
+    "project_next": "Hand off to app-dev"
+  },
+  "structured_result": {
+    "schema_version": "1",
+    "summary": "App-dev tightened the review loop for Aetherion Maze by adding a root review portal, stabilizing the /godot-web/ target route via symlink, providing start/stop review server scripting with preflight health checks, and adding a packaging script that emits timestamped zips with SHA256. Verified that /, /godot-web/, and /godot-web/index.html return 200 via curl on two server implementations and produced a packaged zip.",
+    "implemented": [
+      "index.html review portal at project root linking Play and Play (debug) for Godot Web, with legacy prototypes marked reference-only",
+      "Root-level symlink godot-web -> _archive_20260521/godot-web for stable canonical path",
+      "tools/review.sh for COOP/COEP server start/stop with automatic curl preflight",
+      "tools/package_web.sh for timestamped zips with SHA256 and size reporting",
+      "README.md updated with new quickstart and corrected prototype paths"
+    ],
+    "verified": [
+      "curl 200 OK for http://127.0.0.1:8010/, /godot-web/, /godot-web/index.html",
+      "curl 200 OK for same routes on port 8011 using alternate server",
+      "Packaging created artifacts/aetherion-maze-godot-web-20260521T014103Z.zip with sha256 a5ff78f7b617b659b980bb4cfd1b98880965f4c63d32ec13e2650a3d13bd76ae and size 9080315"
+    ],
+    "assumed": [
+      "Using a symlink for /godot-web/ is acceptable for the canonical path and matches the single-target strategy",
+      "The ?debug=1 toggle remains the correct flag to enable diagnostics in the current build"
+    ],
+    "blocked": [],
+    "risks": [
+      "Symlink may not be followed by some non-Python static hosts; packaging script includes content so zips are unaffected",
+      "Future Godot exports in new dated dirs require repointing the symlink to maintain the stable route"
+    ],
+    "next_actions": [
+      "Confirm the portal UX and packaging naming are acceptable",
+      "Optionally add a script to repoint the godot-web symlink when a new export drops",
+      "If desired, mirror packaged zips to the app-dev workspace in addition to the project artifacts/"
+    ],
+    "artifacts": [
+      "/home/james/Hermes/state/projects/aetherion-maze/index.html",
+      "/home/james/Hermes/state/projects/aetherion-maze/tools/review.sh",
+      "/home/james/Hermes/state/projects/aetherion-maze/tools/package_web.sh",
+      "/home/james/Hermes/state/projects/aetherion-maze/godot-web (symlink -> _archive_20260521/godot-web)",
+      "/home/james/Hermes/state/projects/aetherion-maze/README.md",
+      "/home/james/Hermes/state/projects/aetherion-maze/artifacts/aetherion-maze-godot-web-20260521T014103Z.zip"
+    ],
+    "handoff_needed": false
+  }
+}

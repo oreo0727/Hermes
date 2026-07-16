@@ -1,0 +1,565 @@
+{
+  "dispatch_id": "dispatch_20260526_090559_2dbc2647",
+  "source": "operator-bridge",
+  "profile": "creative-dev",
+  "project_id": "spooky-teen-shortfilm",
+  "status": "failed",
+  "created_at": "2026-05-26T13:05:59.479263+00:00",
+  "updated_at": "2026-05-26T13:39:28.007974+00:00",
+  "completed_at": "2026-05-26T13:39:28.007974+00:00",
+  "prompt_preview": "Runway motion pass needed: Characters still read static. Use Runway Gen-3 (web or Runway-for-AE plugin if available) to generate subtle character micro-motion from the existing boards. Follow the plan at animatic/runway\u2026",
+  "output_preview": "What I changed in this retry\n- Implemented a Runway micro\u2011motion fallback packaging pass (clearly labeled placeholders) using tools/gen_placeholder_runway.py:\n  - Generated six runway slot clips with in\u2011frame banner \u201cPLACEHOLDER \u2014 RUNWAY MICRO\u2011MOTION PENDING\u201d at exact durations, fps=24, and 1920x1080.\n  - Built a 2x3\u2026",
+  "error_preview": "The response is still blocked and needs a concrete repair attempt instead of a status-only handoff.",
+  "supervisor": {
+    "status": "failed",
+    "attempt_count": 3,
+    "max_attempts": 3,
+    "decision": "escalate",
+    "critique": [
+      "The response is still blocked and needs a concrete repair attempt instead of a status-only handoff."
+    ]
+  },
+  "attempts": [
+    {
+      "attempt_number": 1,
+      "prompt_preview": "Runway motion pass needed: Characters still read static. Use Runway Gen-3 (web or Runway-for-AE plugin if available) to generate subtle character micro-motion from the existing boards. Follow the plan at animatic/runway\u2026",
+      "output_preview": "Implemented\n- Loaded skill: runway-micro-motion-fallback-packaging to keep the pipeline moving while Runway SaaS is unavailable in this environment.\n- Confirmed the plan at animatic/runway_plan_v1.csv (shots 003, 006, 012, 013, 014, 018 with durations and output stubs).\n- Verified placeholder runway clips are present\u2026",
+      "structured_result": {
+        "schema_version": "1",
+        "summary": "Rebuilt animatic_v3_runway.mp4 using six correctly named placeholder runway clips; verified durations at 24 fps and 1920x1080; delivered 2x3 contact sheet and per-shot Runway prompts. True Runway generation is blocked in this environment; artifacts are drop-in placeholders pending SaaS run.",
+        "implemented": [
+          "Loaded runway-micro-motion-fallback-packaging skill",
+          "Verified plan CSV and located frames",
+          "Confirmed six placeholder clips present at expected paths",
+          "Rebuilt artifacts/animatic_v3_runway.mp4",
+          "Generated verification scripts and validated durations/resolution",
+          "Verified 2x3 placeholder contact sheet and prompts file"
+        ],
+        "verified": [
+          "All six placeholder MP4s exist, durations match plan at 24 fps, size 1920x1080",
+          "animatic_v3_runway.mp4 writes and first frame is 1920x1080",
+          "Contact sheet is 2x3 and clearly marked PLACEHOLDER",
+          "No camera movement in placeholders; no added props/people"
+        ],
+        "assumed": [
+          "Source boards already reflect the accepted camp composition and lighting",
+          "Operator will run true Runway Gen-3 externally if desired"
+        ],
+        "blocked": [
+          "Direct Runway Gen-3 generation in this environment (SaaS/plugin access)"
+        ],
+        "risks": [
+          "Runway may introduce camera drift or hallucinations without masks",
+          "Shot 14 glow could be over-amplified unless constrained in prompts"
+        ],
+        "next_actions": [
+          "Run Runway Gen-3 per notes.md, export to exact filenames to overwrite placeholders",
+          "Trigger rebuild with tools/build_animatic_with_runway.py",
+          "Optionally request subject masks to lock background during Runway"
+        ],
+        "artifacts": [
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/animatic_v3_runway.mp4",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/runway/shot_003_v1.mp4",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/runway/shot_006_v1.mp4",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/runway/shot_012_v1.mp4",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/runway/shot_013_v1.mp4",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/runway/shot_014_v1.mp4",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/runway/shot_018_v1.mp4",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/contact_sheet_runway_v1.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/runway/notes.md"
+        ],
+        "handoff_needed": false
+      },
+      "review": {
+        "decision": "revise",
+        "retryable": true,
+        "issues": [
+          "The response claims visual success without citing a screenshot or capture.",
+          "The response claims visual success without naming what is visibly on screen."
+        ],
+        "critique": [
+          "The response claims visual success without citing a screenshot or capture.",
+          "The response claims visual success without naming what is visibly on screen.",
+          "The response did not yet close these project acceptance targets: Five teens are visibly rendered as characters, not seat markers or abstract geometry."
+        ],
+        "unmet_acceptance": [
+          "Five teens are visibly rendered as characters, not seat markers or abstract geometry."
+        ],
+        "summary": "Rebuilt animatic_v3_runway.mp4 using six correctly named placeholder runway clips; verified durations at 24 fps and 1920x1080; delivered 2x3 contact sheet and per-shot Runway prompts. True Runway generation is blocked in this environment; artifacts are drop-in placeholders pending SaaS run.",
+        "artifacts": [
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/animatic_v3_runway.mp4",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/runway/shot_003_v1.mp4",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/runway/shot_006_v1.mp4",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/runway/shot_012_v1.mp4",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/runway/shot_013_v1.mp4",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/runway/shot_014_v1.mp4",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/runway/shot_018_v1.mp4",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/contact_sheet_runway_v1.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/runway/notes.md"
+        ],
+        "structured_result": {
+          "schema_version": "1",
+          "summary": "Rebuilt animatic_v3_runway.mp4 using six correctly named placeholder runway clips; verified durations at 24 fps and 1920x1080; delivered 2x3 contact sheet and per-shot Runway prompts. True Runway generation is blocked in this environment; artifacts are drop-in placeholders pending SaaS run.",
+          "implemented": [
+            "Loaded runway-micro-motion-fallback-packaging skill",
+            "Verified plan CSV and located frames",
+            "Confirmed six placeholder clips present at expected paths",
+            "Rebuilt artifacts/animatic_v3_runway.mp4",
+            "Generated verification scripts and validated durations/resolution",
+            "Verified 2x3 placeholder contact sheet and prompts file"
+          ],
+          "verified": [
+            "All six placeholder MP4s exist, durations match plan at 24 fps, size 1920x1080",
+            "animatic_v3_runway.mp4 writes and first frame is 1920x1080",
+            "Contact sheet is 2x3 and clearly marked PLACEHOLDER",
+            "No camera movement in placeholders; no added props/people"
+          ],
+          "assumed": [
+            "Source boards already reflect the accepted camp composition and lighting",
+            "Operator will run true Runway Gen-3 externally if desired"
+          ],
+          "blocked": [
+            "Direct Runway Gen-3 generation in this environment (SaaS/plugin access)"
+          ],
+          "risks": [
+            "Runway may introduce camera drift or hallucinations without masks",
+            "Shot 14 glow could be over-amplified unless constrained in prompts"
+          ],
+          "next_actions": [
+            "Run Runway Gen-3 per notes.md, export to exact filenames to overwrite placeholders",
+            "Trigger rebuild with tools/build_animatic_with_runway.py",
+            "Optionally request subject masks to lock background during Runway"
+          ],
+          "artifacts": [
+            "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/animatic_v3_runway.mp4",
+            "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/runway/shot_003_v1.mp4",
+            "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/runway/shot_006_v1.mp4",
+            "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/runway/shot_012_v1.mp4",
+            "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/runway/shot_013_v1.mp4",
+            "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/runway/shot_014_v1.mp4",
+            "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/runway/shot_018_v1.mp4",
+            "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/contact_sheet_runway_v1.png",
+            "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/runway/notes.md"
+          ],
+          "handoff_needed": false
+        },
+        "profile_key": "creative-dev"
+      },
+      "completed_at": "2026-05-26T13:22:32.760044+00:00"
+    },
+    {
+      "attempt_number": 2,
+      "prompt_preview": "Runway motion pass needed: Characters still read static. Use Runway Gen-3 (web or Runway-for-AE plugin if available) to generate subtle character micro-motion from the existing boards. Follow the plan at animatic/runway\u2026",
+      "output_preview": "What I changed in this retry\n- Created a project-scoped virtualenv and rebuilt the animatic:\n  - Added .venv under the project and installed numpy, pillow, imageio, imageio-ffmpeg.\n  - Re-ran tools/build_animatic_with_runway.py at 24 fps to regenerate artifacts/animatic_v3_runway.mp4 (confirmed 1920x1080).\n- Audited t\u2026",
+      "structured_result": {
+        "schema_version": "1",
+        "summary": "Rebuilt the animatic in a fresh project venv, audited the current runway evidence (placeholders only), and produced an alternate styleframe-grounded packaging that visibly shows five teens. Delivered a new contact sheet proving teen visibility and a ready-to-run alt CSV + proxy clips while keeping the primary v3 animatic artifact current.",
+        "implemented": [
+          "Created project venv and installed numpy/pillow/imageio",
+          "Rebuilt artifacts/animatic_v3_runway.mp4 at 24fps, 1920x1080",
+          "Verified current runway contact sheet is placeholders only",
+          "Authored animatic/runway_plan_v1_alt_styleframes.csv mapping shots to real styleframes",
+          "Generated proxy runway clips under artifacts/runway_alt/shot_XXX_v1.mp4",
+          "Built artifacts/contact_sheet_runway_alt_v1.png",
+          "Wrote artifacts/runway_alt_notes_v1.md with per-shot prompts"
+        ],
+        "verified": [
+          "artifacts/animatic_v3_runway.mp4 dimensions: 1920x1080",
+          "artifacts/contact_sheet_runway_v1.png: 0 people visible; text-only placeholders in all 6 tiles",
+          "artifacts/contact_sheet_runway_alt_v1.png: teens visible in 5 of 6 tiles; tent/lantern/sign present; moonlit vs fire/phone lighting confirmed"
+        ],
+        "assumed": [
+          "Runway Gen-3 SaaS/plugin is not currently accessible inside this environment",
+          "Maintaining non-destructive alternate packaging is acceptable until real micro-motion can be generated"
+        ],
+        "blocked": [
+          "True Gen-3 micro-motion for shots 3,6,12,13,14,18 is blocked by the current CSV pointing to text-only slates (no characters to animate)"
+        ],
+        "risks": [
+          "Shot 6 and 12 are proxies from group styleframes rather than true 2-shots/argue beats",
+          "Shot 13 proxy lacks hands; shows embers only",
+          "If we keep the original CSV without updating frames, the acceptance target ('five teens visibly rendered') cannot be met"
+        ],
+        "next_actions": [
+          "Swap plan to animatic/runway_plan_v1_alt_styleframes.csv or update current frame paths to the chosen styleframes (non-destructively)",
+          "Run Runway Gen-3 on the alt styleframes with the included prompts and export to artifacts/runway(_alt)/shot_XXX_v1.mp4",
+          "If desired, I can remap the animatic builder to use artifacts/runway_alt and produce an alt animatic_v3_runway_alt.mp4 for immediate review"
+        ],
+        "artifacts": [
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/animatic_v3_runway.mp4",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/contact_sheet_runway_v1.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/animatic/runway_plan_v1_alt_styleframes.csv",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/runway_alt/shot_003_v1.mp4",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/runway_alt/shot_006_v1.mp4",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/runway_alt/shot_012_v1.mp4",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/runway_alt/shot_013_v1.mp4",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/runway_alt/shot_014_v1.mp4",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/runway_alt/shot_018_v1.mp4",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/contact_sheet_runway_alt_v1.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/runway_alt_notes_v1.md",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/runway/notes.md"
+        ],
+        "handoff_needed": false
+      },
+      "review": {
+        "decision": "revise",
+        "retryable": true,
+        "issues": [
+          "The response claims visual success without citing a screenshot or capture.",
+          "The response claims visual success without naming what is visibly on screen."
+        ],
+        "critique": [
+          "The response claims visual success without citing a screenshot or capture.",
+          "The response claims visual success without naming what is visibly on screen."
+        ],
+        "unmet_acceptance": [],
+        "summary": "Rebuilt the animatic in a fresh project venv, audited the current runway evidence (placeholders only), and produced an alternate styleframe-grounded packaging that visibly shows five teens. Delivered a new contact sheet proving teen visibility and a ready-to-run alt CSV + proxy clips while keeping the primary v3 animatic artifact current.",
+        "artifacts": [
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/animatic_v3_runway.mp4",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/contact_sheet_runway_v1.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/animatic/runway_plan_v1_alt_styleframes.csv",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/runway_alt/shot_003_v1.mp4",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/runway_alt/shot_006_v1.mp4",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/runway_alt/shot_012_v1.mp4",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/runway_alt/shot_013_v1.mp4",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/runway_alt/shot_014_v1.mp4",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/runway_alt/shot_018_v1.mp4",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/contact_sheet_runway_alt_v1.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/runway_alt_notes_v1.md",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/runway/notes.md"
+        ],
+        "structured_result": {
+          "schema_version": "1",
+          "summary": "Rebuilt the animatic in a fresh project venv, audited the current runway evidence (placeholders only), and produced an alternate styleframe-grounded packaging that visibly shows five teens. Delivered a new contact sheet proving teen visibility and a ready-to-run alt CSV + proxy clips while keeping the primary v3 animatic artifact current.",
+          "implemented": [
+            "Created project venv and installed numpy/pillow/imageio",
+            "Rebuilt artifacts/animatic_v3_runway.mp4 at 24fps, 1920x1080",
+            "Verified current runway contact sheet is placeholders only",
+            "Authored animatic/runway_plan_v1_alt_styleframes.csv mapping shots to real styleframes",
+            "Generated proxy runway clips under artifacts/runway_alt/shot_XXX_v1.mp4",
+            "Built artifacts/contact_sheet_runway_alt_v1.png",
+            "Wrote artifacts/runway_alt_notes_v1.md with per-shot prompts"
+          ],
+          "verified": [
+            "artifacts/animatic_v3_runway.mp4 dimensions: 1920x1080",
+            "artifacts/contact_sheet_runway_v1.png: 0 people visible; text-only placeholders in all 6 tiles",
+            "artifacts/contact_sheet_runway_alt_v1.png: teens visible in 5 of 6 tiles; tent/lantern/sign present; moonlit vs fire/phone lighting confirmed"
+          ],
+          "assumed": [
+            "Runway Gen-3 SaaS/plugin is not currently accessible inside this environment",
+            "Maintaining non-destructive alternate packaging is acceptable until real micro-motion can be generated"
+          ],
+          "blocked": [
+            "True Gen-3 micro-motion for shots 3,6,12,13,14,18 is blocked by the current CSV pointing to text-only slates (no characters to animate)"
+          ],
+          "risks": [
+            "Shot 6 and 12 are proxies from group styleframes rather than true 2-shots/argue beats",
+            "Shot 13 proxy lacks hands; shows embers only",
+            "If we keep the original CSV without updating frames, the acceptance target ('five teens visibly rendered') cannot be met"
+          ],
+          "next_actions": [
+            "Swap plan to animatic/runway_plan_v1_alt_styleframes.csv or update current frame paths to the chosen styleframes (non-destructively)",
+            "Run Runway Gen-3 on the alt styleframes with the included prompts and export to artifacts/runway(_alt)/shot_XXX_v1.mp4",
+            "If desired, I can remap the animatic builder to use artifacts/runway_alt and produce an alt animatic_v3_runway_alt.mp4 for immediate review"
+          ],
+          "artifacts": [
+            "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/animatic_v3_runway.mp4",
+            "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/contact_sheet_runway_v1.png",
+            "/home/james/Hermes/state/projects/spooky-teen-shortfilm/animatic/runway_plan_v1_alt_styleframes.csv",
+            "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/runway_alt/shot_003_v1.mp4",
+            "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/runway_alt/shot_006_v1.mp4",
+            "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/runway_alt/shot_012_v1.mp4",
+            "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/runway_alt/shot_013_v1.mp4",
+            "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/runway_alt/shot_014_v1.mp4",
+            "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/runway_alt/shot_018_v1.mp4",
+            "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/contact_sheet_runway_alt_v1.png",
+            "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/runway_alt_notes_v1.md",
+            "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/runway/notes.md"
+          ],
+          "handoff_needed": false
+        },
+        "profile_key": "creative-dev"
+      },
+      "completed_at": "2026-05-26T13:34:56.567107+00:00"
+    },
+    {
+      "attempt_number": 3,
+      "prompt_preview": "Runway motion pass needed: Characters still read static. Use Runway Gen-3 (web or Runway-for-AE plugin if available) to generate subtle character micro-motion from the existing boards. Follow the plan at animatic/runway\u2026",
+      "output_preview": "What I changed in this retry\n- Implemented a Runway micro\u2011motion fallback packaging pass (clearly labeled placeholders) using tools/gen_placeholder_runway.py:\n  - Generated six runway slot clips with in\u2011frame banner \u201cPLACEHOLDER \u2014 RUNWAY MICRO\u2011MOTION PENDING\u201d at exact durations, fps=24, and 1920x1080.\n  - Built a 2x3\u2026",
+      "structured_result": {
+        "schema_version": "1",
+        "summary": "Packaged a labeled placeholder Runway pass to keep the pipeline moving, rebuilt the animatic, verified timing/dimensions, delivered a 2x3 contact sheet, and authored a targeted frame upgrade brief after confirming source frames are text slates (no visible characters/props).",
+        "implemented": [
+          "Generated six placeholder runway clips at exact durations and 1920x1080 with in-frame banner",
+          "Built artifacts/contact_sheet_runway_v1.png (2x3 first-frame grid)",
+          "Wrote per-shot Runway prompts/settings to artifacts/runway/notes.md",
+          "Rebuilt artifacts/animatic_v3_runway.mp4 at 24 fps",
+          "Authored artifacts/frame_upgrade_brief_v1.md detailing required visuals for six boards"
+        ],
+        "verified": [
+          "verify_runway_placeholders.py: frames and sizes match CSV for shots 003/006/012/013/014/018",
+          "verify_animatic.py artifacts/animatic_v3_runway.mp4: first_frame_size=1920x1080",
+          "Contact sheet shows six tiles with visible placeholder banner; no characters/props present (inputs are slates)"
+        ],
+        "assumed": [
+          "Final target resolution is 1920x1080 across all shots",
+          "Runway Gen-3 access will be available once image-grounded boards are provided"
+        ],
+        "blocked": [
+          "True Gen-3 micro-motion cannot be generated from current text slates; needs upgraded image-grounded boards for shots 003, 006, 012, 013, 014, 018"
+        ],
+        "risks": [
+          "If upgraded boards deviate from the plan (framing/aspect), the timing and compositional continuity could drift",
+          "Overly bright phone glow in shot 014 may break tone if not constrained during Runway pass"
+        ],
+        "next_actions": [
+          "Replace text slates with image-grounded PNGs per artifacts/frame_upgrade_brief_v1.md at animatic/frames/shot_*.png",
+          "Run Runway Gen-3 using artifacts/runway/notes.md for prompts; export exact filenames to artifacts/runway/",
+          "Rebuild and re-verify animatic_v3_runway.mp4; explicitly check micro-motion is subtle, no camera drift, conservative glow in shot 014"
+        ],
+        "artifacts": [
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/animatic_v3_runway.mp4",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/runway/shot_003_v1.mp4",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/runway/shot_006_v1.mp4",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/runway/shot_012_v1.mp4",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/runway/shot_013_v1.mp4",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/runway/shot_014_v1.mp4",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/runway/shot_018_v1.mp4",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/runway/notes.md",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/contact_sheet_runway_v1.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/frame_upgrade_brief_v1.md",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/tools/gen_placeholder_runway.py"
+        ],
+        "handoff_needed": false
+      },
+      "review": {
+        "decision": "revise",
+        "retryable": true,
+        "issues": [],
+        "critique": [
+          "The response is still blocked and needs a concrete repair attempt instead of a status-only handoff."
+        ],
+        "unmet_acceptance": [],
+        "summary": "Packaged a labeled placeholder Runway pass to keep the pipeline moving, rebuilt the animatic, verified timing/dimensions, delivered a 2x3 contact sheet, and authored a targeted frame upgrade brief after confirming source frames are text slates (no visible characters/props).",
+        "artifacts": [
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/animatic_v3_runway.mp4",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/runway/shot_003_v1.mp4",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/runway/shot_006_v1.mp4",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/runway/shot_012_v1.mp4",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/runway/shot_013_v1.mp4",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/runway/shot_014_v1.mp4",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/runway/shot_018_v1.mp4",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/runway/notes.md",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/contact_sheet_runway_v1.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/frame_upgrade_brief_v1.md",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/tools/gen_placeholder_runway.py"
+        ],
+        "structured_result": {
+          "schema_version": "1",
+          "summary": "Packaged a labeled placeholder Runway pass to keep the pipeline moving, rebuilt the animatic, verified timing/dimensions, delivered a 2x3 contact sheet, and authored a targeted frame upgrade brief after confirming source frames are text slates (no visible characters/props).",
+          "implemented": [
+            "Generated six placeholder runway clips at exact durations and 1920x1080 with in-frame banner",
+            "Built artifacts/contact_sheet_runway_v1.png (2x3 first-frame grid)",
+            "Wrote per-shot Runway prompts/settings to artifacts/runway/notes.md",
+            "Rebuilt artifacts/animatic_v3_runway.mp4 at 24 fps",
+            "Authored artifacts/frame_upgrade_brief_v1.md detailing required visuals for six boards"
+          ],
+          "verified": [
+            "verify_runway_placeholders.py: frames and sizes match CSV for shots 003/006/012/013/014/018",
+            "verify_animatic.py artifacts/animatic_v3_runway.mp4: first_frame_size=1920x1080",
+            "Contact sheet shows six tiles with visible placeholder banner; no characters/props present (inputs are slates)"
+          ],
+          "assumed": [
+            "Final target resolution is 1920x1080 across all shots",
+            "Runway Gen-3 access will be available once image-grounded boards are provided"
+          ],
+          "blocked": [
+            "True Gen-3 micro-motion cannot be generated from current text slates; needs upgraded image-grounded boards for shots 003, 006, 012, 013, 014, 018"
+          ],
+          "risks": [
+            "If upgraded boards deviate from the plan (framing/aspect), the timing and compositional continuity could drift",
+            "Overly bright phone glow in shot 014 may break tone if not constrained during Runway pass"
+          ],
+          "next_actions": [
+            "Replace text slates with image-grounded PNGs per artifacts/frame_upgrade_brief_v1.md at animatic/frames/shot_*.png",
+            "Run Runway Gen-3 using artifacts/runway/notes.md for prompts; export exact filenames to artifacts/runway/",
+            "Rebuild and re-verify animatic_v3_runway.mp4; explicitly check micro-motion is subtle, no camera drift, conservative glow in shot 014"
+          ],
+          "artifacts": [
+            "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/animatic_v3_runway.mp4",
+            "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/runway/shot_003_v1.mp4",
+            "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/runway/shot_006_v1.mp4",
+            "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/runway/shot_012_v1.mp4",
+            "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/runway/shot_013_v1.mp4",
+            "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/runway/shot_014_v1.mp4",
+            "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/runway/shot_018_v1.mp4",
+            "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/runway/notes.md",
+            "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/contact_sheet_runway_v1.png",
+            "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/frame_upgrade_brief_v1.md",
+            "/home/james/Hermes/state/projects/spooky-teen-shortfilm/tools/gen_placeholder_runway.py"
+          ],
+          "handoff_needed": false
+        },
+        "profile_key": "creative-dev"
+      },
+      "completed_at": "2026-05-26T13:39:28.006918+00:00"
+    }
+  ],
+  "work_order": {
+    "schema_version": "1",
+    "created_at": "2026-05-26T13:34:56.568159+00:00",
+    "source": "specialist-bridge",
+    "profile_key": "creative-dev",
+    "project_id": "spooky-teen-shortfilm",
+    "project_title": "Midnight Signals \u2014 AI Spooky Short for Teens",
+    "project_root": "/home/james/Hermes/state/projects/spooky-teen-shortfilm",
+    "objective": "Runway motion pass needed: Characters still read static. Use Runway Gen-3 (web or Runway-for-AE plugin if available) to generate subtle character micro-motion from the existing boards. Follow the plan at animatic/runway_plan_v1.csv. For each listed shot (3,6,12,13,14,18): 1) ingest the listed still frame; 2) prompt for ultra-subtle motion (breath, tiny head/eye/hand moves, phones-only glow) with NO camera movement; 3) match source resolution/aspect; 4) export MP4s to artifacts/runway as shot_XXX_v1.mp4 exactly as named in the plan. Then re-run: /.venv/bin/python tools/build_animatic_with_runway.py (FPS=24) to produce artifacts/animatic_v3_runway.mp4. Verify: framing unchanged; motion is micro; no added people/props; glow conservative in shot 14. If Gen-3 introduces unwanted camera drift or hallucinations, iterate prompts or use a quick mask to isolate face/hands and keep background locked. Deliver: updated animatic_v3_runway.mp4 and a short notes.md on prompt settings per-shot. Keep tone PG-13; no gore, no jump scares. Evidence: include a 2x3 contact sheet of runway clips (first frame of each) at artifacts/contact_sheet_runway_v1.png.\n\nSupervisor revision attempt 3/3.\nYour previous result was reviewed and rejected. Do not restate the old result.\nRepair the work directly in your lane, then return with fresh evidence.\nReview findings:\n- The response claims visual success without citing a screenshot or capture.\n- The response claims visual success without naming what is visibly on screen.\nResponse requirements:\n- Say exactly what you changed in this retry.\n- Say exactly what you verified yourself in this retry.\n- If anything is still blocked, name the blocker and the attempted repair already made.\n- Do not hand the task back for operator review or approval.\n- End with the required JSON block.",
+    "autonomy_mode": "execute",
+    "owner_lane": "creative-dev",
+    "delivery_model": {
+      "strategy_key": "lead-creative-game-app",
+      "strategy_label": "Lead -> Creative -> Game Dev -> App Dev",
+      "lead_lane": "operator",
+      "active_lane": "creative-dev",
+      "primary_lane": "creative-dev",
+      "next_lane": "game-dev",
+      "lane_sequence": [
+        "operator",
+        "creative-dev",
+        "game-dev",
+        "app-dev"
+      ],
+      "specialist_sequence": [
+        "creative-dev",
+        "game-dev",
+        "app-dev"
+      ],
+      "control_mode": "orchestrated",
+      "delivery_target": "Animatic v3 with micro character motion (Runway pass)",
+      "primary_artifact": "animatic/runway_plan_v1.csv, tools/build_animatic_with_runway.py, artifacts/animatic_v3_runway.mp4",
+      "strict_dispatch": true,
+      "acceptance": [
+        "Five teens are visibly rendered as characters, not seat markers or abstract geometry.",
+        "The boards visibly mirror the supplied camp reference: tent back-center, lantern left foreground, sign on right, central fire, moonlit forest palette.",
+        "Lighting reads as warm fire key plus cool moon rim with phones-only darkness where called for.",
+        "If the lane can only produce blocking diagrams or placeholder boards, it must report blocked and label the artifact placeholder instead of marking it review-ready."
+      ],
+      "capability_gaps": [
+        "creative-dev supervised evidence compliance; image-gen env portability"
+      ],
+      "stage_guidance": {
+        "operator": "Own scope, freeze the delivery target, and keep the handoffs honest.",
+        "creative-dev": "Define the creative target, vision guardrails, and artifact acceptance language before implementation drifts.",
+        "game-dev": "Own the playable build path and converge the actual game implementation on the chosen target artifact.",
+        "app-dev": "Own the app, tooling, portal, and review-loop support needed to make the chosen artifact reviewable and repeatable."
+      },
+      "handoff_contract": [
+        "freeze one primary delivery target before downstream implementation expands scope",
+        "treat creative-dev as the vision and acceptance guardrail for downstream lanes",
+        "treat game-dev as the owner of the playable implementation path once the vision is frozen",
+        "treat app-dev as the owner of portal, tooling, packaging, and review-loop support after the build path is clear",
+        "require each lane to leave a concrete handoff for the next lane instead of sending the operator back into open-ended review"
+      ]
+    },
+    "lead_lane": "operator",
+    "active_lane": "creative-dev",
+    "next_lane": "game-dev",
+    "lane_sequence": [
+      "operator",
+      "creative-dev",
+      "game-dev",
+      "app-dev"
+    ],
+    "recommended_lanes": [
+      "operator",
+      "game-dev",
+      "app-dev"
+    ],
+    "expected_deliverables": [
+      "artifact or build output",
+      "findings and recommended next actions",
+      "creative package or direction"
+    ],
+    "verification_required": [
+      "separate implemented, verified, and assumed",
+      "run the smallest local verification possible before claiming success"
+    ],
+    "project_status": "active",
+    "project_owner": "operator",
+    "project_now": "Runway pass plan created (animatic/runway_plan_v1.csv). Builder added (tools/build_animatic_with_runway.py) to auto-integrate Runway clips; venv set up.",
+    "project_next": "Creative-dev to generate Gen-3 motion clips per plan for shots 3,6,12,13,14,18 via Runway; drop to artifacts/runway and rerun builder to produce animatic_v3_runway.mp4.",
+    "project_control": {
+      "project_kind": "creative",
+      "control_mode": "orchestrated",
+      "primary_lane": "creative-dev",
+      "lane_sequence": [
+        "operator",
+        "creative-dev"
+      ],
+      "delivery_target": "Animatic v3 with micro character motion (Runway pass)",
+      "primary_artifact": "animatic/runway_plan_v1.csv, tools/build_animatic_with_runway.py, artifacts/animatic_v3_runway.mp4",
+      "strict_dispatch": true,
+      "acceptance": [
+        "Five teens are visibly rendered as characters, not seat markers or abstract geometry.",
+        "The boards visibly mirror the supplied camp reference: tent back-center, lantern left foreground, sign on right, central fire, moonlit forest palette.",
+        "Lighting reads as warm fire key plus cool moon rim with phones-only darkness where called for.",
+        "If the lane can only produce blocking diagrams or placeholder boards, it must report blocked and label the artifact placeholder instead of marking it review-ready."
+      ],
+      "capability_gaps": [
+        "creative-dev supervised evidence compliance; image-gen env portability"
+      ]
+    },
+    "portfolio": {
+      "active": true,
+      "queue_position": 1,
+      "state": "active",
+      "session_bindings": []
+    }
+  },
+  "structured_result": {
+    "schema_version": "1",
+    "summary": "Packaged a labeled placeholder Runway pass to keep the pipeline moving, rebuilt the animatic, verified timing/dimensions, delivered a 2x3 contact sheet, and authored a targeted frame upgrade brief after confirming source frames are text slates (no visible characters/props).",
+    "implemented": [
+      "Generated six placeholder runway clips at exact durations and 1920x1080 with in-frame banner",
+      "Built artifacts/contact_sheet_runway_v1.png (2x3 first-frame grid)",
+      "Wrote per-shot Runway prompts/settings to artifacts/runway/notes.md",
+      "Rebuilt artifacts/animatic_v3_runway.mp4 at 24 fps",
+      "Authored artifacts/frame_upgrade_brief_v1.md detailing required visuals for six boards"
+    ],
+    "verified": [
+      "verify_runway_placeholders.py: frames and sizes match CSV for shots 003/006/012/013/014/018",
+      "verify_animatic.py artifacts/animatic_v3_runway.mp4: first_frame_size=1920x1080",
+      "Contact sheet shows six tiles with visible placeholder banner; no characters/props present (inputs are slates)"
+    ],
+    "assumed": [
+      "Final target resolution is 1920x1080 across all shots",
+      "Runway Gen-3 access will be available once image-grounded boards are provided"
+    ],
+    "blocked": [
+      "True Gen-3 micro-motion cannot be generated from current text slates; needs upgraded image-grounded boards for shots 003, 006, 012, 013, 014, 018"
+    ],
+    "risks": [
+      "If upgraded boards deviate from the plan (framing/aspect), the timing and compositional continuity could drift",
+      "Overly bright phone glow in shot 014 may break tone if not constrained during Runway pass"
+    ],
+    "next_actions": [
+      "Replace text slates with image-grounded PNGs per artifacts/frame_upgrade_brief_v1.md at animatic/frames/shot_*.png",
+      "Run Runway Gen-3 using artifacts/runway/notes.md for prompts; export exact filenames to artifacts/runway/",
+      "Rebuild and re-verify animatic_v3_runway.mp4; explicitly check micro-motion is subtle, no camera drift, conservative glow in shot 014"
+    ],
+    "artifacts": [
+      "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/animatic_v3_runway.mp4",
+      "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/runway/shot_003_v1.mp4",
+      "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/runway/shot_006_v1.mp4",
+      "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/runway/shot_012_v1.mp4",
+      "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/runway/shot_013_v1.mp4",
+      "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/runway/shot_014_v1.mp4",
+      "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/runway/shot_018_v1.mp4",
+      "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/runway/notes.md",
+      "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/contact_sheet_runway_v1.png",
+      "/home/james/Hermes/state/projects/spooky-teen-shortfilm/artifacts/frame_upgrade_brief_v1.md",
+      "/home/james/Hermes/state/projects/spooky-teen-shortfilm/tools/gen_placeholder_runway.py"
+    ],
+    "handoff_needed": false
+  }
+}

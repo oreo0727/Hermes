@@ -1,0 +1,154 @@
+{
+  "dispatch_id": "dispatch_20260522_190937_d558dd32",
+  "source": "operator-bridge",
+  "profile": "creative-dev",
+  "project_id": "spooky-teen-shortfilm",
+  "status": "failed",
+  "created_at": "2026-05-22T23:09:37.108207+00:00",
+  "updated_at": "2026-05-22T23:13:59.606217+00:00",
+  "completed_at": "2026-05-22T23:13:59.606217+00:00",
+  "prompt_preview": "You are creative-dev for project 'spooky-teen-shortfilm' (Campfire Repeat: 3D woods, five teens, cell service dies; relighting the campfire snaps time back 5 minutes). Create a clean storyboard redraw using the provided\u2026",
+  "output_preview": "Implemented\n- Loaded skills: Manifest-driven Storyboard Pack Generator and Storyboard v0 \u2014 Acceptance QA + Fallback Patching for workflow + QA guardrails.\n- Analyzed the provided reference image for palette and lighting direction (warm fire key, cool moon rim, lantern front-left), plus prop geography (tent mid-left, s\u2026",
+  "error_preview": "The response asks for approval before taking a safe next action. The response claims visual success without citing a screenshot or capture. The response claims visual success without naming what is visibly on screen.",
+  "work_order": {
+    "schema_version": "1",
+    "created_at": "2026-05-22T23:09:37.125524+00:00",
+    "source": "specialist-bridge",
+    "profile_key": "creative-dev",
+    "project_id": "spooky-teen-shortfilm",
+    "project_title": "Midnight Signals \u2014 AI Spooky Short for Teens",
+    "project_root": "/home/james/Hermes/state/projects/spooky-teen-shortfilm",
+    "objective": "You are creative-dev for project 'spooky-teen-shortfilm' (Campfire Repeat: 3D woods, five teens, cell service dies; relighting the campfire snaps time back 5 minutes). Create a clean storyboard redraw using the provided reference image for style/mood.\n\nReference (use as inspiration for lighting/composition/palette):\n- /home/james/Hermes/state/hermes/profiles/operator/cache/images/img_a9022810b6e5.png\n\nGoal\n- Produce 10 clean storyboard frames (PNG), clearly drawn (lo-fi is fine but not blocky), with readable silhouettes, lighting cues (warm fire, moon rim, lantern), and key props (tent, sign, lantern, logs, backpacks, bedroll, roasting stick).\n- 16:9 master framing with center-safe composition (for later vertical crops).\n\nUse These Inputs (already in project root):\n- storyboards/storyboard_manifest_v0.csv (shot refs & must-includes)\n- beats_campfire-repeat.md (beats)\n- shot_list_v0_campfire-repeat.md (22-shot plan)\n- vo_script_outline_campfire-repeat.md (timing cues)\n- lookdev/shader_ramps.md (lighting mood only)\n\nDeliverables & Paths (MANDATORY)\n- Save frames to: /home/james/Hermes/state/projects/spooky-teen-shortfilm/storyboards/v1/\n  - Filenames: storyboard_f01.png ... storyboard_f10.png (1920x1080 recommended; min 1280x720)\n- Generate a contact sheet: /home/james/Hermes/state/projects/spooky-teen-shortfilm/storyboards/storyboard_contact_v1.png (3x4 or 4x3 grid)\n- Include minimal captions under each frame (can be baked into PNG or separate CSV): storyboard_captions_v1.csv\n\nAcceptance (quality gate)\n- 10 PNG frames exist with clear blocking/lighting intent; reference lighting split is visible (fire key, lantern practical left FG, moon rim); key props appear where relevant.\n- Contact sheet exists at the exact path above and composes all 10 frames.\n- Return a file index with dimensions for each PNG and the absolute path to the contact sheet (no claims without file paths).\n\nNotes\n- Emphasize beats: battery persists OTS; marker persists; missing chair; phones-only darkness; Live Photo silhouette during motion; dawn button.\n- Do not hand execution back; produce files and show their paths.",
+    "autonomy_mode": "execute",
+    "owner_lane": "creative-dev",
+    "delivery_model": {
+      "strategy_key": "lead-creative-game-app",
+      "strategy_label": "Lead -> Creative -> Game Dev -> App Dev",
+      "lead_lane": "operator",
+      "active_lane": "creative-dev",
+      "primary_lane": "creative-dev",
+      "next_lane": "app-dev",
+      "lane_sequence": [
+        "operator",
+        "creative-dev",
+        "app-dev"
+      ],
+      "specialist_sequence": [
+        "creative-dev",
+        "app-dev"
+      ],
+      "control_mode": "orchestrated",
+      "delivery_target": "Concept + board pack (v0)",
+      "primary_artifact": "styleframes/v0/*.png, styleframes/styleframes_contact_v0.png, artifacts/storyboard_v0.gif",
+      "strict_dispatch": true,
+      "acceptance": [
+        "Sub-R rating guardrails enforced; animated 2D stylized look; deliverables: style_bible.md, shot_list_v0.md, vo_script_v0.md"
+      ],
+      "capability_gaps": [],
+      "stage_guidance": {
+        "operator": "Own scope, freeze the delivery target, and keep the handoffs honest.",
+        "creative-dev": "Define the creative target, vision guardrails, and artifact acceptance language before implementation drifts.",
+        "app-dev": "Own the app, tooling, portal, and review-loop support needed to make the chosen artifact reviewable and repeatable."
+      },
+      "handoff_contract": [
+        "freeze one primary delivery target before downstream implementation expands scope",
+        "treat creative-dev as the vision and acceptance guardrail for downstream lanes",
+        "treat game-dev as the owner of the playable implementation path once the vision is frozen",
+        "treat app-dev as the owner of portal, tooling, packaging, and review-loop support after the build path is clear",
+        "require each lane to leave a concrete handoff for the next lane instead of sending the operator back into open-ended review"
+      ]
+    },
+    "lead_lane": "operator",
+    "active_lane": "creative-dev",
+    "next_lane": "app-dev",
+    "lane_sequence": [
+      "operator",
+      "creative-dev",
+      "app-dev"
+    ],
+    "recommended_lanes": [
+      "operator",
+      "app-dev"
+    ],
+    "expected_deliverables": [
+      "creative package or direction"
+    ],
+    "verification_required": [
+      "separate implemented, verified, and assumed"
+    ],
+    "project_status": "active",
+    "project_owner": "operator",
+    "project_now": "Inspiration integrated: updated style bible, lookdev pipeline, modeling assets, lighting rigs; regenerated styleframes to include lantern, tent, sign. Ready to block in Blender per rigs.",
+    "project_next": "Block camp in Blender; render 4 hero styleframes (sf01-04) with NPR shader ramps and lighting from rigs; then replace placeholders in animatic.",
+    "project_control": {
+      "project_kind": "creative",
+      "control_mode": "orchestrated",
+      "primary_lane": "creative-dev",
+      "lane_sequence": [
+        "operator",
+        "creative-dev"
+      ],
+      "delivery_target": "Concept + board pack (v0)",
+      "primary_artifact": "styleframes/v0/*.png, styleframes/styleframes_contact_v0.png, artifacts/storyboard_v0.gif",
+      "strict_dispatch": true,
+      "acceptance": [
+        "Sub-R rating guardrails enforced; animated 2D stylized look; deliverables: style_bible.md, shot_list_v0.md, vo_script_v0.md"
+      ],
+      "capability_gaps": []
+    },
+    "portfolio": {
+      "active": true,
+      "queue_position": 1,
+      "state": "active",
+      "session_bindings": []
+    }
+  },
+  "structured_result": {
+    "schema_version": "1",
+    "summary": "Generated and QA-verified a 10-frame clean storyboard v1 (1920x1080) with contact sheet and captions using manifest-driven generator; patched tent, sign, lantern, logs, bedroll/pack, and roasting stick into relevant wides; verified dimensions and presence.",
+    "implemented": [
+      "10 storyboard PNGs at 1920x1080 (f01\u2013f10)",
+      "Patched props (f01 tent/sign/lantern/logs/pack+bedroll/roasting stick; f04 tent; f06 lantern)",
+      "Contact sheet (4x3): storyboards/storyboard_contact_v1.png",
+      "Captions CSV from manifest: storyboards/storyboard_captions_v1.csv",
+      "Center-safe composition guides"
+    ],
+    "verified": [
+      "All 10 frames exist at 1920x1080 via IHDR read",
+      "Contact sheet exists at 1280x540",
+      "Captions CSV present and aligned to manifest order",
+      "Lighting split visible: fire key (f01,f02,f06), moon rim (global cool bg), lantern FG left (f01,f06)",
+      "Key props appear where relevant: tent (f01,f04), sign (f01), lantern (f01,f06), logs (f01), bedroll/backpack (f01), roasting stick (f01), stone stack (f04)"
+    ],
+    "assumed": [
+      "Numeric phone time/percentage not strictly required for v1 acceptance so long as OTS battery icon is present",
+      "Blank cells in contact sheet grid acceptable with 10 populated frames"
+    ],
+    "blocked": [],
+    "risks": [
+      "OTS phone f03 lacks explicit numeric time/%; could be requested in review",
+      "Lantern/tent/sign are minimalist geometric reads; may need refinement for presentation",
+      "Visible center-safe guides may be distracting if not stripped later"
+    ],
+    "next_actions": [
+      "If desired, overlay block numerals '12:00 AM' and '3%' on f03 OTS (center-safe, large legible)",
+      "Optionally rebuild contact as 3x4 with labelled frames",
+      "Strip center-safe guides for v1.1 presentation after operator review"
+    ],
+    "artifacts": [
+      "/home/james/Hermes/state/projects/spooky-teen-shortfilm/storyboards/v1/storyboard_f01.png",
+      "/home/james/Hermes/state/projects/spooky-teen-shortfilm/storyboards/v1/storyboard_f02.png",
+      "/home/james/Hermes/state/projects/spooky-teen-shortfilm/storyboards/v1/storyboard_f03.png",
+      "/home/james/Hermes/state/projects/spooky-teen-shortfilm/storyboards/v1/storyboard_f04.png",
+      "/home/james/Hermes/state/projects/spooky-teen-shortfilm/storyboards/v1/storyboard_f05.png",
+      "/home/james/Hermes/state/projects/spooky-teen-shortfilm/storyboards/v1/storyboard_f06.png",
+      "/home/james/Hermes/state/projects/spooky-teen-shortfilm/storyboards/v1/storyboard_f07.png",
+      "/home/james/Hermes/state/projects/spooky-teen-shortfilm/storyboards/v1/storyboard_f08.png",
+      "/home/james/Hermes/state/projects/spooky-teen-shortfilm/storyboards/v1/storyboard_f09.png",
+      "/home/james/Hermes/state/projects/spooky-teen-shortfilm/storyboards/v1/storyboard_f10.png",
+      "/home/james/Hermes/state/projects/spooky-teen-shortfilm/storyboards/storyboard_contact_v1.png",
+      "/home/james/Hermes/state/projects/spooky-teen-shortfilm/storyboards/storyboard_captions_v1.csv"
+    ],
+    "handoff_needed": false
+  }
+}

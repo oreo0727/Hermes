@@ -1,0 +1,102 @@
+*** Begin Patch
+*** Update File: narrative-maze-prototype/index.html
+@@
+-  <div id="narrativeOverlay" class="overlay hidden">
+-    <div class="content">
+-      <h2>Chapter</h2>
+-      <p id="narrativeText"></p>
+-      <button id="continueBtn">Continue</button>
+-    </div>
+-  </div>
++  <!-- Accessible modal dialog for narrative overlay -->
++  <div id="narrativeOverlay"
++       class="overlay hidden"
++       role="dialog"
++       aria-modal="true"
++       aria-labelledby="narrativeTitle"
++       aria-describedby="narrativeText"
++       tabindex="-1">
++    <div class="content" role="document">
++      <h2 id="narrativeTitle">Chapter</h2>
++      <p id="narrativeText"></p>
++      <div class="overlay-actions">
++        <button id="continueBtn">Continue</button>
++      </div>
++    </div>
++  </div>
++
++  <!-- Live region for short updates (screen readers) -->
++  <div id="srStatus" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+*** End Patch
+*** Begin Patch
+*** Update File: narrative-maze-prototype/js/ui.js
+@@
++// Focus trap for narrative overlay
++const overlay = document.getElementById('narrativeOverlay');
++const continueBtn = document.getElementById('continueBtn');
++let lastFocusedBeforeOverlay = null;
++
++function tabbables(root) {
++  return Array.from(root.querySelectorAll('[tabindex]:not([tabindex="-1"]), button, [href], input, select, textarea'))
++    .filter(el => !el.hasAttribute('disabled') && el.offsetParent !== null);
++}
++
++export function openNarrativeOverlay(text, title = 'Chapter') {
++  const titleEl = document.getElementById('narrativeTitle');
++  const textEl = document.getElementById('narrativeText');
++  if (titleEl) titleEl.textContent = title;
++  if (textEl) textEl.textContent = text;
++
++  lastFocusedBeforeOverlay = document.activeElement;
++  overlay.classList.remove('hidden');
++  overlay.setAttribute('aria-hidden', 'false');
++  overlay.focus();
++
++  const els = tabbables(overlay);
++  const first = els[0] || continueBtn;
++  const last = els[els.length - 1] || continueBtn;
++  (first || continueBtn).focus();
++
++  const trap = (e) => {
++    if (e.key === 'Tab') {
++      if (els.length === 0) {
++        e.preventDefault();
++        overlay.focus();
++        return;
++      }
++      if (e.shiftKey && document.activeElement === first) {
++        e.preventDefault();
++        last.focus();
++      } else if (!e.shiftKey && document.activeElement === last) {
++        e.preventDefault();
++        first.focus();
++      }
++    } else if (e.key === 'Escape') {
++      closeNarrativeOverlay();
++    }
++  };
++  overlay._trap = trap;
++  overlay.addEventListener('keydown', overlay._trap);
++}
++
++export function closeNarrativeOverlay() {
++  overlay.classList.add('hidden');
++  overlay.setAttribute('aria-hidden', 'true');
++  if (overlay._trap) {
++    overlay.removeEventListener('keydown', overlay._trap);
++    delete overlay._trap;
++  }
++  if (lastFocusedBeforeOverlay && document.body.contains(lastFocusedBeforeOverlay)) {
++    lastFocusedBeforeOverlay.focus();
++  }
++}
++
++export function announceStatus(msg) {
++  const sr = document.getElementById('srStatus');
++  if (sr) {
++    sr.textContent = '';
++    // allow SR to detect change
++    setTimeout(() => { sr.textContent = msg; }, 0);
++  }
++}
+*** End Patch

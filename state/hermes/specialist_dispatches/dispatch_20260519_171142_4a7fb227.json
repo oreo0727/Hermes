@@ -1,0 +1,80 @@
+{
+  "dispatch_id": "dispatch_20260519_171142_4a7fb227",
+  "source": "operator-bridge",
+  "profile": "game-dev",
+  "project_id": "aetherion-maze",
+  "status": "completed",
+  "created_at": "2026-05-19T21:11:42.541330+00:00",
+  "updated_at": "2026-05-19T21:17:14.627093+00:00",
+  "completed_at": "2026-05-19T21:17:14.627093+00:00",
+  "prompt_preview": "Audit the HTML5 canvas ground-up build (maze-groundup) to enforce the provided sprite catalog and scene composition rules. Deliverables: (1) verify wall-variant autotiler orientation (tl/tr/bl/br, h, v, endcap index=8)\u2026",
+  "output_preview": "Implemented\n- Enforced sprite-catalog-first mapping and tile-pass separation with minimal, surgical patches:\n  1) Skins mapping precedence\n     - assets/sprite_catalog.json is now guaranteed primary. Team defaults only backfill missing roles; localStorage overrides are honored only with ?allowLocal=1 (already present)\u2026",
+  "error_preview": "",
+  "work_order": {
+    "schema_version": "1",
+    "created_at": "2026-05-19T21:11:42.565366+00:00",
+    "source": "specialist-bridge",
+    "profile_key": "game-dev",
+    "project_id": "aetherion-maze",
+    "project_title": "Aetherion Maze Games",
+    "project_root": "/home/james/Hermes/state/projects/aetherion-maze",
+    "objective": "Audit the HTML5 canvas ground-up build (maze-groundup) to enforce the provided sprite catalog and scene composition rules. Deliverables: (1) verify wall-variant autotiler orientation (tl/tr/bl/br, h, v, endcap index=8) matches catalog; (2) confirm Skins mapping prefers assets/sprite_catalog.json over team defaults and localStorage; (3) confirm only floor/wall render in tile pass; items/enemies/traps/player/portal drawn as separate layers with sparse counts and min distance per config; (4) portal is near exit, hero spawns near a corner; (5) quick visual sweep to ensure no random fill or duplicate hearts/props across corridors; (6) note any corner swaps needed or atlas oddities. Do not refactor gameplay, just tighten visuals to catalog. URL: http://127.0.0.1:9980/?skin=painted&vv=now",
+    "autonomy_mode": "execute",
+    "owner_lane": "game-dev",
+    "recommended_lanes": [],
+    "expected_deliverables": [
+      "code changes",
+      "artifact or build output",
+      "findings and recommended next actions",
+      "creative package or direction"
+    ],
+    "verification_required": [
+      "separate implemented, verified, and assumed",
+      "preflight referenced local URLs before relying on them",
+      "run the smallest local verification possible before claiming success"
+    ],
+    "project_status": "blocked",
+    "project_owner": "game-dev",
+    "project_now": "",
+    "project_next": "moves (today)"
+  },
+  "structured_result": {
+    "schema_version": "1",
+    "summary": "Catalog-first skin mapping enforced; tile pass restricted to floor/wall; added non-invasive wall-variant debug overlay; server healthy. Code-level audit confirms variant names map to catalog indices (tl/tr/bl/br, h, v, endcap=8), spawn rules honor min-distance, portal placed near exit, and hero spawns near a corner. Visual screenshot pending due to browser-tool timeout.",
+    "implemented": [
+      "skins.js: manifest mapping now fill-only (no overwrite of catalog/defaults); removed 'exit=portal' alias; removed manifest 'exit' mapping",
+      "renderer.js: optional MF_WALL_DEBUG letters for fast orientation QA",
+      "flags.js: added ?wallDebug=1 to toggle glyph overlay"
+    ],
+    "verified": [
+      "HTTP 200 on game URL and key assets via curl",
+      "Autotile variant selection logic matches catalog orientation and endcap conditions",
+      "Skins mapping precedence: catalog > team defaults (fill) > localStorage (only with ?allowLocal=1), manifest fill-only",
+      "Tile pass draws only floor/walls; exit is overlay; items/portal/enemies/traps/player drawn later",
+      "Spawn logic: portal near exit; hero near corner; min-distance enforced; counts bounded by rules"
+    ],
+    "assumed": [
+      "Art semantics for 'horizontal'/'vertical' match renderer naming; corner variants visually align with tl/tr/bl/br",
+      "No atlas misindexing beyond what the catalog already encodes"
+    ],
+    "blocked": [
+      "Visual screenshot and corner/atlas oddity sweep (browser navigation tool timed out despite server 200). Use the provided URL with ?slice=1&wallDebug=1 for rapid confirmation."
+    ],
+    "risks": [
+      "Possible H/V semantic mismatch in art vs naming (quickly detectable with wallDebug overlay)",
+      "If a sprite-based exit in tile pass was desired visually, it is now overlay-only unless an explicit 'exit' index is added to the catalog"
+    ],
+    "next_actions": [
+      "Open http://127.0.0.1:9980/?skin=painted&vv=now&slice=1&wallDebug=1 and confirm corner letters match corners and that only floor/walls render in tile pass",
+      "If H/V look swapped, swap indices 2<->3 in assets/sprite_catalog.json or ask me to patch",
+      "Optionally add interactables.exit to sprite_catalog.json if you want a true exit sprite in tile pass"
+    ],
+    "artifacts": [
+      "/home/james/Hermes/state/projects/aetherion-maze/maze-groundup/src/skins.js",
+      "/home/james/Hermes/state/projects/aetherion-maze/maze-groundup/src/renderer.js",
+      "/home/james/Hermes/state/projects/aetherion-maze/maze-groundup/src/flags.js",
+      "Live URL (preflighted): http://127.0.0.1:9980/?skin=painted&vv=now"
+    ],
+    "handoff_needed": false
+  }
+}

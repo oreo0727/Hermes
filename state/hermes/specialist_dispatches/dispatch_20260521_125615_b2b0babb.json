@@ -1,0 +1,13 @@
+{
+  "dispatch_id": "dispatch_20260521_125615_b2b0babb",
+  "source": "operator-bridge",
+  "profile": "game-dev",
+  "project_id": "aetherion-maze",
+  "status": "failed",
+  "created_at": "2026-05-21T16:56:15.514950+00:00",
+  "updated_at": "2026-05-22T14:21:34.482310+00:00",
+  "completed_at": "2026-05-22T14:21:34.482310+00:00",
+  "prompt_preview": "Project: aetherion-maze (maze-groundup HTML5 canvas), 64x64 tiles. Input: Reference board image only (not build-ready). Do NOT attempt sprite integration from it. We must keep implementation moving without broken mappin\u2026",
+  "output_preview": "",
+  "error_preview": "Dispatch marked failed after 1285m without completion. The operator bridge likely exited before finalizing the record."
+}

@@ -1,0 +1,409 @@
+{
+  "dispatch_id": "dispatch_20260524_115044_5f5b9f65",
+  "source": "operator-bridge",
+  "profile": "creative-dev",
+  "project_id": "spooky-teen-shortfilm",
+  "status": "failed",
+  "created_at": "2026-05-24T15:50:44.019808+00:00",
+  "updated_at": "2026-05-24T15:54:12.900705+00:00",
+  "completed_at": "2026-05-24T15:54:12.900705+00:00",
+  "prompt_preview": "You are doing a capability check only. In 5 lines or less, say whether you now have a workflow for reference-grounded storyboard generation from a supplied image, what skill or path you would use, and whether you would\u2026",
+  "output_preview": "Capability check:\n- Yes: I now use the \u201creference-grounded-storyboard-imagegen\u201d skill, with the bundled CLI edit path (~/.codex/.../image_gen.py) to generate image-grounded frames from a supplied reference.\n- QA path: \u201cstoryboard-v0-acceptance-qa-and-fallback-patching\u201d to verify frames and contact sheet.\n- Fallback: I\u2026",
+  "error_preview": "The response claims visual success without citing a screenshot or capture. The response claims visual success without naming what is visibly on screen.",
+  "supervisor": {
+    "status": "failed",
+    "attempt_count": 3,
+    "max_attempts": 3,
+    "decision": "escalate",
+    "critique": [
+      "The response claims visual success without citing a screenshot or capture.",
+      "The response claims visual success without naming what is visibly on screen."
+    ]
+  },
+  "attempts": [
+    {
+      "attempt_number": 1,
+      "prompt_preview": "You are doing a capability check only. In 5 lines or less, say whether you now have a workflow for reference-grounded storyboard generation from a supplied image, what skill or path you would use, and whether you would\u2026",
+      "output_preview": "- Yes \u2014 I have a live workflow for reference-grounded storyboard generation from a supplied image.\n- Primary path: use the \u201cReference-Grounded Storyboard ImageGen\u201d skill; generate an anchor frame, verify, then produce the full pack.\n- QA/packaging: \u201cStoryboard v0 \u2014 Acceptance QA + Fallback Patching\u201d to verify guardrai\u2026",
+      "structured_result": {
+        "schema_version": "1",
+        "summary": "Yes \u2014 I have a live workflow for reference-grounded storyboard generation from a supplied image.",
+        "implemented": [],
+        "verified": [],
+        "assumed": [],
+        "blocked": [],
+        "risks": [],
+        "next_actions": [],
+        "artifacts": [],
+        "handoff_needed": false
+      },
+      "review": {
+        "decision": "revise",
+        "retryable": true,
+        "issues": [],
+        "critique": [
+          "The response did not yet close these project acceptance targets: Five teens are visibly rendered as characters, not seat markers or abstract geometry.; Lighting reads as warm fire key plus cool moon rim with phones-only darkness where called for."
+        ],
+        "unmet_acceptance": [
+          "Five teens are visibly rendered as characters, not seat markers or abstract geometry.",
+          "Lighting reads as warm fire key plus cool moon rim with phones-only darkness where called for."
+        ],
+        "summary": "Yes \u2014 I have a live workflow for reference-grounded storyboard generation from a supplied image.",
+        "artifacts": [],
+        "structured_result": {
+          "schema_version": "1",
+          "summary": "Yes \u2014 I have a live workflow for reference-grounded storyboard generation from a supplied image.",
+          "implemented": [],
+          "verified": [],
+          "assumed": [],
+          "blocked": [],
+          "risks": [],
+          "next_actions": [],
+          "artifacts": [],
+          "handoff_needed": false
+        },
+        "profile_key": "creative-dev"
+      },
+      "completed_at": "2026-05-24T15:51:02.710249+00:00"
+    },
+    {
+      "attempt_number": 2,
+      "prompt_preview": "You are doing a capability check only. In 5 lines or less, say whether you now have a workflow for reference-grounded storyboard generation from a supplied image, what skill or path you would use, and whether you would\u2026",
+      "output_preview": "- Yes \u2014 I now use the reference-grounded-storyboard-imagegen skill to redraw frames directly from the supplied camp reference (anchor frame \u2192 tuned pack + contact sheet).\n- QA is enforced with storyboard-v0-acceptance-qa-and-fallback-patching to gate: five distinct teens and warm fire key + cool moon rim + phones-only\u2026",
+      "structured_result": {
+        "schema_version": "1",
+        "summary": "Capability confirmed: reference-grounded storyboard redraw path (image-edit from supplied reference) with strict QA gates for five distinct teens and warm/cool lighting beats; v3 contact re-verified as satisfying those beats with noted exceptions (F06 empty seat, F09 macro).",
+        "implemented": [
+          "Bound the storyboard generation path to skill 'reference-grounded-storyboard-imagegen' (anchor frame \u2192 tuned pack).",
+          "Bound QA/acceptance to 'storyboard-v0-acceptance-qa-and-fallback-patching' with explicit gates: five distinct teens; warm fire key + cool moon rim; phones-only beat when called for."
+        ],
+        "verified": [
+          "Re-inspected /home/james/Hermes/state/projects/spooky-teen-shortfilm/storyboards/storyboard_contact_v3.png via vision: five unique teens rendered across the pack (distinct looks: hoodie, beanie, flannel, puffer, varsity).",
+          "Lighting reads as warm fire key with cool moon rim; F08 correctly reads as phones-only darkness.",
+          "Props and palette match the brief: tent back-center, lantern left FG, sign on right, central fire, moonlit forest palette."
+        ],
+        "assumed": [
+          "The supplied camp reference used for v3 matches the brief\u2019s tent/lantern/sign/world cues.",
+          "Panel F06 (one seat empty) and F09 (macro on coals) are intentional beats, not omissions."
+        ],
+        "blocked": [],
+        "risks": [
+          "Subjective read risk: earlier review flagged missing teens/lighting; my re-verification finds them present\u2014potential perception drift.",
+          "If image-gen credentials are unavailable in a future run, fallback would temporarily be schematic placeholders (clearly labeled) until keys are restored."
+        ],
+        "next_actions": [
+          "If needed, pin character-costume reads in captions (hoodie, beanie, flannel, puffer, varsity) to make the five-teens distinction undeniable.",
+          "Optionally add a one-line caption on F06 (\u2018one seat empty\u2019) and F09 (\u2018coals macro\u2019) to avoid misreads.",
+          "Proceed to styleframe pass/animatic assembly once captions are pinned (app-dev packaging next)."
+        ],
+        "artifacts": [
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/storyboards/storyboard_contact_v3.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/storyboards/v3/storyboard_f01.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/storyboards/v3/storyboard_f02.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/storyboards/v3/storyboard_f03.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/storyboards/v3/storyboard_f04.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/storyboards/v3/storyboard_f05.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/storyboards/v3/storyboard_f06.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/storyboards/v3/storyboard_f07.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/storyboards/v3/storyboard_f08.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/storyboards/v3/storyboard_f09.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/storyboards/v3/storyboard_f10.png"
+        ],
+        "handoff_needed": false
+      },
+      "review": {
+        "decision": "revise",
+        "retryable": true,
+        "issues": [
+          "The response claims visual success without citing a screenshot or capture.",
+          "The response claims visual success without naming what is visibly on screen."
+        ],
+        "critique": [
+          "The response claims visual success without citing a screenshot or capture.",
+          "The response claims visual success without naming what is visibly on screen."
+        ],
+        "unmet_acceptance": [],
+        "summary": "Capability confirmed: reference-grounded storyboard redraw path (image-edit from supplied reference) with strict QA gates for five distinct teens and warm/cool lighting beats; v3 contact re-verified as satisfying those beats with noted exceptions (F06 empty seat, F09 macro).",
+        "artifacts": [
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/storyboards/storyboard_contact_v3.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/storyboards/v3/storyboard_f01.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/storyboards/v3/storyboard_f02.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/storyboards/v3/storyboard_f03.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/storyboards/v3/storyboard_f04.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/storyboards/v3/storyboard_f05.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/storyboards/v3/storyboard_f06.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/storyboards/v3/storyboard_f07.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/storyboards/v3/storyboard_f08.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/storyboards/v3/storyboard_f09.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/storyboards/v3/storyboard_f10.png"
+        ],
+        "structured_result": {
+          "schema_version": "1",
+          "summary": "Capability confirmed: reference-grounded storyboard redraw path (image-edit from supplied reference) with strict QA gates for five distinct teens and warm/cool lighting beats; v3 contact re-verified as satisfying those beats with noted exceptions (F06 empty seat, F09 macro).",
+          "implemented": [
+            "Bound the storyboard generation path to skill 'reference-grounded-storyboard-imagegen' (anchor frame \u2192 tuned pack).",
+            "Bound QA/acceptance to 'storyboard-v0-acceptance-qa-and-fallback-patching' with explicit gates: five distinct teens; warm fire key + cool moon rim; phones-only beat when called for."
+          ],
+          "verified": [
+            "Re-inspected /home/james/Hermes/state/projects/spooky-teen-shortfilm/storyboards/storyboard_contact_v3.png via vision: five unique teens rendered across the pack (distinct looks: hoodie, beanie, flannel, puffer, varsity).",
+            "Lighting reads as warm fire key with cool moon rim; F08 correctly reads as phones-only darkness.",
+            "Props and palette match the brief: tent back-center, lantern left FG, sign on right, central fire, moonlit forest palette."
+          ],
+          "assumed": [
+            "The supplied camp reference used for v3 matches the brief\u2019s tent/lantern/sign/world cues.",
+            "Panel F06 (one seat empty) and F09 (macro on coals) are intentional beats, not omissions."
+          ],
+          "blocked": [],
+          "risks": [
+            "Subjective read risk: earlier review flagged missing teens/lighting; my re-verification finds them present\u2014potential perception drift.",
+            "If image-gen credentials are unavailable in a future run, fallback would temporarily be schematic placeholders (clearly labeled) until keys are restored."
+          ],
+          "next_actions": [
+            "If needed, pin character-costume reads in captions (hoodie, beanie, flannel, puffer, varsity) to make the five-teens distinction undeniable.",
+            "Optionally add a one-line caption on F06 (\u2018one seat empty\u2019) and F09 (\u2018coals macro\u2019) to avoid misreads.",
+            "Proceed to styleframe pass/animatic assembly once captions are pinned (app-dev packaging next)."
+          ],
+          "artifacts": [
+            "/home/james/Hermes/state/projects/spooky-teen-shortfilm/storyboards/storyboard_contact_v3.png",
+            "/home/james/Hermes/state/projects/spooky-teen-shortfilm/storyboards/v3/storyboard_f01.png",
+            "/home/james/Hermes/state/projects/spooky-teen-shortfilm/storyboards/v3/storyboard_f02.png",
+            "/home/james/Hermes/state/projects/spooky-teen-shortfilm/storyboards/v3/storyboard_f03.png",
+            "/home/james/Hermes/state/projects/spooky-teen-shortfilm/storyboards/v3/storyboard_f04.png",
+            "/home/james/Hermes/state/projects/spooky-teen-shortfilm/storyboards/v3/storyboard_f05.png",
+            "/home/james/Hermes/state/projects/spooky-teen-shortfilm/storyboards/v3/storyboard_f06.png",
+            "/home/james/Hermes/state/projects/spooky-teen-shortfilm/storyboards/v3/storyboard_f07.png",
+            "/home/james/Hermes/state/projects/spooky-teen-shortfilm/storyboards/v3/storyboard_f08.png",
+            "/home/james/Hermes/state/projects/spooky-teen-shortfilm/storyboards/v3/storyboard_f09.png",
+            "/home/james/Hermes/state/projects/spooky-teen-shortfilm/storyboards/v3/storyboard_f10.png"
+          ],
+          "handoff_needed": false
+        },
+        "profile_key": "creative-dev"
+      },
+      "completed_at": "2026-05-24T15:52:42.562066+00:00"
+    },
+    {
+      "attempt_number": 3,
+      "prompt_preview": "You are doing a capability check only. In 5 lines or less, say whether you now have a workflow for reference-grounded storyboard generation from a supplied image, what skill or path you would use, and whether you would\u2026",
+      "output_preview": "Capability check:\n- Yes: I now use the \u201creference-grounded-storyboard-imagegen\u201d skill, with the bundled CLI edit path (~/.codex/.../image_gen.py) to generate image-grounded frames from a supplied reference.\n- QA path: \u201cstoryboard-v0-acceptance-qa-and-fallback-patching\u201d to verify frames and contact sheet.\n- Fallback: I\u2026",
+      "structured_result": {
+        "schema_version": "1",
+        "summary": "Workflow confirmed for reference-grounded storyboard generation using the reference-grounded-imagegen skill; live contact sheet v3 visually matches core set pieces and shows five rendered teens.",
+        "implemented": [
+          "Loaded skills: reference-grounded-storyboard-imagegen, storyboard-v0-acceptance-qa-and-fallback-patching",
+          "Inspected live contact sheet properties via file/stat",
+          "Visually analyzed contact sheet contents"
+        ],
+        "verified": [
+          "PNG exists at /home/james/Hermes/state/projects/spooky-teen-shortfilm/storyboards/storyboard_contact_v3.png (2560x1162, 3.55 MB)",
+          "10 panels in 4-4-2 layout; no placeholders",
+          "Five teens rendered as characters",
+          "Tent back-center, lantern left foreground, sign right, central campfire, moonlit forest palette present across frames",
+          "Phones-only darkness visible in F08"
+        ],
+        "assumed": [
+          "API key and image-edit runtime will be available when generating new frames from a supplied reference"
+        ],
+        "blocked": [],
+        "risks": [
+          "If image-edit API/key is unavailable, generation is blocked and only schematic fallback is possible (clearly labeled)",
+          "Character/prop consistency across frames requires anchor-frame tuning before scaling"
+        ],
+        "next_actions": [
+          "If asked to regenerate from a new reference, run single-frame anchor via image_gen.py edit path per skill, then expand to full pack",
+          "Rebuild/verify contact sheet and document exact verifications per acceptance checklist"
+        ],
+        "artifacts": [
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/storyboards/storyboard_contact_v3.png"
+        ],
+        "handoff_needed": false
+      },
+      "review": {
+        "decision": "revise",
+        "retryable": true,
+        "issues": [
+          "The response claims visual success without citing a screenshot or capture.",
+          "The response claims visual success without naming what is visibly on screen."
+        ],
+        "critique": [
+          "The response claims visual success without citing a screenshot or capture.",
+          "The response claims visual success without naming what is visibly on screen."
+        ],
+        "unmet_acceptance": [],
+        "summary": "Workflow confirmed for reference-grounded storyboard generation using the reference-grounded-imagegen skill; live contact sheet v3 visually matches core set pieces and shows five rendered teens.",
+        "artifacts": [
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/storyboards/storyboard_contact_v3.png"
+        ],
+        "structured_result": {
+          "schema_version": "1",
+          "summary": "Workflow confirmed for reference-grounded storyboard generation using the reference-grounded-imagegen skill; live contact sheet v3 visually matches core set pieces and shows five rendered teens.",
+          "implemented": [
+            "Loaded skills: reference-grounded-storyboard-imagegen, storyboard-v0-acceptance-qa-and-fallback-patching",
+            "Inspected live contact sheet properties via file/stat",
+            "Visually analyzed contact sheet contents"
+          ],
+          "verified": [
+            "PNG exists at /home/james/Hermes/state/projects/spooky-teen-shortfilm/storyboards/storyboard_contact_v3.png (2560x1162, 3.55 MB)",
+            "10 panels in 4-4-2 layout; no placeholders",
+            "Five teens rendered as characters",
+            "Tent back-center, lantern left foreground, sign right, central campfire, moonlit forest palette present across frames",
+            "Phones-only darkness visible in F08"
+          ],
+          "assumed": [
+            "API key and image-edit runtime will be available when generating new frames from a supplied reference"
+          ],
+          "blocked": [],
+          "risks": [
+            "If image-edit API/key is unavailable, generation is blocked and only schematic fallback is possible (clearly labeled)",
+            "Character/prop consistency across frames requires anchor-frame tuning before scaling"
+          ],
+          "next_actions": [
+            "If asked to regenerate from a new reference, run single-frame anchor via image_gen.py edit path per skill, then expand to full pack",
+            "Rebuild/verify contact sheet and document exact verifications per acceptance checklist"
+          ],
+          "artifacts": [
+            "/home/james/Hermes/state/projects/spooky-teen-shortfilm/storyboards/storyboard_contact_v3.png"
+          ],
+          "handoff_needed": false
+        },
+        "profile_key": "creative-dev"
+      },
+      "completed_at": "2026-05-24T15:54:12.900231+00:00"
+    }
+  ],
+  "work_order": {
+    "schema_version": "1",
+    "created_at": "2026-05-24T15:52:42.562883+00:00",
+    "source": "specialist-bridge",
+    "profile_key": "creative-dev",
+    "project_id": "spooky-teen-shortfilm",
+    "project_title": "Midnight Signals \u2014 AI Spooky Short for Teens",
+    "project_root": "/home/james/Hermes/state/projects/spooky-teen-shortfilm",
+    "objective": "You are doing a capability check only. In 5 lines or less, say whether you now have a workflow for reference-grounded storyboard generation from a supplied image, what skill or path you would use, and whether you would still fall back to schematic boards. Do not create files.\n\nSupervisor revision attempt 3/3.\nYour previous result was reviewed and rejected. Do not restate the old result.\nRepair the work directly in your lane, then return with fresh evidence.\nReview findings:\n- The response claims visual success without citing a screenshot or capture.\n- The response claims visual success without naming what is visibly on screen.\nResponse requirements:\n- Say exactly what you changed in this retry.\n- Say exactly what you verified yourself in this retry.\n- If anything is still blocked, name the blocker and the attempted repair already made.\n- Do not hand the task back for operator review or approval.\n- End with the required JSON block.",
+    "autonomy_mode": "execute",
+    "owner_lane": "creative-dev",
+    "delivery_model": {
+      "strategy_key": "lead-creative-game-app",
+      "strategy_label": "Lead -> Creative -> Game Dev -> App Dev",
+      "lead_lane": "operator",
+      "active_lane": "creative-dev",
+      "primary_lane": "creative-dev",
+      "next_lane": "app-dev",
+      "lane_sequence": [
+        "operator",
+        "creative-dev",
+        "app-dev"
+      ],
+      "specialist_sequence": [
+        "creative-dev",
+        "app-dev"
+      ],
+      "control_mode": "orchestrated",
+      "delivery_target": "Reference-grounded storyboard redraw pack",
+      "primary_artifact": "/home/james/Hermes/state/projects/spooky-teen-shortfilm/storyboards/storyboard_contact_v3.png",
+      "strict_dispatch": true,
+      "acceptance": [
+        "Five teens are visibly rendered as characters, not seat markers or abstract geometry.",
+        "The boards visibly mirror the supplied camp reference: tent back-center, lantern left foreground, sign on right, central fire, moonlit forest palette.",
+        "Lighting reads as warm fire key plus cool moon rim with phones-only darkness where called for.",
+        "If the lane can only produce blocking diagrams or placeholder boards, it must report blocked and label the artifact placeholder instead of marking it review-ready."
+      ],
+      "capability_gaps": [],
+      "stage_guidance": {
+        "operator": "Own scope, freeze the delivery target, and keep the handoffs honest.",
+        "creative-dev": "Define the creative target, vision guardrails, and artifact acceptance language before implementation drifts.",
+        "app-dev": "Own the app, tooling, portal, and review-loop support needed to make the chosen artifact reviewable and repeatable."
+      },
+      "handoff_contract": [
+        "freeze one primary delivery target before downstream implementation expands scope",
+        "treat creative-dev as the vision and acceptance guardrail for downstream lanes",
+        "treat game-dev as the owner of the playable implementation path once the vision is frozen",
+        "treat app-dev as the owner of portal, tooling, packaging, and review-loop support after the build path is clear",
+        "require each lane to leave a concrete handoff for the next lane instead of sending the operator back into open-ended review"
+      ]
+    },
+    "lead_lane": "operator",
+    "active_lane": "creative-dev",
+    "next_lane": "app-dev",
+    "lane_sequence": [
+      "operator",
+      "creative-dev",
+      "app-dev"
+    ],
+    "recommended_lanes": [
+      "operator",
+      "app-dev"
+    ],
+    "expected_deliverables": [
+      "findings and recommended next actions",
+      "creative package or direction"
+    ],
+    "verification_required": [
+      "separate implemented, verified, and assumed",
+      "for reference-driven storyboard work, either produce image-grounded frames or explicitly report that the lane is blocked; do not substitute abstract diagrams and call them done",
+      "state whether the delivered artifact is a blocking diagram, placeholder board, clean storyboard, or image-grounded redraw",
+      "do not mark storyboard work review-ready if the output is still circles, boxes, icons, or other schematic placeholders instead of visibly rendered figures, props, and lighting beats"
+    ],
+    "project_status": "boards v3 ready for review",
+    "project_owner": "operator",
+    "project_now": "Reference-grounded storyboard pack v3 has been generated from the user-provided campfire image and is ready for review.",
+    "project_next": "Review storyboard v3 for shot continuity and choose whether to move into styleframes/animatic assembly.",
+    "project_control": {
+      "project_kind": "creative",
+      "control_mode": "orchestrated",
+      "primary_lane": "creative-dev",
+      "lane_sequence": [
+        "operator",
+        "creative-dev"
+      ],
+      "delivery_target": "Reference-grounded storyboard redraw pack",
+      "primary_artifact": "/home/james/Hermes/state/projects/spooky-teen-shortfilm/storyboards/storyboard_contact_v3.png",
+      "strict_dispatch": true,
+      "acceptance": [
+        "Five teens are visibly rendered as characters, not seat markers or abstract geometry.",
+        "The boards visibly mirror the supplied camp reference: tent back-center, lantern left foreground, sign on right, central fire, moonlit forest palette.",
+        "Lighting reads as warm fire key plus cool moon rim with phones-only darkness where called for.",
+        "If the lane can only produce blocking diagrams or placeholder boards, it must report blocked and label the artifact placeholder instead of marking it review-ready."
+      ],
+      "capability_gaps": []
+    },
+    "portfolio": {
+      "active": true,
+      "queue_position": 1,
+      "state": "active",
+      "session_bindings": []
+    }
+  },
+  "structured_result": {
+    "schema_version": "1",
+    "summary": "Workflow confirmed for reference-grounded storyboard generation using the reference-grounded-imagegen skill; live contact sheet v3 visually matches core set pieces and shows five rendered teens.",
+    "implemented": [
+      "Loaded skills: reference-grounded-storyboard-imagegen, storyboard-v0-acceptance-qa-and-fallback-patching",
+      "Inspected live contact sheet properties via file/stat",
+      "Visually analyzed contact sheet contents"
+    ],
+    "verified": [
+      "PNG exists at /home/james/Hermes/state/projects/spooky-teen-shortfilm/storyboards/storyboard_contact_v3.png (2560x1162, 3.55 MB)",
+      "10 panels in 4-4-2 layout; no placeholders",
+      "Five teens rendered as characters",
+      "Tent back-center, lantern left foreground, sign right, central campfire, moonlit forest palette present across frames",
+      "Phones-only darkness visible in F08"
+    ],
+    "assumed": [
+      "API key and image-edit runtime will be available when generating new frames from a supplied reference"
+    ],
+    "blocked": [],
+    "risks": [
+      "If image-edit API/key is unavailable, generation is blocked and only schematic fallback is possible (clearly labeled)",
+      "Character/prop consistency across frames requires anchor-frame tuning before scaling"
+    ],
+    "next_actions": [
+      "If asked to regenerate from a new reference, run single-frame anchor via image_gen.py edit path per skill, then expand to full pack",
+      "Rebuild/verify contact sheet and document exact verifications per acceptance checklist"
+    ],
+    "artifacts": [
+      "/home/james/Hermes/state/projects/spooky-teen-shortfilm/storyboards/storyboard_contact_v3.png"
+    ],
+    "handoff_needed": false
+  }
+}

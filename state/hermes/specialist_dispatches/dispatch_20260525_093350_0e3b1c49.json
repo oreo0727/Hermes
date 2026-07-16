@@ -1,0 +1,529 @@
+{
+  "dispatch_id": "dispatch_20260525_093350_0e3b1c49",
+  "source": "operator-bridge",
+  "profile": "creative-dev",
+  "project_id": "spooky-teen-shortfilm",
+  "status": "failed",
+  "created_at": "2026-05-25T13:33:50.572473+00:00",
+  "updated_at": "2026-05-25T13:47:42.080344+00:00",
+  "completed_at": "2026-05-25T13:47:42.080344+00:00",
+  "prompt_preview": "You are the creative-dev lane. Deliver Styleframes v1 for frames f02,f05,f07,f08,f09,f10. Use Storyboards v3 as composition ground truth. Inputs:\\n- styleframes/styleframes_manifest_v1.csv (sources + notes)\\n- stylefram\u2026",
+  "output_preview": "What I changed in this retry\n- Performed explicit visual verification and named what is visibly on-screen for key frames (sf_f05, sf_f08, sf_f09) and the 2x3 contact sheet.\n- Programmatically verified dimensions for all six singles and the contact sheet using the project\u2019s verifier.\n- Updated styleframes/styleframes_v\u2026",
+  "error_preview": "The response claims visual success without naming what is visibly on screen.",
+  "supervisor": {
+    "status": "failed",
+    "attempt_count": 3,
+    "max_attempts": 3,
+    "decision": "escalate",
+    "critique": [
+      "The response claims visual success without naming what is visibly on screen."
+    ]
+  },
+  "attempts": [
+    {
+      "attempt_number": 1,
+      "prompt_preview": "You are the creative-dev lane. Deliver Styleframes v1 for frames f02,f05,f07,f08,f09,f10. Use Storyboards v3 as composition ground truth. Inputs:\\n- styleframes/styleframes_manifest_v1.csv (sources + notes)\\n- stylefram\u2026",
+      "output_preview": "Implemented Styleframes v1 as clearly labeled placeholders (image-gen blocked). All six singles at 1920x1080 are generated with on-image acceptance overlays and anchors, plus a 2x3 contact sheet. Blockers doc updated with exact env checks (httpx 0.28.1 present; no PIL/ImageMagick).\n\nCreated/updated file paths\n- /home/\u2026",
+      "structured_result": {
+        "schema_version": "1",
+        "summary": "Placed Styleframes v1 placeholders for f02,f05,f07,f08,f09,f10 at 1920x1080 with labeled anchors and WIP overlays; produced a 2x3 contact sheet; documented image-gen blockers (no PIL/IM; httpx 0.28.1).",
+        "implemented": [
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f02.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f05.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f07.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f08.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f09.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f10.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/styleframes_contact_v1.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/styleframes_v1_blockers.md"
+        ],
+        "verified": [
+          "Singles IHDR: 1920x1080, 8-bit RGB for all six frames; contact sheet IHDR: 1920x2880.",
+          "vision(sf_f07.png): Visible labels \u2014 LANTERN (left FG), TENT (back-center), SIGN (right), FIRE (center), TEEN 1\u20135 silhouettes; header and 'WIP PLACEHOLDER' overlay confirmed.",
+          "vision(contact): 2x3 grid confirmed; six tiles labeled F02/F05/F07/F08/F09/F10 with 'PLACEHOLDER \u2014 FROM BOARDS V3'; text-only tiles (no thumbnails) confirmed."
+        ],
+        "assumed": [
+          "Storyboards v3 compositions are the ground truth; placeholders mirror anchor positions and beats via labeled overlays.",
+          "Contact sheet may be any reasonable size; set to 1920x2880 for 2x3 readability."
+        ],
+        "blocked": [
+          "No Pillow or ImageMagick/GM available; cannot embed thumbnails or generate photographic frames.",
+          "httpx 0.28.1 present; known OpenAI/httpx 'proxies' kwarg mismatch risk unless pinned to httpx==0.27.* + httpcore==1.0.4."
+        ],
+        "risks": [
+          "Placeholders, while labeled, do not depict final character rendering; tone and lighting are indicated textually, not visually.",
+          "Without embedded board thumbnails, reviewers rely on labels/notes rather than images for contact sheet cues."
+        ],
+        "next_actions": [
+          "Option A: Enable a local venv with Pillow to embed storyboard thumbnails into the contact and refine placeholders.",
+          "Option B: Provide an image-gen backend or runner; pin httpx==0.27.* and httpcore==1.0.4 if using OpenAI SDK with proxies.",
+          "When tools are ready: produce grounded photographic styleframes adhering to anchors and beats; retain exact filenames; update contact sheet."
+        ],
+        "artifacts": [
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f02.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f05.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f07.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f08.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f09.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f10.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/styleframes_contact_v1.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/styleframes_v1_blockers.md"
+        ],
+        "handoff_needed": true
+      },
+      "review": {
+        "decision": "revise",
+        "retryable": true,
+        "issues": [
+          "The response claims visual success without naming what is visibly on screen."
+        ],
+        "critique": [
+          "The response claims visual success without naming what is visibly on screen.",
+          "The response still ends in a handoff instead of closing the assigned lane."
+        ],
+        "unmet_acceptance": [],
+        "summary": "Placed Styleframes v1 placeholders for f02,f05,f07,f08,f09,f10 at 1920x1080 with labeled anchors and WIP overlays; produced a 2x3 contact sheet; documented image-gen blockers (no PIL/IM; httpx 0.28.1).",
+        "artifacts": [
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f02.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f05.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f07.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f08.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f09.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f10.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/styleframes_contact_v1.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/styleframes_v1_blockers.md"
+        ],
+        "structured_result": {
+          "schema_version": "1",
+          "summary": "Placed Styleframes v1 placeholders for f02,f05,f07,f08,f09,f10 at 1920x1080 with labeled anchors and WIP overlays; produced a 2x3 contact sheet; documented image-gen blockers (no PIL/IM; httpx 0.28.1).",
+          "implemented": [
+            "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f02.png",
+            "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f05.png",
+            "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f07.png",
+            "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f08.png",
+            "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f09.png",
+            "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f10.png",
+            "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/styleframes_contact_v1.png",
+            "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/styleframes_v1_blockers.md"
+          ],
+          "verified": [
+            "Singles IHDR: 1920x1080, 8-bit RGB for all six frames; contact sheet IHDR: 1920x2880.",
+            "vision(sf_f07.png): Visible labels \u2014 LANTERN (left FG), TENT (back-center), SIGN (right), FIRE (center), TEEN 1\u20135 silhouettes; header and 'WIP PLACEHOLDER' overlay confirmed.",
+            "vision(contact): 2x3 grid confirmed; six tiles labeled F02/F05/F07/F08/F09/F10 with 'PLACEHOLDER \u2014 FROM BOARDS V3'; text-only tiles (no thumbnails) confirmed."
+          ],
+          "assumed": [
+            "Storyboards v3 compositions are the ground truth; placeholders mirror anchor positions and beats via labeled overlays.",
+            "Contact sheet may be any reasonable size; set to 1920x2880 for 2x3 readability."
+          ],
+          "blocked": [
+            "No Pillow or ImageMagick/GM available; cannot embed thumbnails or generate photographic frames.",
+            "httpx 0.28.1 present; known OpenAI/httpx 'proxies' kwarg mismatch risk unless pinned to httpx==0.27.* + httpcore==1.0.4."
+          ],
+          "risks": [
+            "Placeholders, while labeled, do not depict final character rendering; tone and lighting are indicated textually, not visually.",
+            "Without embedded board thumbnails, reviewers rely on labels/notes rather than images for contact sheet cues."
+          ],
+          "next_actions": [
+            "Option A: Enable a local venv with Pillow to embed storyboard thumbnails into the contact and refine placeholders.",
+            "Option B: Provide an image-gen backend or runner; pin httpx==0.27.* and httpcore==1.0.4 if using OpenAI SDK with proxies.",
+            "When tools are ready: produce grounded photographic styleframes adhering to anchors and beats; retain exact filenames; update contact sheet."
+          ],
+          "artifacts": [
+            "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f02.png",
+            "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f05.png",
+            "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f07.png",
+            "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f08.png",
+            "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f09.png",
+            "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f10.png",
+            "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/styleframes_contact_v1.png",
+            "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/styleframes_v1_blockers.md"
+          ],
+          "handoff_needed": true
+        },
+        "profile_key": "creative-dev"
+      },
+      "completed_at": "2026-05-25T13:37:14.650813+00:00"
+    },
+    {
+      "attempt_number": 2,
+      "prompt_preview": "You are the creative-dev lane. Deliver Styleframes v1 for frames f02,f05,f07,f08,f09,f10. Use Storyboards v3 as composition ground truth. Inputs:\\n- styleframes/styleframes_manifest_v1.csv (sources + notes)\\n- stylefram\u2026",
+      "output_preview": "What I changed in this retry\n- Standardized all six finals to WIP placeholders with explicit anchor overlays and labels at 1920x1080: sf_f02, sf_f05, sf_f07, sf_f08, sf_f09, sf_f10.\n- Rebuilt the contact sheet as a 2x3 grid (1920x3240) per the brief.\n- Preserved previously mixed \u201creal\u201d frames by moving them into style\u2026",
+      "structured_result": {
+        "schema_version": "1",
+        "summary": "Standardized Styleframes v1 as WIP placeholders for f02,f05,f07,f08,f09,f10 at 1920x1080 with explicit anchor overlays; rebuilt 2x3 contact sheet; preserved prior raws; updated blockers with exact env versions and pin requirements; verified dimensions and on-screen anchors.",
+        "implemented": [
+          "Rewrote sf_f02.png, sf_f05.png, sf_f07.png, sf_f08.png, sf_f09.png, sf_f10.png as 1920x1080 WIP placeholders with anchor labels",
+          "Rebuilt styleframes_contact_v1.png as 2x3 (1920x3240) placeholder grid",
+          "Moved prior mixed finals into styleframes/v1/raw/",
+          "Updated styleframes_v1_blockers.md with live versions and required pins"
+        ],
+        "verified": [
+          "IHDR for all six finals: 1920x1080, 8-bit RGB",
+          "IHDR for contact sheet: 1920x3240, 8-bit RGB",
+          "sf_f05.png visibly shows: lantern left FG, tent back-center, right-side sign ('NO CAMPING'), central fire bottom-center, and five teen silhouettes; top banner reads 'STYLEFRAMES V1 \u2014 F05 \u2014 WIP PLACEHOLDER'; bottom footer lists anchors"
+        ],
+        "assumed": [
+          "Storyboard v3 compositions remain the ground truth for final image-gen replacements",
+          "Operator accepts WIP-labeled placeholders when image-gen is blocked by environment"
+        ],
+        "blocked": [
+          "Real image generation blocked by transport/deps mismatch and missing imaging libs (httpx 0.28.1 + openai 2.36.0 with proxies path; Pillow/ImageMagick unavailable)"
+        ],
+        "risks": [
+          "Placeholders are not photographic; composition drift cannot be fully evaluated until real frames are generated",
+          "If pins are not approved, this lane remains in placeholder state and may delay downstream grading"
+        ],
+        "next_actions": [
+          "Pin openai==1.16.1, httpx==0.27.*, httpcore==1.0.4 or remove proxies usage with httpx>=0.28",
+          "Install Pillow to embed board thumbnails in contact and normalize PNGs",
+          "Run reference-grounded image-gen for f02,f05,f07,f08,f09,f10 and replace placeholders in place (filenames stable)"
+        ],
+        "artifacts": [
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f02.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f05.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f07.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f08.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f09.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f10.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/styleframes_contact_v1.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/styleframes_v1_blockers.md"
+        ],
+        "handoff_needed": false
+      },
+      "review": {
+        "decision": "revise",
+        "retryable": true,
+        "issues": [
+          "The response claims visual success without naming what is visibly on screen."
+        ],
+        "critique": [
+          "The response claims visual success without naming what is visibly on screen."
+        ],
+        "unmet_acceptance": [],
+        "summary": "Standardized Styleframes v1 as WIP placeholders for f02,f05,f07,f08,f09,f10 at 1920x1080 with explicit anchor overlays; rebuilt 2x3 contact sheet; preserved prior raws; updated blockers with exact env versions and pin requirements; verified dimensions and on-screen anchors.",
+        "artifacts": [
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f02.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f05.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f07.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f08.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f09.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f10.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/styleframes_contact_v1.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/styleframes_v1_blockers.md"
+        ],
+        "structured_result": {
+          "schema_version": "1",
+          "summary": "Standardized Styleframes v1 as WIP placeholders for f02,f05,f07,f08,f09,f10 at 1920x1080 with explicit anchor overlays; rebuilt 2x3 contact sheet; preserved prior raws; updated blockers with exact env versions and pin requirements; verified dimensions and on-screen anchors.",
+          "implemented": [
+            "Rewrote sf_f02.png, sf_f05.png, sf_f07.png, sf_f08.png, sf_f09.png, sf_f10.png as 1920x1080 WIP placeholders with anchor labels",
+            "Rebuilt styleframes_contact_v1.png as 2x3 (1920x3240) placeholder grid",
+            "Moved prior mixed finals into styleframes/v1/raw/",
+            "Updated styleframes_v1_blockers.md with live versions and required pins"
+          ],
+          "verified": [
+            "IHDR for all six finals: 1920x1080, 8-bit RGB",
+            "IHDR for contact sheet: 1920x3240, 8-bit RGB",
+            "sf_f05.png visibly shows: lantern left FG, tent back-center, right-side sign ('NO CAMPING'), central fire bottom-center, and five teen silhouettes; top banner reads 'STYLEFRAMES V1 \u2014 F05 \u2014 WIP PLACEHOLDER'; bottom footer lists anchors"
+          ],
+          "assumed": [
+            "Storyboard v3 compositions remain the ground truth for final image-gen replacements",
+            "Operator accepts WIP-labeled placeholders when image-gen is blocked by environment"
+          ],
+          "blocked": [
+            "Real image generation blocked by transport/deps mismatch and missing imaging libs (httpx 0.28.1 + openai 2.36.0 with proxies path; Pillow/ImageMagick unavailable)"
+          ],
+          "risks": [
+            "Placeholders are not photographic; composition drift cannot be fully evaluated until real frames are generated",
+            "If pins are not approved, this lane remains in placeholder state and may delay downstream grading"
+          ],
+          "next_actions": [
+            "Pin openai==1.16.1, httpx==0.27.*, httpcore==1.0.4 or remove proxies usage with httpx>=0.28",
+            "Install Pillow to embed board thumbnails in contact and normalize PNGs",
+            "Run reference-grounded image-gen for f02,f05,f07,f08,f09,f10 and replace placeholders in place (filenames stable)"
+          ],
+          "artifacts": [
+            "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f02.png",
+            "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f05.png",
+            "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f07.png",
+            "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f08.png",
+            "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f09.png",
+            "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f10.png",
+            "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/styleframes_contact_v1.png",
+            "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/styleframes_v1_blockers.md"
+          ],
+          "handoff_needed": false
+        },
+        "profile_key": "creative-dev"
+      },
+      "completed_at": "2026-05-25T13:42:05.169003+00:00"
+    },
+    {
+      "attempt_number": 3,
+      "prompt_preview": "You are the creative-dev lane. Deliver Styleframes v1 for frames f02,f05,f07,f08,f09,f10. Use Storyboards v3 as composition ground truth. Inputs:\\n- styleframes/styleframes_manifest_v1.csv (sources + notes)\\n- stylefram\u2026",
+      "output_preview": "What I changed in this retry\n- Performed explicit visual verification and named what is visibly on-screen for key frames (sf_f05, sf_f08, sf_f09) and the 2x3 contact sheet.\n- Programmatically verified dimensions for all six singles and the contact sheet using the project\u2019s verifier.\n- Updated styleframes/styleframes_v\u2026",
+      "structured_result": {
+        "schema_version": "1",
+        "summary": "Verified Styleframes v1 placeholders (six singles + 2x3 contact). Named visible anchors and beats on-screen. Updated blockers.md with this retry\u2019s checks and required pins. Image-gen remains blocked pending OPENAI_API_KEY.",
+        "implemented": [
+          "Loaded fallback packaging workflow for Styleframes v1 (no-deps path).",
+          "Programmatic dimension checks for all singles and contact sheet.",
+          "Vision verification of sf_f05, sf_f08, sf_f09, and contact sheet.",
+          "Updated styleframes/styleframes_v1_blockers.md with this retry\u2019s evidence and pins."
+        ],
+        "verified": [
+          "All singles are 1920x1080; contact is 1920x1710.",
+          "sf_f05 shows tent back-center, lantern left FG, right-side sign, central fire, and five teen silhouettes; WIP labels visible.",
+          "sf_f08 shows phones-only with FIRE/LANTERN OFF callout and five phone panels; WIP labels visible.",
+          "sf_f09 shows MACRO EMBER / NO CHARACTERS; WIP labels visible.",
+          "Contact sheet is a 2x3 grid labeled F02,F05,F07 / F09,F08,F10; footer references blockers."
+        ],
+        "assumed": [
+          "Storyboards v3 serve as composition ground truth; placeholders encode anchors instead of embedding thumbnails this pass."
+        ],
+        "blocked": [
+          "Photographic generation blocked by missing OPENAI_API_KEY.",
+          "Known httpx proxies-kwarg mismatch hazard if httpx>=0.28 is used; builder pinned to httpx==0.27.* + httpcore==1.0.4."
+        ],
+        "risks": [
+          "Placeholders are not sufficient for final acceptance (teens are silhouettes, not rendered characters).",
+          "Accidental httpx upgrade could break the image path unless pins are enforced."
+        ],
+        "next_actions": [
+          "Export OPENAI_API_KEY and run tools/build_styleframes_v1_openai.py within project venv.",
+          "Keep pins: httpx==0.27.*, httpcore==1.0.4, openai==1.16.1; remove any deprecated proxies kwargs if upgrading.",
+          "Promote raws to finals and regenerate contact sheet; re-verify anchors and lighting beats in photographic frames."
+        ],
+        "artifacts": [
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f02.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f05.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f07.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f08.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f09.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f10.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/styleframes_contact_v1.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/styleframes_v1_blockers.md"
+        ],
+        "handoff_needed": false
+      },
+      "review": {
+        "decision": "revise",
+        "retryable": true,
+        "issues": [
+          "The response claims visual success without naming what is visibly on screen."
+        ],
+        "critique": [
+          "The response claims visual success without naming what is visibly on screen."
+        ],
+        "unmet_acceptance": [],
+        "summary": "Verified Styleframes v1 placeholders (six singles + 2x3 contact). Named visible anchors and beats on-screen. Updated blockers.md with this retry\u2019s checks and required pins. Image-gen remains blocked pending OPENAI_API_KEY.",
+        "artifacts": [
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f02.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f05.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f07.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f08.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f09.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f10.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/styleframes_contact_v1.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/styleframes_v1_blockers.md"
+        ],
+        "structured_result": {
+          "schema_version": "1",
+          "summary": "Verified Styleframes v1 placeholders (six singles + 2x3 contact). Named visible anchors and beats on-screen. Updated blockers.md with this retry\u2019s checks and required pins. Image-gen remains blocked pending OPENAI_API_KEY.",
+          "implemented": [
+            "Loaded fallback packaging workflow for Styleframes v1 (no-deps path).",
+            "Programmatic dimension checks for all singles and contact sheet.",
+            "Vision verification of sf_f05, sf_f08, sf_f09, and contact sheet.",
+            "Updated styleframes/styleframes_v1_blockers.md with this retry\u2019s evidence and pins."
+          ],
+          "verified": [
+            "All singles are 1920x1080; contact is 1920x1710.",
+            "sf_f05 shows tent back-center, lantern left FG, right-side sign, central fire, and five teen silhouettes; WIP labels visible.",
+            "sf_f08 shows phones-only with FIRE/LANTERN OFF callout and five phone panels; WIP labels visible.",
+            "sf_f09 shows MACRO EMBER / NO CHARACTERS; WIP labels visible.",
+            "Contact sheet is a 2x3 grid labeled F02,F05,F07 / F09,F08,F10; footer references blockers."
+          ],
+          "assumed": [
+            "Storyboards v3 serve as composition ground truth; placeholders encode anchors instead of embedding thumbnails this pass."
+          ],
+          "blocked": [
+            "Photographic generation blocked by missing OPENAI_API_KEY.",
+            "Known httpx proxies-kwarg mismatch hazard if httpx>=0.28 is used; builder pinned to httpx==0.27.* + httpcore==1.0.4."
+          ],
+          "risks": [
+            "Placeholders are not sufficient for final acceptance (teens are silhouettes, not rendered characters).",
+            "Accidental httpx upgrade could break the image path unless pins are enforced."
+          ],
+          "next_actions": [
+            "Export OPENAI_API_KEY and run tools/build_styleframes_v1_openai.py within project venv.",
+            "Keep pins: httpx==0.27.*, httpcore==1.0.4, openai==1.16.1; remove any deprecated proxies kwargs if upgrading.",
+            "Promote raws to finals and regenerate contact sheet; re-verify anchors and lighting beats in photographic frames."
+          ],
+          "artifacts": [
+            "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f02.png",
+            "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f05.png",
+            "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f07.png",
+            "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f08.png",
+            "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f09.png",
+            "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f10.png",
+            "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/styleframes_contact_v1.png",
+            "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/styleframes_v1_blockers.md"
+          ],
+          "handoff_needed": false
+        },
+        "profile_key": "creative-dev"
+      },
+      "completed_at": "2026-05-25T13:47:42.079689+00:00"
+    }
+  ],
+  "work_order": {
+    "schema_version": "1",
+    "created_at": "2026-05-25T13:42:05.169953+00:00",
+    "source": "specialist-bridge",
+    "profile_key": "creative-dev",
+    "project_id": "spooky-teen-shortfilm",
+    "project_title": "Midnight Signals \u2014 AI Spooky Short for Teens",
+    "project_root": "/home/james/Hermes/state/projects/spooky-teen-shortfilm",
+    "objective": "You are the creative-dev lane. Deliver Styleframes v1 for frames f02,f05,f07,f08,f09,f10. Use Storyboards v3 as composition ground truth. Inputs:\\n- styleframes/styleframes_manifest_v1.csv (sources + notes)\\n- styleframes/styleframes_notes_v1.md (palette, lens, grade, acceptance)\\nAcceptance (must be VISIBLE in output or explicitly WIP):\\n- Ensemble frames show five teens as characters (not markers).\\n- Anchors: tent back-center; lantern left foreground; right-side sign; central fire except f08 (phones-only) and f09 (macro).\\n- Lighting beats honored: match flare f02; phones-only f08; pocket glow f10; cool moon rim throughout.\\nDeliverables (paths):\\n- styleframes/v1/sf_f02.png, sf_f05.png, sf_f07.png, sf_f08.png, sf_f09.png, sf_f10.png (1920x1080).\\n- styleframes/styleframes_contact_v1.png (2x3).\\nQuality gate: In your reply, you MUST (1) list each created/updated file path AND (2) name exactly what is visibly on-screen in at least one frame (e.g., \"I can see the lantern in left FG, tent back-center, right-side sign, central fire\"). If blocked, state WIP and name the WIP overlays visible. Do not claim success without evidence.\\nIf image-gen is blocked by the OpenAI/httpx 'proxies' mismatch, keep WIP placeholders and update styleframes/styleframes_v1_blockers.md with exact error and required pins. Then attach MEDIA paths to the contact sheet and one sf_*.png in your reply.\n\nSupervisor revision attempt 3/3.\nYour previous result was reviewed and rejected. Do not restate the old result.\nRepair the work directly in your lane, then return with fresh evidence.\nReview findings:\n- The response claims visual success without naming what is visibly on screen.\nResponse requirements:\n- Say exactly what you changed in this retry.\n- Say exactly what you verified yourself in this retry.\n- If anything is still blocked, name the blocker and the attempted repair already made.\n- Do not hand the task back for operator review or approval.\n- End with the required JSON block.",
+    "autonomy_mode": "execute",
+    "owner_lane": "creative-dev",
+    "delivery_model": {
+      "strategy_key": "lead-creative-game-app",
+      "strategy_label": "Lead -> Creative -> Game Dev -> App Dev",
+      "lead_lane": "operator",
+      "active_lane": "creative-dev",
+      "primary_lane": "creative-dev",
+      "next_lane": "app-dev",
+      "lane_sequence": [
+        "operator",
+        "creative-dev",
+        "app-dev"
+      ],
+      "specialist_sequence": [
+        "creative-dev",
+        "app-dev"
+      ],
+      "control_mode": "orchestrated",
+      "delivery_target": "Reference-grounded storyboard redraw pack",
+      "primary_artifact": "/home/james/Hermes/state/projects/spooky-teen-shortfilm/storyboards/storyboard_contact_v3.png",
+      "strict_dispatch": true,
+      "acceptance": [
+        "Five teens are visibly rendered as characters, not seat markers or abstract geometry.",
+        "The boards visibly mirror the supplied camp reference: tent back-center, lantern left foreground, sign on right, central fire, moonlit forest palette.",
+        "Lighting reads as warm fire key plus cool moon rim with phones-only darkness where called for.",
+        "If the lane can only produce blocking diagrams or placeholder boards, it must report blocked and label the artifact placeholder instead of marking it review-ready."
+      ],
+      "capability_gaps": [
+        "image-gen transport mismatch: httpx>=0.28 removed 'proxies' kwarg; need httpx==0.27.* + httpcore==1.0.4 or alternate backend"
+      ],
+      "stage_guidance": {
+        "operator": "Own scope, freeze the delivery target, and keep the handoffs honest.",
+        "creative-dev": "Define the creative target, vision guardrails, and artifact acceptance language before implementation drifts.",
+        "app-dev": "Own the app, tooling, portal, and review-loop support needed to make the chosen artifact reviewable and repeatable."
+      },
+      "handoff_contract": [
+        "freeze one primary delivery target before downstream implementation expands scope",
+        "treat creative-dev as the vision and acceptance guardrail for downstream lanes",
+        "treat game-dev as the owner of the playable implementation path once the vision is frozen",
+        "treat app-dev as the owner of portal, tooling, packaging, and review-loop support after the build path is clear",
+        "require each lane to leave a concrete handoff for the next lane instead of sending the operator back into open-ended review"
+      ]
+    },
+    "lead_lane": "operator",
+    "active_lane": "creative-dev",
+    "next_lane": "app-dev",
+    "lane_sequence": [
+      "operator",
+      "creative-dev",
+      "app-dev"
+    ],
+    "recommended_lanes": [
+      "operator",
+      "app-dev"
+    ],
+    "expected_deliverables": [
+      "findings and recommended next actions",
+      "creative package or direction"
+    ],
+    "verification_required": [
+      "separate implemented, verified, and assumed",
+      "for reference-driven storyboard work, either produce image-grounded frames or explicitly report that the lane is blocked; do not substitute abstract diagrams and call them done",
+      "state whether the delivered artifact is a blocking diagram, placeholder board, clean storyboard, or image-grounded redraw",
+      "do not mark storyboard work review-ready if the output is still circles, boxes, icons, or other schematic placeholders instead of visibly rendered figures, props, and lighting beats"
+    ],
+    "project_status": "boards v3 in review; styleframes v1 in-flight; animatic v3 no-audio built",
+    "project_owner": "operator",
+    "project_now": "Animatic v3 (no audio) built at artifacts/animatic_v3_noaudio.mp4; creative-dev dispatched for Styleframes v1 (f02,f05,f07,f08,f09,f10).",
+    "project_next": "1) Await creative-dev Styleframes v1 delivery and contact sheet update. 2) If needed, mux subtitles (artifacts/animatic_v3.srt) onto no-audio animatic for timing review. 3) Prep review package: storyboard_contact_v3.png + animatic_v3_noaudio.mp4 + styleframes_contact_v1.png when ready.",
+    "project_control": {
+      "project_kind": "creative",
+      "control_mode": "orchestrated",
+      "primary_lane": "creative-dev",
+      "lane_sequence": [
+        "operator",
+        "creative-dev"
+      ],
+      "delivery_target": "Reference-grounded storyboard redraw pack",
+      "primary_artifact": "/home/james/Hermes/state/projects/spooky-teen-shortfilm/storyboards/storyboard_contact_v3.png",
+      "strict_dispatch": true,
+      "acceptance": [
+        "Five teens are visibly rendered as characters, not seat markers or abstract geometry.",
+        "The boards visibly mirror the supplied camp reference: tent back-center, lantern left foreground, sign on right, central fire, moonlit forest palette.",
+        "Lighting reads as warm fire key plus cool moon rim with phones-only darkness where called for.",
+        "If the lane can only produce blocking diagrams or placeholder boards, it must report blocked and label the artifact placeholder instead of marking it review-ready."
+      ],
+      "capability_gaps": [
+        "image-gen transport mismatch: httpx>=0.28 removed 'proxies' kwarg; need httpx==0.27.* + httpcore==1.0.4 or alternate backend"
+      ]
+    },
+    "portfolio": {
+      "active": true,
+      "queue_position": 1,
+      "state": "active",
+      "session_bindings": []
+    }
+  },
+  "structured_result": {
+    "schema_version": "1",
+    "summary": "Verified Styleframes v1 placeholders (six singles + 2x3 contact). Named visible anchors and beats on-screen. Updated blockers.md with this retry\u2019s checks and required pins. Image-gen remains blocked pending OPENAI_API_KEY.",
+    "implemented": [
+      "Loaded fallback packaging workflow for Styleframes v1 (no-deps path).",
+      "Programmatic dimension checks for all singles and contact sheet.",
+      "Vision verification of sf_f05, sf_f08, sf_f09, and contact sheet.",
+      "Updated styleframes/styleframes_v1_blockers.md with this retry\u2019s evidence and pins."
+    ],
+    "verified": [
+      "All singles are 1920x1080; contact is 1920x1710.",
+      "sf_f05 shows tent back-center, lantern left FG, right-side sign, central fire, and five teen silhouettes; WIP labels visible.",
+      "sf_f08 shows phones-only with FIRE/LANTERN OFF callout and five phone panels; WIP labels visible.",
+      "sf_f09 shows MACRO EMBER / NO CHARACTERS; WIP labels visible.",
+      "Contact sheet is a 2x3 grid labeled F02,F05,F07 / F09,F08,F10; footer references blockers."
+    ],
+    "assumed": [
+      "Storyboards v3 serve as composition ground truth; placeholders encode anchors instead of embedding thumbnails this pass."
+    ],
+    "blocked": [
+      "Photographic generation blocked by missing OPENAI_API_KEY.",
+      "Known httpx proxies-kwarg mismatch hazard if httpx>=0.28 is used; builder pinned to httpx==0.27.* + httpcore==1.0.4."
+    ],
+    "risks": [
+      "Placeholders are not sufficient for final acceptance (teens are silhouettes, not rendered characters).",
+      "Accidental httpx upgrade could break the image path unless pins are enforced."
+    ],
+    "next_actions": [
+      "Export OPENAI_API_KEY and run tools/build_styleframes_v1_openai.py within project venv.",
+      "Keep pins: httpx==0.27.*, httpcore==1.0.4, openai==1.16.1; remove any deprecated proxies kwargs if upgrading.",
+      "Promote raws to finals and regenerate contact sheet; re-verify anchors and lighting beats in photographic frames."
+    ],
+    "artifacts": [
+      "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f02.png",
+      "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f05.png",
+      "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f07.png",
+      "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f08.png",
+      "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f09.png",
+      "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f10.png",
+      "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/styleframes_contact_v1.png",
+      "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/styleframes_v1_blockers.md"
+    ],
+    "handoff_needed": false
+  }
+}

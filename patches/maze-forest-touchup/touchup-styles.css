@@ -1,0 +1,18 @@
+/* Crisp pixel presentation and minimal HUD framing */
+#game {
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+/* Optional: a small top-left HUD bar for readability */
+#hudTL {
+  position: absolute;
+  top: 8px; left: 8px;
+  background: rgba(0,0,0,0.45);
+  padding: 6px 10px;
+  border-radius: 8px;
+  color: #FFF;
+  pointer-events: none;
+}
+#hudTL .row { display: flex; gap: 8px; align-items: center; }
+#hudTL .stat { font-weight: 600; text-shadow: 0 1px 0 rgba(0,0,0,0.6), 0 0 2px rgba(0,0,0,0.6); }

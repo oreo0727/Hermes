@@ -1,0 +1,49 @@
+# Python/runtime caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Local virtual environments
+.venv/
+venv/
+env/
+state/hermes/venv/
+state/projects/*/.venv/
+state/workspaces/*/.venv/
+
+# Hermes local runtime state
+.http_pid
+.http_pid_*
+state/hermes/runtime.env
+state/hermes/snapshot.json
+state/hermes/profiles/
+state/hermes/portal_uploads/
+state/projects/*/pmbwork/
+state/projects/*/tools/
+state/workspaces/creative-dev/aetherion-maze-hud-pack/
+*.db
+*.sqlite
+*.sqlite3
+
+# Downloaded/vendor toolchains and generated archives
+state/tools/
+state/archives/
+backups/
+maze-forest.zip
+*.tar.gz
+*.tgz
+
+# Editor/OS noise
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+**/.git/
+
+# Logs and temporary output
+*.log
+*.tmp
+tmp/
+temp/

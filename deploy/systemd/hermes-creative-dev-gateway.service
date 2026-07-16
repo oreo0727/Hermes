@@ -1,0 +1,16 @@
+[Unit]
+Description=Hermes Creative Dev Gateway
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=%h/Hermes
+ExecStart=%h/Hermes/scripts/run-hermes-gateway.sh creative-dev
+Restart=always
+RestartSec=5
+KillSignal=SIGINT
+TimeoutStopSec=30
+
+[Install]
+WantedBy=default.target

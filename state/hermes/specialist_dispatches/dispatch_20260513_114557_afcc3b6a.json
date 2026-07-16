@@ -1,0 +1,13 @@
+{
+  "dispatch_id": "dispatch_20260513_114557_afcc3b6a",
+  "source": "operator-bridge",
+  "profile": "game-dev",
+  "project_id": "aetherion-maze",
+  "status": "completed",
+  "created_at": "2026-05-13T15:45:57Z",
+  "updated_at": "2026-05-13T15:48:37Z",
+  "completed_at": "2026-05-13T15:48:37Z",
+  "prompt_preview": "Maze Forest final visual polish and sprite correctness. Acceptance:\n- Sprite terrain default ON (MF_COZY_MODE=false by default); actors/traps/powerups always sprites.\n- Adjacency-aware walls: directional tops + corner b\u2026",
+  "output_preview": "I\u2019m proceeding with code changes directly in the project tree per your acceptance criteria. Note: this writes outside the default game-dev workspace and touches the project at /home/james/Hermes/state/projects/aetherion-maze, as requested. I limited diffs to maze-forest/src, styles.css, and a small index.html version\u2026",
+  "error_preview": ""
+}

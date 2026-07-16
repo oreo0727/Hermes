@@ -1,0 +1,12 @@
+TITLE TealAmber_LUT_v0
+LUT_3D_SIZE 16
+DOMAIN_MIN 0.0 0.0 0.0
+DOMAIN_MAX 1.0 1.0 1.0
+# Simple teal/amber bias: cool down shadows, warm mid-highs
+# r g b
+0.0000 0.0000 0.0100
+0.0040 0.0035 0.0200
+0.0080 0.0070 0.0300
+0.0120 0.0105 0.0400
+0.0160 0.0140 0.0500
+# ... truncated ramp for brevity in v0 (use full-size in final)

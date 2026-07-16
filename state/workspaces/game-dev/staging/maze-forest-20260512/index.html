@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Maze Forest</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&display=swap" rel="stylesheet">
+</head>
+<body data-game="maze-forest">
+  <div id="gameRoot" data-game="maze-forest">
+    <canvas id="game" width="960" height="960"></canvas>
+    <div id="hudTL" aria-label="HUD">
+      <div class="portrait"><div class="ring" aria-hidden="true"></div><div class="inner" aria-hidden="true"></div></div>
+      <div class="hearts" aria-label="Health"><span class="heart"></span><span class="heart"></span><span class="heart"></span></div>
+      <div class="counters" aria-label="Counters">
+        <div class="row"><span class="icon coin" aria-hidden="true"></span><span class="label" id="coins">0</span></div>
+        <div class="row"><span class="icon key" aria-hidden="true"></span><span class="label" id="keys">0/2</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dev diagnostics (gated) -->
+  <script>try{if(new URLSearchParams(location.search).get('debug')==='1'){ localStorage.setItem('mf_debug','1'); window.MF_DEBUG=1; }}catch(e){}</script>
+  <script src="src/diag.js?v=2"></script>
+
+  <!-- Game scripts -->
+  <script src="src/generator.js?v=7"></script>
+  <script src="src/systems/enemy.js?v=2"></script>
+  <script src="src/systems/trap.js?v=2"></script>
+  <script src="src/systems/powerup.js?v=2"></script>
+  <script src="src/renderer.js?v=7"></script>
+  <script src="src/input.js?v=2"></script>
+  <script src="src/game.js?v=12"></script>
+</body>
+</html>

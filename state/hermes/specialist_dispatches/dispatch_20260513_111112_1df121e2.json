@@ -1,0 +1,13 @@
+{
+  "dispatch_id": "dispatch_20260513_111112_1df121e2",
+  "source": "operator-bridge",
+  "profile": "game-dev",
+  "project_id": "aetherion-maze",
+  "status": "completed",
+  "created_at": "2026-05-13T15:11:12Z",
+  "updated_at": "2026-05-13T15:16:09Z",
+  "completed_at": "2026-05-13T15:16:09Z",
+  "prompt_preview": "Maze Forest polish pass to 'great':\n1) Default actors as sprites (player/enemies/traps/powerups); keep terrain sprites gated by Cozy flag (MF_COZY_MODE) but ensure wall side-overlays for readability.\n2) Verify adjacency\u2026",
+  "output_preview": "I loaded our Maze Forest renderer/HUD/Cozy/DPR skills and performed a focused polish pass directly in the project.\n\nKey changes implemented\n- Actors as sprites by default: Player, enemies, traps, and powerups now use atlas sprites whenever available (SPRITES_READY), independent of Cozy Mode. Procedural fallback remain\u2026",
+  "error_preview": ""
+}

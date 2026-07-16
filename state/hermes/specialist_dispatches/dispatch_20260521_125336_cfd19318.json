@@ -1,0 +1,151 @@
+{
+  "dispatch_id": "dispatch_20260521_125336_cfd19318",
+  "source": "operator-bridge",
+  "profile": "creative-dev",
+  "project_id": "aetherion-maze",
+  "status": "completed",
+  "created_at": "2026-05-21T16:53:36.658358+00:00",
+  "updated_at": "2026-05-21T16:55:48.700453+00:00",
+  "completed_at": "2026-05-21T16:55:48.700453+00:00",
+  "prompt_preview": "Project: aetherion-maze (maze-groundup HTML5 canvas). Input: A single composite reference-board image showing terrain, walls, ground, decorations, hero (12 frames), enemies (skeleton/goblin idle+walk), items (chest, key\u2026",
+  "output_preview": "Asset-readiness verdict: The supplied image is a labeled reference board (a presentation sheet), not a build-ready runtime spritesheet. It mixes categories, likely has baked labels/backgrounds, and lacks consistent transparent bounds and per-sprite metadata. We will not integrate it directly. The packaging below conve\u2026",
+  "error_preview": "",
+  "work_order": {
+    "schema_version": "1",
+    "created_at": "2026-05-21T16:53:36.679404+00:00",
+    "source": "specialist-bridge",
+    "profile_key": "creative-dev",
+    "project_id": "aetherion-maze",
+    "project_title": "Aetherion Maze Games",
+    "project_root": "/home/james/Hermes/state/projects/aetherion-maze",
+    "objective": "Project: aetherion-maze (maze-groundup HTML5 canvas). Input: A single composite reference-board image showing terrain, walls, ground, decorations, hero (12 frames), enemies (skeleton/goblin idle+walk), items (chest, key, potion, shield, crystal), traps (spikes), portal, effects, and UI icons. This is NOT a machine-usable sprite sheet.\n\nYour task (deliver concise, production-ready artifacts):\n1) Asset packaging plan (ASSET_PACKAGING.md):\n   - State clearly that the current image is a reference board, not runtime-ready.\n   - Define the final delivery options and pick a preferred default:\n     Option A (preferred): Loose transparent PNGs organized in folders.\n     Option B: Uniform 64x64 grid atlas (power-of-two canvas) + JSON with rects.\n     Option C: Texture atlas PNG + JSON (arbitrary rects).\n   - Specify naming conventions, folder layout, tile size=64, and required role coverage: walls (h,v,tl,tr,bl,br,endcap,door), ground (dirt, grass), decorations (tree_cluster, rock_cluster, bush, flowers), hero (idle/walk x4 dirs), enemies (skeleton idle/walk, goblin idle/walk), items (chest, key, potion, shield, crystal), traps (spikes), effects (portal, speed_bolt, magic_orb), UI (heart, coin, key_icon, shield_icon).\n   - Include exact file paths we will expect under assets/painted/\u2026 and explicit atlas JSON schema if B/C is chosen.\n2) Missing asset list (FILELIST template):\n   - Provide a line-by-line checklist of required PNGs (64x64) with target paths and notes (e.g., collision, pivot if needed).\n3) Atlas JSON template (atlas_spec_template.json):\n   - If B or C: provide a complete JSON template with keys, including sample rects (0,0,64,64), tile_size=64, and properties such as layer and type.\n\nConstraints & guidance:\n- Only floor and walls belong to TileMaps. All other objects are entities/layers.\n- We must not rely on a click-mapper. Catalog/manifest-first.\n- The end product must allow immediate drop-in for our HTML5 canvas loader.\n\nOutput format:\n- Begin with a one-paragraph asset-readiness verdict.\n- Then the ASSET_PACKAGING.md content.\n- Then a FILELIST (plain text) block.\n- Then atlas_spec_template.json content.\n- Keep concise and unambiguous.",
+    "autonomy_mode": "execute",
+    "owner_lane": "creative-dev",
+    "delivery_model": {
+      "strategy_key": "lead-creative-game-app",
+      "strategy_label": "Lead -> Creative -> Game Dev -> App Dev",
+      "lead_lane": "operator",
+      "active_lane": "creative-dev",
+      "next_lane": "game-dev",
+      "lane_sequence": [
+        "operator",
+        "creative-dev",
+        "game-dev",
+        "app-dev"
+      ],
+      "specialist_sequence": [
+        "creative-dev",
+        "game-dev",
+        "app-dev"
+      ],
+      "stage_guidance": {
+        "operator": "Own scope, freeze the delivery target, and keep the handoffs honest.",
+        "creative-dev": "Define the creative target, vision guardrails, and artifact acceptance language before implementation drifts.",
+        "game-dev": "Own the playable build path and converge the actual game implementation on the chosen target artifact.",
+        "app-dev": "Own the app, tooling, portal, and review-loop support needed to make the chosen artifact reviewable and repeatable."
+      },
+      "handoff_contract": [
+        "freeze one primary delivery target before downstream implementation expands scope",
+        "treat creative-dev as the vision and acceptance guardrail for downstream lanes",
+        "treat game-dev as the owner of the playable implementation path once the vision is frozen",
+        "treat app-dev as the owner of portal, tooling, packaging, and review-loop support after the build path is clear",
+        "require each lane to leave a concrete handoff for the next lane instead of sending the operator back into open-ended review"
+      ]
+    },
+    "lead_lane": "operator",
+    "active_lane": "creative-dev",
+    "next_lane": "game-dev",
+    "lane_sequence": [
+      "operator",
+      "creative-dev",
+      "game-dev",
+      "app-dev"
+    ],
+    "recommended_lanes": [
+      "operator",
+      "game-dev",
+      "app-dev"
+    ],
+    "expected_deliverables": [
+      "creative package or direction",
+      "asset readiness verdict before integration"
+    ],
+    "verification_required": [
+      "separate implemented, verified, and assumed",
+      "classify each referenced art input as reference board, loose sprites, uniform grid sheet, atlas plus manifest, or unknown before integrating it",
+      "if an image includes labels, section dividers, notes, or a presentation background, state that it is a reference board and not a build-ready runtime sheet",
+      "do not claim sprite integration is complete until a machine-usable artifact exists such as loose transparent sprites, a uniform grid sheet with proven cell geometry, or an atlas with manifest"
+    ],
+    "project_status": "active",
+    "project_owner": "operator",
+    "project_now": "Lead orchestration complete for: Converge Aetherion Maze under one lead-owned path that runs creative-dev first, then game-dev, then app-dev, with one primary delivery target and no parallel rebuild drift.",
+    "project_next": "Operator selects the next execution slice from the orchestration artifact and keeps one primary delivery target."
+  },
+  "structured_result": {
+    "schema_version": "1",
+    "summary": "Asset-readiness verdict: The supplied image is a labeled reference board (a presentation sheet), not a build-ready runtime spritesheet. It mixes categories, likely has baked labels/backgrounds, and lacks consistent transparent bounds and per-sprite metadata. We will not integrate it directly. The packaging below converts it into a manifest-first, loader-ready set with 64x64 RGBA sprites and clear roles/layers.",
+    "implemented": [
+      "Wrote packaging plan, file checklist, and atlas template into the creative-dev workspace:",
+      "/home/james/Hermes/state/workspaces/creative-dev/aetherion-maze/ASSET_PACKAGING.md",
+      "/home/james/Hermes/state/workspaces/creative-dev/aetherion-maze/FILELIST",
+      "/home/james/Hermes/state/workspaces/creative-dev/aetherion-maze/atlas_spec_template.json",
+      "Adopted kebab-case naming, 64\u00d764 tiles, 2 px safe borders, center anchors per loaded workflow skill."
+    ],
+    "verified": [
+      "Files created at the above paths."
+    ],
+    "assumed": [
+      "The board includes the listed subjects; enemies do not require 4-direction variants (hero does).",
+      "Loader accepts the proposed atlas JSON keys (layer, type, frames, aliases). If not, we will adapt the schema."
+    ],
+    "blocked": [],
+    "risks": [
+      "If the loader expects underscores or different keys, we\u2019ll need a quick mapping pass.",
+      "If art comes without 2 px padding, atlas bleed/mip issues can occur.",
+      "If enemies require directional facings, the current FILELIST will need expansion."
+    ],
+    "next_actions": [
+      "actions (game-dev handoff-ready):",
+      "Implement the HTML5 canvas loader bindings for Option A paths using FILELIST as the manifest.",
+      "If delivering an atlas (B/C), wire atlas_spec_template.json fields to the loader.",
+      "Convert the reference board into the listed PNGs, preserving 2 px safe borders and center anchors.",
+      "Add a quick validator to ensure each delivered PNG is 64\u00d764 and file names match kebab-case."
+    ],
+    "artifacts": [
+      "ASSET_PACKAGING.md, FILELIST, atlas_spec_template.json in the creative-dev workspace (paths above).",
+      "Handoff needed:",
+      "Yes \u2014 to game-dev to integrate the manifest-first loading and verify layer roles (TileMap only for ground/walls).",
+      "Machine-readable",
+      "{",
+      "\"summary\": \"Packaged Aetherion Maze art into a manifest-first plan: Option A loose 64x64 PNGs (preferred), with explicit folder layout, roles, and naming; plus FILELIST checklist and an atlas JSON template for B/C. The reference board is flagged as non-runtime and will be converted per this plan.\",",
+      "\"implemented\": [",
+      "\"/home/james/Hermes/state/workspaces/creative-dev/aetherion-maze/ASSET_PACKAGING.md\",",
+      "\"/home/james/Hermes/state/workspaces/creative-dev/aetherion-maze/FILELIST\",",
+      "\"/home/james/Hermes/state/workspaces/creative-dev/aetherion-maze/atlas_spec_template.json\"",
+      "],",
+      "\"verified\": [",
+      "\"Artifacts written to the creative-dev workspace paths listed above\"",
+      "\"assumed\": [",
+      "\"Enemies do not require 4-direction variants by default\",",
+      "\"Loader will accept the provided atlas JSON schema with minimal or no changes\"",
+      "\"blocked\": [],",
+      "\"risks\": [",
+      "\"Naming/schema mismatch with existing loader conventions\",",
+      "\"Sprites delivered without 2 px padding may cause bleeding\",",
+      "\"Directional facings for enemies may be required later\"",
+      "\"next_actions\": [",
+      "\"Game-dev: Wire the loader to Option A folder structure using FILELIST as the catalog (no click-mapper).\",",
+      "\"If using B/C: Bind atlas_spec_template.json fields (layer, type, frames) and test hero-walk-n animation.\",",
+      "\"Art: Extract sprites from the board to 64x64 PNGs with 2 px safe borders and center anchors.\",",
+      "\"QA: Add a validator to assert 64x64 dims, kebab-case names, and presence of required files.\"",
+      "\"artifacts\": {",
+      "\"ASSET_PACKAGING.md\": \"/home/james/Hermes/state/workspaces/creative-dev/aetherion-maze/ASSET_PACKAGING.md\",",
+      "\"FILELIST\": \"/home/james/Hermes/state/workspaces/creative-dev/aetherion-maze/FILELIST\",",
+      "\"atlas_spec_template.json\": \"/home/james/Hermes/state/workspaces/creative-dev/aetherion-maze/atlas_spec_template.json\"",
+      "},",
+      "\"handoff_needed\": \"game-dev\"",
+      "}"
+    ],
+    "handoff_needed": false
+  }
+}

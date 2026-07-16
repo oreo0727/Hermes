@@ -1,0 +1,14 @@
+// Load cozy renderer + DPR crispness live (no file edits required)
+(function(){
+  const c = document.getElementById('game'); if(!c) return console.warn('[Polish] No #game canvas found');
+  const ctx = c.getContext('2d');
+  function fit(){ const dpr = Math.max(1, devicePixelRatio||1); const w=c.clientWidth|0, h=c.clientHeight|0; if(!w||!h) return; c.width=w*dpr; c.height=h*dpr; ctx.setTransform(dpr,0,0,dpr,0,0); ctx.imageSmoothingEnabled=false; }
+  fit(); addEventListener('resize', ()=>setTimeout(fit,0), {passive:true});
+  // Lighten vignette if a global draw vignette exists
+  const ov = window.__drawSoftVignette; if(ov){ window.__drawSoftVignette = function(ctx,W,H){ return ov(ctx,W,H, {strength:0.35, inner:0.48, outer:0.9}); }; console.log('[Polish] Vignette softened'); }
+  // Dynamically load the cozy renderer override
+  (function addScript(url){ const s=document.createElement('script'); s.src=url; s.onload=()=>console.log('[Polish] Cozy renderer loaded'); s.onerror=()=>console.warn('[Polish] Failed to load', url); document.head.appendChild(s); })('patches/maze-forest-polish-v2/renderer.js?v=12');
+  // Inject style tokens if not already present
+  (function addStyle(url){ fetch(url).then(r=>r.text()).then(css=>{ const st=document.createElement('style'); st.textContent=css; document.head.appendChild(st); console.log('[Polish] Style tokens injected'); }).catch(()=>console.warn('[Polish] Could not inline styles from', url)); })('patches/maze-forest-polish-v2/styles-tokens.css');
+  console.log('[Polish] DPR fit + smoothing off applied');
+})();

@@ -1,0 +1,41 @@
+{
+  "project_id": "pixel3a-os-rebuild",
+  "title": "Pixel 3a OS Rebuild (google-sargo)",
+  "summary": "Build a ground-up OS image for Google Pixel 3a (sargo) using postmarketOS edge; prepare flashable images and execute flashing once device is in fastboot. Includes environment audit, build config, and background build.",
+  "status": "in_progress",
+  "specialists": [
+    "operator",
+    "app-dev"
+  ],
+  "tracking": {
+    "owner": "operator",
+    "now": "pmbootstrap install (v3.10.1) running in project workdir; chroot prep started; mirrors fixed; waiting for rootfs/images",
+    "next": "Monitor build to completion; if success, export images and prep fastboot flashing; in parallel, enable ADB or provide SSH creds for device checks",
+    "blocked": [
+      "Awaiting SSH credentials or ADB authorization"
+    ],
+    "done": [
+      "Upgraded pmbootstrap to 3.10.1 in project tools and preseeded config (device/ui/work)."
+    ],
+    "priority": 50,
+    "percent": 35
+  },
+  "control": {
+    "project_kind": "app",
+    "control_mode": "orchestrated",
+    "delivery_target": "Flashable postmarketOS edge images for Pixel 3a (sargo) prepared and flashed",
+    "primary_artifact": "/home/james/Hermes/state/projects/pixel3a-os-rebuild/pmbwork/log.txt",
+    "acceptance": [
+      "Live pmbootstrap log shows install starting with google-sargo config and project workdir active"
+    ],
+    "primary_lane": "operator",
+    "lane_sequence": [
+      "operator",
+      "app-dev"
+    ],
+    "strict_dispatch": true,
+    "capability_gaps": []
+  },
+  "created_at": "2026-06-09T14:27:39.216872+00:00",
+  "updated_at": "2026-06-09T15:50:04.295642+00:00"
+}

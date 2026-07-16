@@ -1,0 +1,23 @@
+{
+  "green_deep": "#0f2a18",
+  "green_dark": "#1f3e23",
+  "green_mid": "#3f7f3a",
+  "green_light": "#88c057",
+  "green_moss": "#a9d96a",
+  "dirt_dark": "#6e4a2a",
+  "dirt_mid": "#9b7848",
+  "wood": "#6a4b2a",
+  "stone_dark": "#5e6556",
+  "stone_mid": "#7a806e",
+  "stone_light": "#9aa18d",
+  "stone_hi": "#bfc6b2",
+  "metal_light": "#c6cbd4",
+  "metal_dark": "#646b74",
+  "heart": "#ff4747",
+  "gold": "#f6c54b",
+  "gold_sh": "#d99b2b",
+  "shield": "#56b4ff",
+  "lightning": "#19ccff",
+  "crystal": "#7a2be2",
+  "crystal_hi": "#c084fc"
+}

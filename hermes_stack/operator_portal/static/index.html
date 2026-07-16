@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Hermes v2 Command Deck</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="sidebar-brand">
+          <div class="brand-stack">
+            <p class="show-mark">HERMES V2</p>
+            <div>
+              <h1 id="portal-label">Multi-Agent Studio OS</h1>
+              <p class="brand-subtitle">Character-led specialist operating system</p>
+            </div>
+          </div>
+        </div>
+
+        <nav class="sidebar-nav">
+          <a class="nav-link active" href="#dashboard">
+            <span class="nav-icon">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5v8.5a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>
+            </span>
+            <span>Dashboard</span>
+          </a>
+          <a class="nav-link" href="#projects">
+            <span class="nav-icon">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3z"/></svg>
+            </span>
+            <span>Projects</span>
+          </a>
+          <a class="nav-link" href="#queue">
+            <span class="nav-icon">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h3v3H4zm0 5h3v3H4zm0 5h3v3H4zm5-10h11v3H9zm0 5h11v3H9zm0 5h11v3H9z"/></svg>
+            </span>
+            <span>Queue</span>
+          </a>
+          <a class="nav-link" href="#agents">
+            <span class="nav-icon">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 11a4 4 0 1 0-4-4 4 4 0 0 0 4 4ZM8 12a3 3 0 1 0-3-3 3 3 0 0 0 3 3Zm8 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4ZM8 14c-2.33 0-7 1.17-7 3.5V20h6v-2c0-1.07.59-2.03 1.59-2.79A7.49 7.49 0 0 0 8 14Z"/></svg>
+            </span>
+            <span>Agents</span>
+          </a>
+          <a class="nav-link" href="#artifacts">
+            <span class="nav-icon">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Zm2 3v12h10V6Zm2 2h6v4H9Zm0 6h6v2H9Z"/></svg>
+            </span>
+            <span>Artifacts</span>
+          </a>
+          <a class="nav-link" href="#reports">
+            <span class="nav-icon">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20V9h3v11Zm5 0V4h4v16Zm6 0v-7h3v7Z"/></svg>
+            </span>
+            <span>Reports</span>
+          </a>
+          <a class="nav-link" href="#settings">
+            <span class="nav-icon">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m19.14 12.94.04-.94-.04-.94 2.03-1.58a.5.5 0 0 0 .12-.64l-1.92-3.32a.5.5 0 0 0-.6-.22l-2.39.96a7.14 7.14 0 0 0-1.63-.94L14.4 2.8a.49.49 0 0 0-.49-.4h-3.82a.49.49 0 0 0-.49.4l-.35 2.52a7.14 7.14 0 0 0-1.63.94l-2.39-.96a.5.5 0 0 0-.6.22L2.7 8.84a.5.5 0 0 0 .12.64l2.03 1.58-.04.94.04.94-2.03 1.58a.5.5 0 0 0-.12.64l1.92 3.32a.5.5 0 0 0 .6.22l2.39-.96c.5.39 1.05.71 1.63.94l.35 2.52a.49.49 0 0 0 .49.4h3.82a.49.49 0 0 0 .49-.4l.35-2.52c.58-.23 1.13-.55 1.63-.94l2.39.96a.5.5 0 0 0 .6-.22l1.92-3.32a.5.5 0 0 0-.12-.64ZM12 15.5A3.5 3.5 0 1 1 15.5 12 3.5 3.5 0 0 1 12 15.5Z"/></svg>
+            </span>
+            <span>Settings</span>
+          </a>
+        </nav>
+
+        <section class="toggle-card">
+          <div>
+            <strong>Bazinga Mode</strong>
+          </div>
+          <span class="toggle-pill">ON</span>
+        </section>
+
+        <section class="quote-mini">
+          <p class="eyebrow">Quote of the Day</p>
+          <blockquote id="sidebar-quote">"Truth beats performance."</blockquote>
+          <p class="quote-attribution">Hermes v2</p>
+        </section>
+
+        <footer class="sidebar-footer">
+          <p id="footer-discord">Discord Connected</p>
+          <p id="footer-system">All systems operational</p>
+        </footer>
+      </aside>
+
+      <main class="main-shell" id="dashboard">
+        <header class="topbar">
+          <div class="topbar-copy">
+            <p class="eyebrow">Management UI</p>
+            <h2>Command Deck</h2>
+          </div>
+          <div class="topbar-actions">
+            <button class="button primary" type="button">New Project</button>
+            <button class="button secondary" type="button">Quick Command</button>
+            <button id="refresh-button" class="icon-button" type="button" aria-label="Refresh">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.65 6.35A7.95 7.95 0 0 0 12 4V1L7 6l5 5V7a5 5 0 1 1-5 5H5a7 7 0 1 0 12.65-5.65Z"/></svg>
+            </button>
+            <button class="icon-button" type="button" aria-label="Notifications">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22a2.5 2.5 0 0 0 2.45-2h-4.9A2.5 2.5 0 0 0 12 22Zm6-6V11a6 6 0 1 0-12 0v5L4 18v1h16v-1Z"/></svg>
+            </button>
+            <button class="icon-button" type="button" aria-label="Settings">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m19.14 12.94.04-.94-.04-.94 2.03-1.58a.5.5 0 0 0 .12-.64l-1.92-3.32a.5.5 0 0 0-.6-.22l-2.39.96a7.14 7.14 0 0 0-1.63-.94L14.4 2.8a.49.49 0 0 0-.49-.4h-3.82a.49.49 0 0 0-.49.4l-.35 2.52a7.14 7.14 0 0 0-1.63.94l-2.39-.96a.5.5 0 0 0-.6.22L2.7 8.84a.5.5 0 0 0 .12.64l2.03 1.58-.04.94.04.94-2.03 1.58a.5.5 0 0 0-.12.64l1.92 3.32a.5.5 0 0 0 .6.22l2.39-.96c.5.39 1.05.71 1.63.94l.35 2.52a.49.49 0 0 0 .49.4h3.82a.49.49 0 0 0 .49-.4l.35-2.52c.58-.23 1.13-.55 1.63-.94l2.39.96a.5.5 0 0 0 .6-.22l1.92-3.32a.5.5 0 0 0-.12-.64ZM12 15.5A3.5 3.5 0 1 1 15.5 12 3.5 3.5 0 0 1 12 15.5Z"/></svg>
+            </button>
+            <div class="topbar-avatar">
+              <img src="/branding/sheldon.png" alt="Sheldon" />
+            </div>
+          </div>
+        </header>
+
+        <div class="workspace-grid">
+          <div class="primary-column">
+            <section class="hero-shell">
+              <article class="welcome-card">
+                <div class="welcome-head">
+                  <div class="operator-avatar large">
+                    <img src="/branding/sheldon.png" alt="Sheldon" />
+                  </div>
+                  <div class="welcome-copy">
+                    <h3 id="operator-presence">Good evening, Operator.</h3>
+                    <p id="operator-subtitle">Loading project, gateway, and proof state.</p>
+                  </div>
+                </div>
+
+                <div class="stat-pills">
+                  <article class="stat-pill">
+                    <span class="metric-label">Projects</span>
+                    <strong id="metric-projects">0</strong>
+                    <p>Active</p>
+                  </article>
+                  <article class="stat-pill">
+                    <span class="metric-label">In Progress</span>
+                    <strong id="metric-tasks">0</strong>
+                    <p>Tasks</p>
+                  </article>
+                  <article class="stat-pill">
+                    <span class="metric-label">Blocked</span>
+                    <strong id="metric-blocked">0</strong>
+                    <p>Needs attention</p>
+                  </article>
+                  <article class="stat-pill">
+                    <span class="metric-label">Completed</span>
+                    <strong id="metric-completed">0</strong>
+                    <p>Closed slices</p>
+                  </article>
+                </div>
+
+                <div class="hero-strip">
+                  <div>
+                    <span class="meta-label">Active Slice</span>
+                    <strong id="operator-active-slice">No focused slice</strong>
+                  </div>
+                  <div>
+                    <span class="meta-label">Proof Signal</span>
+                    <strong id="operator-proof">No proof attached</strong>
+                  </div>
+                </div>
+              </article>
+
+              <aside class="quote-card">
+                <p class="eyebrow">Fun With Flags</p>
+                <blockquote id="hero-quote">
+                  When something goes wrong, the optimal move is the truthful one.
+                </blockquote>
+                <p id="hero-quote-attribution" class="quote-attribution">Sheldon, Operator</p>
+              </aside>
+            </section>
+
+            <section class="panel projects-panel" id="projects">
+              <div class="panel-head">
+                <div>
+                  <p class="eyebrow">Active Projects</p>
+                  <h3>Portfolio View</h3>
+                </div>
+                <a class="panel-link" href="#queue">View All</a>
+              </div>
+              <div id="active-projects" class="projects-list"></div>
+            </section>
+
+            <section class="panel queue-panel" id="queue">
+              <div class="panel-head">
+                <div>
+                  <p class="eyebrow">Today's Queue</p>
+                  <h3>Task Routing</h3>
+                </div>
+                <a class="panel-link" href="#signals">View Queue</a>
+              </div>
+              <div id="queue-table" class="queue-table"></div>
+            </section>
+          </div>
+
+          <div class="secondary-column">
+            <section class="panel team-panel" id="agents">
+              <div class="panel-head">
+                <div>
+                  <p class="eyebrow">The Team</p>
+                  <h3>Specialists</h3>
+                </div>
+                <button class="icon-button small" type="button" aria-label="Team settings">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m19.14 12.94.04-.94-.04-.94 2.03-1.58a.5.5 0 0 0 .12-.64l-1.92-3.32a.5.5 0 0 0-.6-.22l-2.39.96a7.14 7.14 0 0 0-1.63-.94L14.4 2.8a.49.49 0 0 0-.49-.4h-3.82a.49.49 0 0 0-.49.4l-.35 2.52a7.14 7.14 0 0 0-1.63.94l-2.39-.96a.5.5 0 0 0-.6.22L2.7 8.84a.5.5 0 0 0 .12.64l2.03 1.58-.04.94.04.94-2.03 1.58a.5.5 0 0 0-.12.64l1.92 3.32a.5.5 0 0 0 .6.22l2.39-.96c.5.39 1.05.71 1.63.94l.35 2.52a.49.49 0 0 0 .49.4h3.82a.49.49 0 0 0 .49-.4l.35-2.52c.58-.23 1.13-.55 1.63-.94l2.39.96a.5.5 0 0 0 .6-.22l1.92-3.32a.5.5 0 0 0-.12-.64ZM12 15.5A3.5 3.5 0 1 1 15.5 12 3.5 3.5 0 0 1 12 15.5Z"/></svg>
+                </button>
+              </div>
+              <div id="agent-team" class="team-list"></div>
+            </section>
+
+            <section class="panel activity-panel" id="signals">
+              <div class="panel-head">
+                <div>
+                  <p class="eyebrow">Activity Feed</p>
+                  <h3>Recent Signals</h3>
+                </div>
+              </div>
+              <div id="activity-feed" class="activity-feed"></div>
+            </section>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <template id="empty-state-template">
+      <article class="empty-state">
+        <strong>Nothing here yet.</strong>
+        <p class="meta">Hermes will populate this panel once the relevant state exists.</p>
+      </article>
+    </template>
+
+    <script src="/app.js"></script>
+  </body>
+</html>

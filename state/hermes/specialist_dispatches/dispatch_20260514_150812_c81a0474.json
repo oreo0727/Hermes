@@ -1,0 +1,13 @@
+{
+  "dispatch_id": "dispatch_20260514_150812_c81a0474",
+  "source": "operator-bridge",
+  "profile": "creative-dev",
+  "project_id": "aetherion-maze",
+  "status": "completed",
+  "created_at": "2026-05-14T19:08:12Z",
+  "updated_at": "2026-05-14T19:11:50Z",
+  "completed_at": "2026-05-14T19:11:50Z",
+  "prompt_preview": "Goal: Deliver a cozy HUD visual pack matching the attached reference for Godot 4.\nContext: Live web build at /godot-web shows only debug text; no HUD/vignette. We need production-quality HUD visuals and theme.\nDeliverab\u2026",
+  "output_preview": "Cozy HUD visual pack for Godot 4 is staged and committed to the Creative Dev workspace, ready to drop into the Aetherion Maze Godot project.\n\nWorkspace drop location\n- /home/james/Hermes/state/workspaces/creative-dev/aetherion-maze-hud-pack\n\nSummary of deliverables\n1) UI theme (HUD.tres) with Nunito Sans and label sty\u2026",
+  "error_preview": ""
+}

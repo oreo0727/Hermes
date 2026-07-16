@@ -1,0 +1,312 @@
+{
+  "dispatch_id": "dispatch_20260525_092845_24c38b57",
+  "source": "operator-bridge",
+  "profile": "creative-dev",
+  "project_id": "spooky-teen-shortfilm",
+  "status": "failed",
+  "created_at": "2026-05-25T13:28:45.802937+00:00",
+  "updated_at": "2026-05-26T14:53:11.351903+00:00",
+  "completed_at": "2026-05-26T14:53:11.351903+00:00",
+  "prompt_preview": "You are the creative-dev lane. Deliver Styleframes v1 for frames f02,f05,f07,f08,f09,f10. Use Storyboards v3 as composition ground truth. Inputs:\\n- styleframes/styleframes_manifest_v1.csv (sources + notes)\\n- stylefram\u2026",
+  "output_preview": "Taking the creative-dev lane and acting inside the approved project root. I located the inputs, verified the existing v1 pack, and finished the delivery pass by normalizing all six styleframes to 1920x1080, updating notes and blockers, and validating with a visual check on a raw frame.\n\nWhat I implemented this run\n- C\u2026",
+  "error_preview": "Dispatch marked failed after 1519m without completion. The operator bridge likely exited before finalizing the record.",
+  "supervisor": {
+    "status": "running",
+    "attempt_count": 2,
+    "max_attempts": 3,
+    "decision": "",
+    "critique": []
+  },
+  "attempts": [
+    {
+      "attempt_number": 1,
+      "prompt_preview": "You are the creative-dev lane. Deliver Styleframes v1 for frames f02,f05,f07,f08,f09,f10. Use Storyboards v3 as composition ground truth. Inputs:\\n- styleframes/styleframes_manifest_v1.csv (sources + notes)\\n- stylefram\u2026",
+      "output_preview": "Taking the creative-dev lane and acting inside the approved project root. I located the inputs, verified the existing v1 pack, and finished the delivery pass by normalizing all six styleframes to 1920x1080, updating notes and blockers, and validating with a visual check on a raw frame.\n\nWhat I implemented this run\n- C\u2026",
+      "structured_result": {
+        "schema_version": "1",
+        "summary": "Cropped all six styleframes to 1920x1080, updated notes and blockers, verified content evidence on sf_f07_raw.png, and kept the 2x3 contact sheet (placeholder) for packaging.",
+        "implemented": [
+          "Cropped styleframes/v1/sf_f02.png to 1920x1080",
+          "Cropped styleframes/v1/sf_f05.png to 1920x1080",
+          "Cropped styleframes/v1/sf_f07.png to 1920x1080",
+          "Cropped styleframes/v1/sf_f08.png to 1920x1080",
+          "Cropped styleframes/v1/sf_f09.png to 1920x1080",
+          "Cropped styleframes/v1/sf_f10.png to 1920x1080",
+          "Patched styleframes/styleframes_notes_v1.md with current cross-check and evidence",
+          "Patched styleframes/styleframes_v1_blockers.md with current status and analyzer caveat"
+        ],
+        "verified": [
+          "IHDR shows 1920x1080 for all six styleframes",
+          "Contact sheet is present and labeled PLACEHOLDER (2x3) with correct frame IDs",
+          "sf_f07_raw.png visually shows OTS phone (10:12 lock screen), tent left, lantern left, central fire, right-side sign, and cool ambient rim"
+        ],
+        "assumed": [
+          "Composition in each v1 styleframe matches Storyboards v3 (composition ground truth) based on existing pack lineage and contact annotations",
+          "f05 and f10 read as five teens ensemble frames per brief; direct analyzer check on the cropped finals awaits re-encode for tool compatibility"
+        ],
+        "blocked": [
+          "Vision analyzer rejects the cropped finals with a parser error; recommend Pillow re-encode for maximum compatibility",
+          "Contact sheet remains placeholder until Pillow/Magick is available for thumbnail embed"
+        ],
+        "risks": [
+          "Analyzer incompatibility with the pure-Python PNG re-encode may impede automated review even though IHDR/CRC are valid",
+          "Contact sheet without thumbnails is less reviewer-friendly; acceptance still readable via labels but not visual miniatures"
+        ],
+        "next_actions": [
+          "Create project-local venv and install Pillow; re-encode the six PNGs (lossless) to ensure analyzer compatibility",
+          "Regenerate the contact sheet with embedded thumbnails for f02,f05,f07,f08,f09,f10",
+          "Optionally re-run visual verification on the finals (sf_f05, sf_f10) after re-encode to capture ensemble-count evidence",
+          "If moving to new photographic passes, pin openai==1.16.1, httpx==0.27.*, httpcore==1.0.4 and avoid `proxies` kwargs"
+        ],
+        "artifacts": [
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f02.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f05.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f07.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f08.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f09.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f10.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/styleframes_contact_v1.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/styleframes_manifest_v1.csv",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/styleframes_notes_v1.md",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/styleframes_v1_blockers.md",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f07_raw.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f09_raw.png"
+        ],
+        "handoff_needed": false
+      },
+      "review": {
+        "decision": "revise",
+        "retryable": true,
+        "issues": [
+          "The response claims visual success without naming what is visibly on screen."
+        ],
+        "critique": [
+          "The response claims visual success without naming what is visibly on screen."
+        ],
+        "unmet_acceptance": [],
+        "summary": "Cropped all six styleframes to 1920x1080, updated notes and blockers, verified content evidence on sf_f07_raw.png, and kept the 2x3 contact sheet (placeholder) for packaging.",
+        "artifacts": [
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f02.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f05.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f07.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f08.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f09.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f10.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/styleframes_contact_v1.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/styleframes_manifest_v1.csv",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/styleframes_notes_v1.md",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/styleframes_v1_blockers.md",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f07_raw.png",
+          "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f09_raw.png"
+        ],
+        "structured_result": {
+          "schema_version": "1",
+          "summary": "Cropped all six styleframes to 1920x1080, updated notes and blockers, verified content evidence on sf_f07_raw.png, and kept the 2x3 contact sheet (placeholder) for packaging.",
+          "implemented": [
+            "Cropped styleframes/v1/sf_f02.png to 1920x1080",
+            "Cropped styleframes/v1/sf_f05.png to 1920x1080",
+            "Cropped styleframes/v1/sf_f07.png to 1920x1080",
+            "Cropped styleframes/v1/sf_f08.png to 1920x1080",
+            "Cropped styleframes/v1/sf_f09.png to 1920x1080",
+            "Cropped styleframes/v1/sf_f10.png to 1920x1080",
+            "Patched styleframes/styleframes_notes_v1.md with current cross-check and evidence",
+            "Patched styleframes/styleframes_v1_blockers.md with current status and analyzer caveat"
+          ],
+          "verified": [
+            "IHDR shows 1920x1080 for all six styleframes",
+            "Contact sheet is present and labeled PLACEHOLDER (2x3) with correct frame IDs",
+            "sf_f07_raw.png visually shows OTS phone (10:12 lock screen), tent left, lantern left, central fire, right-side sign, and cool ambient rim"
+          ],
+          "assumed": [
+            "Composition in each v1 styleframe matches Storyboards v3 (composition ground truth) based on existing pack lineage and contact annotations",
+            "f05 and f10 read as five teens ensemble frames per brief; direct analyzer check on the cropped finals awaits re-encode for tool compatibility"
+          ],
+          "blocked": [
+            "Vision analyzer rejects the cropped finals with a parser error; recommend Pillow re-encode for maximum compatibility",
+            "Contact sheet remains placeholder until Pillow/Magick is available for thumbnail embed"
+          ],
+          "risks": [
+            "Analyzer incompatibility with the pure-Python PNG re-encode may impede automated review even though IHDR/CRC are valid",
+            "Contact sheet without thumbnails is less reviewer-friendly; acceptance still readable via labels but not visual miniatures"
+          ],
+          "next_actions": [
+            "Create project-local venv and install Pillow; re-encode the six PNGs (lossless) to ensure analyzer compatibility",
+            "Regenerate the contact sheet with embedded thumbnails for f02,f05,f07,f08,f09,f10",
+            "Optionally re-run visual verification on the finals (sf_f05, sf_f10) after re-encode to capture ensemble-count evidence",
+            "If moving to new photographic passes, pin openai==1.16.1, httpx==0.27.*, httpcore==1.0.4 and avoid `proxies` kwargs"
+          ],
+          "artifacts": [
+            "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f02.png",
+            "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f05.png",
+            "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f07.png",
+            "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f08.png",
+            "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f09.png",
+            "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f10.png",
+            "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/styleframes_contact_v1.png",
+            "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/styleframes_manifest_v1.csv",
+            "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/styleframes_notes_v1.md",
+            "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/styleframes_v1_blockers.md",
+            "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f07_raw.png",
+            "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f09_raw.png"
+          ],
+          "handoff_needed": false
+        },
+        "profile_key": "creative-dev"
+      },
+      "completed_at": "2026-05-25T13:33:32.104388+00:00"
+    }
+  ],
+  "work_order": {
+    "schema_version": "1",
+    "created_at": "2026-05-25T13:28:45.860463+00:00",
+    "source": "specialist-bridge",
+    "profile_key": "creative-dev",
+    "project_id": "spooky-teen-shortfilm",
+    "project_title": "Midnight Signals \u2014 AI Spooky Short for Teens",
+    "project_root": "/home/james/Hermes/state/projects/spooky-teen-shortfilm",
+    "objective": "You are the creative-dev lane. Deliver Styleframes v1 for frames f02,f05,f07,f08,f09,f10. Use Storyboards v3 as composition ground truth. Inputs:\\n- styleframes/styleframes_manifest_v1.csv (sources + notes)\\n- styleframes/styleframes_notes_v1.md (palette, lens, grade, acceptance)\\nAcceptance (must be VISIBLE in output or explicitly WIP):\\n- Ensemble frames show five teens as characters (not markers).\\n- Anchors: tent back-center; lantern left foreground; right-side sign; central fire except f08 (phones-only) and f09 (macro).\\n- Lighting beats honored: match flare f02; phones-only f08; pocket glow f10; cool moon rim throughout.\\nDeliverables (paths):\\n- styleframes/v1/sf_f02.png, sf_f05.png, sf_f07.png, sf_f08.png, sf_f09.png, sf_f10.png (1920x1080).\\n- styleframes/styleframes_contact_v1.png (2x3).\\nQuality gate: In your reply, you MUST (1) list each created/updated file path AND (2) name exactly what is visibly on-screen in at least one frame (e.g., \"I can see the lantern in left FG, tent back-center, right-side sign, central fire\"). If blocked, state WIP and name the WIP overlays visible. Do not claim success without evidence.\\nIf image-gen is blocked by the OpenAI/httpx 'proxies' mismatch, keep WIP placeholders and update styleframes/styleframes_v1_blockers.md with exact error and required pins. Then attach MEDIA paths to the contact sheet and one sf_*.png in your reply.",
+    "autonomy_mode": "execute",
+    "owner_lane": "creative-dev",
+    "delivery_model": {
+      "strategy_key": "lead-creative-game-app",
+      "strategy_label": "Lead -> Creative -> Game Dev -> App Dev",
+      "lead_lane": "operator",
+      "active_lane": "creative-dev",
+      "primary_lane": "creative-dev",
+      "next_lane": "",
+      "lane_sequence": [
+        "operator",
+        "creative-dev"
+      ],
+      "specialist_sequence": [
+        "creative-dev"
+      ],
+      "control_mode": "orchestrated",
+      "delivery_target": "Reference-grounded storyboard redraw pack",
+      "primary_artifact": "/home/james/Hermes/state/projects/spooky-teen-shortfilm/storyboards/storyboard_contact_v3.png",
+      "strict_dispatch": true,
+      "acceptance": [
+        "Five teens are visibly rendered as characters, not seat markers or abstract geometry.",
+        "The boards visibly mirror the supplied camp reference: tent back-center, lantern left foreground, sign on right, central fire, moonlit forest palette.",
+        "Lighting reads as warm fire key plus cool moon rim with phones-only darkness where called for.",
+        "If the lane can only produce blocking diagrams or placeholder boards, it must report blocked and label the artifact placeholder instead of marking it review-ready."
+      ],
+      "capability_gaps": [
+        "image-gen transport mismatch: httpx>=0.28 removed 'proxies' kwarg; need httpx==0.27.* + httpcore==1.0.4 or alternate backend"
+      ],
+      "stage_guidance": {
+        "operator": "Own scope, freeze the delivery target, and keep the handoffs honest.",
+        "creative-dev": "Define the creative target, vision guardrails, and artifact acceptance language before implementation drifts."
+      },
+      "handoff_contract": [
+        "freeze one primary delivery target before downstream implementation expands scope",
+        "treat creative-dev as the vision and acceptance guardrail for downstream lanes",
+        "treat game-dev as the owner of the playable implementation path once the vision is frozen",
+        "treat app-dev as the owner of portal, tooling, packaging, and review-loop support after the build path is clear",
+        "require each lane to leave a concrete handoff for the next lane instead of sending the operator back into open-ended review"
+      ]
+    },
+    "lead_lane": "operator",
+    "active_lane": "creative-dev",
+    "next_lane": "",
+    "lane_sequence": [
+      "operator",
+      "creative-dev"
+    ],
+    "recommended_lanes": [
+      "operator"
+    ],
+    "expected_deliverables": [
+      "creative package or direction"
+    ],
+    "verification_required": [
+      "separate implemented, verified, and assumed",
+      "for reference-driven storyboard work, either produce image-grounded frames or explicitly report that the lane is blocked; do not substitute abstract diagrams and call them done",
+      "state whether the delivered artifact is a blocking diagram, placeholder board, clean storyboard, or image-grounded redraw",
+      "do not mark storyboard work review-ready if the output is still circles, boxes, icons, or other schematic placeholders instead of visibly rendered figures, props, and lighting beats"
+    ],
+    "project_status": "boards v3 in review; styleframes v1 in-flight; animatic v3 no-audio built",
+    "project_owner": "operator",
+    "project_now": "Animatic v3 (no audio) built at artifacts/animatic_v3_noaudio.mp4; creative-dev dispatched for Styleframes v1 (f02,f05,f07,f08,f09,f10).",
+    "project_next": "1) Await creative-dev Styleframes v1 delivery and contact sheet update. 2) If needed, mux subtitles (artifacts/animatic_v3.srt) onto no-audio animatic for timing review. 3) Prep review package: storyboard_contact_v3.png + animatic_v3_noaudio.mp4 + styleframes_contact_v1.png when ready.",
+    "project_control": {
+      "project_kind": "creative",
+      "control_mode": "orchestrated",
+      "primary_lane": "creative-dev",
+      "lane_sequence": [
+        "operator",
+        "creative-dev"
+      ],
+      "delivery_target": "Reference-grounded storyboard redraw pack",
+      "primary_artifact": "/home/james/Hermes/state/projects/spooky-teen-shortfilm/storyboards/storyboard_contact_v3.png",
+      "strict_dispatch": true,
+      "acceptance": [
+        "Five teens are visibly rendered as characters, not seat markers or abstract geometry.",
+        "The boards visibly mirror the supplied camp reference: tent back-center, lantern left foreground, sign on right, central fire, moonlit forest palette.",
+        "Lighting reads as warm fire key plus cool moon rim with phones-only darkness where called for.",
+        "If the lane can only produce blocking diagrams or placeholder boards, it must report blocked and label the artifact placeholder instead of marking it review-ready."
+      ],
+      "capability_gaps": [
+        "image-gen transport mismatch: httpx>=0.28 removed 'proxies' kwarg; need httpx==0.27.* + httpcore==1.0.4 or alternate backend"
+      ]
+    },
+    "portfolio": {
+      "active": true,
+      "queue_position": 1,
+      "state": "active",
+      "session_bindings": []
+    }
+  },
+  "structured_result": {
+    "schema_version": "1",
+    "summary": "Cropped all six styleframes to 1920x1080, updated notes and blockers, verified content evidence on sf_f07_raw.png, and kept the 2x3 contact sheet (placeholder) for packaging.",
+    "implemented": [
+      "Cropped styleframes/v1/sf_f02.png to 1920x1080",
+      "Cropped styleframes/v1/sf_f05.png to 1920x1080",
+      "Cropped styleframes/v1/sf_f07.png to 1920x1080",
+      "Cropped styleframes/v1/sf_f08.png to 1920x1080",
+      "Cropped styleframes/v1/sf_f09.png to 1920x1080",
+      "Cropped styleframes/v1/sf_f10.png to 1920x1080",
+      "Patched styleframes/styleframes_notes_v1.md with current cross-check and evidence",
+      "Patched styleframes/styleframes_v1_blockers.md with current status and analyzer caveat"
+    ],
+    "verified": [
+      "IHDR shows 1920x1080 for all six styleframes",
+      "Contact sheet is present and labeled PLACEHOLDER (2x3) with correct frame IDs",
+      "sf_f07_raw.png visually shows OTS phone (10:12 lock screen), tent left, lantern left, central fire, right-side sign, and cool ambient rim"
+    ],
+    "assumed": [
+      "Composition in each v1 styleframe matches Storyboards v3 (composition ground truth) based on existing pack lineage and contact annotations",
+      "f05 and f10 read as five teens ensemble frames per brief; direct analyzer check on the cropped finals awaits re-encode for tool compatibility"
+    ],
+    "blocked": [
+      "Vision analyzer rejects the cropped finals with a parser error; recommend Pillow re-encode for maximum compatibility",
+      "Contact sheet remains placeholder until Pillow/Magick is available for thumbnail embed"
+    ],
+    "risks": [
+      "Analyzer incompatibility with the pure-Python PNG re-encode may impede automated review even though IHDR/CRC are valid",
+      "Contact sheet without thumbnails is less reviewer-friendly; acceptance still readable via labels but not visual miniatures"
+    ],
+    "next_actions": [
+      "Create project-local venv and install Pillow; re-encode the six PNGs (lossless) to ensure analyzer compatibility",
+      "Regenerate the contact sheet with embedded thumbnails for f02,f05,f07,f08,f09,f10",
+      "Optionally re-run visual verification on the finals (sf_f05, sf_f10) after re-encode to capture ensemble-count evidence",
+      "If moving to new photographic passes, pin openai==1.16.1, httpx==0.27.*, httpcore==1.0.4 and avoid `proxies` kwargs"
+    ],
+    "artifacts": [
+      "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f02.png",
+      "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f05.png",
+      "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f07.png",
+      "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f08.png",
+      "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f09.png",
+      "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f10.png",
+      "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/styleframes_contact_v1.png",
+      "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/styleframes_manifest_v1.csv",
+      "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/styleframes_notes_v1.md",
+      "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/styleframes_v1_blockers.md",
+      "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f07_raw.png",
+      "/home/james/Hermes/state/projects/spooky-teen-shortfilm/styleframes/v1/sf_f09_raw.png"
+    ],
+    "handoff_needed": false
+  }
+}

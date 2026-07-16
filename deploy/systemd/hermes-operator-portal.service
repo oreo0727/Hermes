@@ -1,0 +1,16 @@
+[Unit]
+Description=Hermes Operator Portal
+After=network-online.target hermes-operator-gateway.service
+Wants=network-online.target hermes-operator-gateway.service
+
+[Service]
+Type=simple
+WorkingDirectory=%h/Hermes
+ExecStart=%h/Hermes/scripts/run-operator-portal.sh
+Restart=always
+RestartSec=5
+KillSignal=SIGINT
+TimeoutStopSec=30
+
+[Install]
+WantedBy=default.target

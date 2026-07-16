@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "approvedRoots": [
+    "/home/james/Hermes/state/workspaces/general",
+    "/home/james/Hermes/state/workspaces/app-dev",
+    "/home/james/Hermes/state/workspaces/game-dev",
+    "/home/james/Hermes/state/workspaces/creative-dev"
+  ],
+  "rules": {
+    "allowPromptSelectedPaths": false,
+    "allowArbitraryRunFileReads": false,
+    "requireAuditLog": true
+  }
+}

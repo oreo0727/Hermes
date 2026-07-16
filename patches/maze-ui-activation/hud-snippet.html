@@ -1,0 +1,9 @@
+<!-- Minimal HUD content; paste inside #gameRoot after the canvas if you don't already have a HUD -->
+<div id="hudTL" aria-hidden="false" aria-live="polite">
+  <div class="chip"><span>❤❤❤</span><span id="hudHeartsLabel" class="sr-only">Hearts</span></div>
+  <div class="chip">Lvl <span id="hudLevel">1</span></div>
+  <div class="chip">Keys <span id="hudKeys">0</span></div>
+  <div class="chip">Pickups <span id="hudPickups">0</span></div>
+</div>
+<!-- Optional: add visually-hidden helper class in your CSS -->
+<style>.sr-only{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;}</style>

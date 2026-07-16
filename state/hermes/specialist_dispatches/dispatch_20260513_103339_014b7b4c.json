@@ -1,0 +1,13 @@
+{
+  "dispatch_id": "dispatch_20260513_103339_014b7b4c",
+  "source": "operator-bridge",
+  "profile": "game-dev",
+  "project_id": "aetherion-maze",
+  "status": "completed",
+  "created_at": "2026-05-13T14:33:39Z",
+  "updated_at": "2026-05-13T14:36:03Z",
+  "completed_at": "2026-05-13T14:36:03Z",
+  "prompt_preview": "Objective: Ensure Maze Forest uses sprite atlas for characters, enemies, traps and optional door immediately, with terrain sprites gated by Cozy mode. Fixes required: 1) Always load assets/sheets/spritesheet.json regard\u2026",
+  "output_preview": "Work completed: Maze Forest atlas loading, URL resolution, keys verification, procedural fallback/gating, and version bump\n\nWhat I changed (code patches applied):\n1) assets.js\n- Ensured URL resolution uses new URL(path, location.href), with cache-busting via MF_VERSION (already present).\n- Added a soft verification st\u2026",
+  "error_preview": ""
+}

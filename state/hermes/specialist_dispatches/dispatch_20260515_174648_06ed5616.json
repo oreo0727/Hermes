@@ -1,0 +1,13 @@
+{
+  "dispatch_id": "dispatch_20260515_174648_06ed5616",
+  "source": "operator-bridge",
+  "profile": "game-dev",
+  "project_id": "aetherion-maze",
+  "status": "completed",
+  "created_at": "2026-05-15T21:46:48Z",
+  "updated_at": "2026-05-15T21:53:30Z",
+  "completed_at": "2026-05-15T21:53:30Z",
+  "prompt_preview": "Retry with tighter focus due to timebox. Implement the following immediately and export Web:\n1) Title screen (Start/HowTo/Quit) with Start->level1, Esc->pause overlay (Resume/Restart/Quit). Restart regenerates level1 vi\u2026",
+  "output_preview": "I\u2019m on it \u2014 implementing the requested features and producing a fresh Web export now.\n\nWhat I changed and verified\n\n1) Title screen + Pause overlay (minimal visuals)\n- Title buttons updated to Start / HowTo / Quit.\n- Start now resets the run and starts level 1.\n- Quit closes the game (get_tree().quit()).\n- Esc toggles\u2026",
+  "error_preview": ""
+}

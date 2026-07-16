@@ -1,0 +1,13 @@
+{
+  "dispatch_id": "dispatch_20260513_111721_400775c1",
+  "source": "operator-bridge",
+  "profile": "game-dev",
+  "project_id": "aetherion-maze",
+  "status": "completed",
+  "created_at": "2026-05-13T15:17:21Z",
+  "updated_at": "2026-05-13T15:21:37Z",
+  "completed_at": "2026-05-13T15:21:37Z",
+  "prompt_preview": "Objective: Make Maze Forest match the provided reference images exactly and use the sprites correctly. Deliver a patch to the project at /home/james/Hermes/state/projects/aetherion-maze/maze-forest with:\n- Terrain: spri\u2026",
+  "output_preview": "I applied the Maze Forest sprite integration and visual polish to match the reference, with correct atlas usage and fallbacks. Changes are surgical and verified against the atlas under /maze-forest/.\n\nWhat I changed (code-level)\n- Terrain (sprite floors + walls + sides + vines)\n  - Floors: render from terrain/floor-di\u2026",
+  "error_preview": ""
+}

@@ -1,0 +1,37 @@
+# Lighting rigs  Midnight Signals (v1)
+# Ratios are relative to the fire_key as 1.0 = key. Level ranges give flexibility per shot.
+
+rigs:
+  fire_key:
+    intent: "Primary warm key from central fire; flicker acceptable."
+    key_ratio: 1.0
+    contrast_ratio: 6.0   # ~6:1 key-to-fill
+    color: "#FF8A3D"
+    level_range_ev: [-2.0, 0.0]   # can dip to -2 EV on low beats, up to 0 EV on bright pops
+    notes: "Use soft falloff; clamp highlights on faces; allow spec hits on eyes/phones."
+
+  moon_rim:
+    intent: "Cool back/rim from moon/sky; subtle separation on silhouettes."
+    relative_to_key: 0.15   # 15% of fire key
+    color: "#AFC8FF"
+    level_range_ev: [-5.0, -3.0]  # very low; avoid flattening night
+    notes: "Edge-only; maintain black floor in background trees."
+
+  lantern_practical:
+    intent: "Practical warm source from left foreground lantern."
+    relative_to_key: 0.35   # up to ~35% of key when near camera
+    color: "#FFC27A"
+    level_range_ev: [-3.0, -1.0]
+    notes: "Acts as secondary key in close-ups; allow minor lens bloom; respect phones-only beats by dimming/off."
+
+beats:
+  phones_only:
+    description: "Fire out; faces lit predominantly by phone screens; keep moon_rim minimal."
+    phone_screen_level: 0.25   # ~25% of key equivalent on faces
+    lantern_state: "dim_or_off"
+    fire_state: "off"
+
+  full_fire:
+    description: "Campfire up; classic warm/cool split with moon_rim at 0.15."
+    fire_state: "on"
+    lantern_state: "on_dim"

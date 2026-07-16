@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Maze Forest</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="ui">
+    <div id="title">Maze Forest</div>
+    <div id="hud">
+      <span id="level">Level 1</span>
+      <span id="health">❤❤❤</span>
+      <span id="shield" class="hidden">🛡</span>
+      <span id="msg"></span>
+    </div>
+    <div id="help">WASD/Arrows to move • R restart • M mute</div>
+  </div>
+  <div id="gameRoot">
+    <canvas id="game" width="720" height="720"></canvas>
+  </div>
+
+  <!-- Ship mode: diagnostics gated OFF by default; sprites ON -->
+  <script>try{ localStorage.setItem('mf_debug','0'); window.MF_DEBUG=0; localStorage.setItem('mf_no_sprites','0'); }catch(e){}</script>
+  <!-- <script src="src/diag.js?v=13"></script> -->
+  <script src="src/generator.js?v=13"></script>
+  <script src="src/systems/enemy.js?v=13"></script>
+  <script src="src/systems/trap.js?v=13"></script>
+  <script src="src/systems/powerup.js?v=13"></script>
+  <script src="src/assets.js?v=13"></script>
+  <script src="src/asset_adapter.js?v=13"></script>
+  <script src="src/assets_grid.js?v=13"></script>
+  <script src="src/renderer.js?v=13"></script>
+  <script src="src/input.js?v=13"></script>
+  <script src="src/game.js?v=13"></script>
+</body>
+</html>

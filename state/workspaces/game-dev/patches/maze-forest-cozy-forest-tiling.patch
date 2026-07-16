@@ -1,0 +1,341 @@
+*** Begin Patch
+*** Add File: maze-forest/src/tiling.js
++// Cozy Forest tiling + hashing helpers
++// Keep allocations out of the render loop. All functions are pure and return primitives.
++
++export const TILE_SIZE = 64;
++
++// Read a tile value from the level in a tolerant way (supports various shapes)
++export function readTile(level, x, y) {
++  if (!level) return undefined;
++  const w = level.width ?? (level.tiles && level.tiles[0] ? level.tiles[0].length : 0);
++  const h = level.height ?? (level.tiles ? level.tiles.length : 0);
++  if (x < 0 || y < 0 || x >= w || y >= h) return undefined;
++  if (typeof level.getTile === 'function') return level.getTile(x, y);
++  if (Array.isArray(level.tiles)) return level.tiles[y]?.[x];
++  return undefined;
++}
++
++export function getLevelSize(level) {
++  if (!level) return { width: 0, height: 0 };
++  const width = level.width ?? (level.tiles && level.tiles[0] ? level.tiles[0].length : 0);
++  const height = level.height ?? (level.tiles ? level.tiles.length : 0);
++  return { width, height };
++}
++
++// Default predicate for deciding if a tile is a wall.
++export function isWallDefault(t) {
++  if (t == null) return false;
++  if (t === 1 || t === 'W' || t === 'wall') return true;
++  if (typeof t === 'object') {
++    const k = t.kind || t.type || t.id;
++    return k === 'wall' || k === 'W' || k === 1;
++  }
++  return false;
++}
++
++// Bitmask order: N=1, E=2, S=4, W=8
++export function neighborMask(level, x, y, isWall = isWallDefault) {
++  let mask = 0;
++  if (isWall(readTile(level, x, y - 1))) mask |= 1;
++  if (isWall(readTile(level, x + 1, y))) mask |= 2;
++  if (isWall(readTile(level, x, y + 1))) mask |= 4;
++  if (isWall(readTile(level, x - 1, y))) mask |= 8;
++  return mask;
++}
++
++// Returns the most exposed direction for a wall-top sprite, preferring corners
++// when two orthogonal sides are exposed. One of: 'n','e','s','w','ne','nw','se','sw'
++export function exposedDir(level, x, y, isWall = isWallDefault) {
++  const n = !isWall(readTile(level, x, y - 1));
++  const e = !isWall(readTile(level, x + 1, y));
++  const s = !isWall(readTile(level, x, y + 1));
++  const w = !isWall(readTile(level, x - 1, y));
++  if (n && w) return 'nw';
++  if (n && e) return 'ne';
++  if (s && w) return 'sw';
++  if (s && e) return 'se';
++  if (n) return 'n';
++  if (e) return 'e';
++  if (s) return 's';
++  if (w) return 'w';
++  return 'n';
++}
++
++// Fast, stable 2D hash (x,y) with an external seed and salt. Returns uint32.
++export function seededHash32(seed, x, y, salt = 0) {
++  // Mix inspired by FNV/xxhash style integer mixing; stays in 32-bit space
++  let h = (2166136261 ^ (seed | 0)) >>> 0;
++  h ^= (x | 0) + 374761393; h = Math.imul(h, 2654435761) >>> 0;
++  h ^= (y | 0) + 1274126177; h = Math.imul(h, 2246822519) >>> 0;
++  h ^= (salt | 0);           h = Math.imul(h, 3266489917) >>> 0;
++  // Final avalanche
++  h ^= h >>> 15; h = Math.imul(h, 2246822507) >>> 0;
++  h ^= h >>> 13; h = Math.imul(h, 3266489909) >>> 0;
++  h ^= h >>> 16;
++  return h >>> 0;
++}
++
++export function stableIndex(seed, x, y, count, salt = 0) {
++  return (seededHash32(seed, x, y, salt) % (count >>> 0)) >>> 0;
++}
++
++export function chance(seed, x, y, salt, probability /* 0..1 */) {
++  const t = (seededHash32(seed, x, y, salt) & 0xffff) / 65536;
++  return t < probability;
++}
++
++export function playerTileXY(state) {
++  const p = state && state.player ? state.player : {};
++  if (Number.isFinite(p.tx) && Number.isFinite(p.ty)) return { x: p.tx | 0, y: p.ty | 0 };
++  const ts = TILE_SIZE;
++  const x = Number.isFinite(p.x) ? Math.max(0, Math.floor(p.x / ts)) : 0;
++  const y = Number.isFinite(p.y) ? Math.max(0, Math.floor(p.y / ts)) : 0;
++  return { x, y };
++}
++
+*** End Patch
+*** Begin Patch
+*** Update File: maze-forest/src/renderer.js
+@@
+-import { drawSprite } from './assets.js';
++// Renderer updated for Cozy Forest tiling and animations.
++// Assumes a minimal assets loader with drawSprite(name, x, y) or drawSprite(ctx, name, x, y).
++// Public API stays the same: new Renderer(canvas, assets).render(state, ts)
++
++import { TILE_SIZE, readTile, getLevelSize, isWallDefault, exposedDir, stableIndex, chance, playerTileXY } from './tiling.js';
++
++export class Renderer {
++  constructor(canvas, assets) {
++    this.canvas = canvas;
++    this.ctx = canvas ? canvas.getContext('2d') : null;
++    this.assets = assets || {};
++    this._probeCache = new Map(); // name -> boolean
++    this._animLenCache = new Map(); // base -> count
++  }
++
++  // Defensive sprite existence probe that tolerates different loader shapes.
++  hasSprite(name) {
++    if (!name) return false;
++    const cached = this._probeCache.get(name);
++    if (cached != null) return cached;
++    const A = this.assets || {};
++    let ok = false;
++    try {
++      const frames = A.frames || (A.atlas && A.atlas.frames) || A.map || A.index || A.lookup;
++      if (frames && (frames[name] || frames[name + '.png'])) ok = true;
++      else if (typeof A.has === 'function') ok = !!A.has(name);
++      else if (typeof A.get === 'function') ok = !!A.get(name);
++    } catch (_) { /* ignore */ }
++    this._probeCache.set(name, !!ok);
++    return !!ok;
++  }
++
++  // Draw wrapper supporting both drawSprite(ctx, name, x, y) and drawSprite(name, x, y)
++  _draw(name, x, y) {
++    const A = this.assets;
++    if (!A || typeof A.drawSprite !== 'function') return;
++    try {
++      if (A.drawSprite.length >= 4) A.drawSprite(this.ctx, name, x, y);
++      else A.drawSprite(name, x, y);
++    } catch (_) { /* ignore draw errors to preserve fallbacks */ }
++  }
++
++  _withAdditive(fn) {
++    if (!this.ctx) return fn();
++    const ctx = this.ctx;
++    ctx.save();
++    ctx.globalCompositeOperation = 'lighter';
++    fn();
++    ctx.restore();
++  }
++
++  _fallbackRect(x, y, color) {
++    const ctx = this.ctx; if (!ctx) return;
++    ctx.fillStyle = color;
++    ctx.fillRect(x | 0, y | 0, TILE_SIZE, TILE_SIZE);
++  }
++
++  _fallbackCircle(x, y, color) {
++    const ctx = this.ctx; if (!ctx) return;
++    const cx = (x | 0) + (TILE_SIZE >> 1);
++    const cy = (y | 0) + (TILE_SIZE >> 1);
++    ctx.fillStyle = color;
++    ctx.beginPath();
++    ctx.arc(cx, cy, TILE_SIZE * 0.35, 0, Math.PI * 2);
++    ctx.fill();
++  }
++
++  _fallbackGlow(cx, cy, r, color) {
++    const ctx = this.ctx; if (!ctx) return;
++    const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, r);
++    g.addColorStop(0, color);
++    g.addColorStop(1, 'rgba(0,0,0,0)');
++    ctx.fillStyle = g;
++    ctx.beginPath();
++    ctx.arc(cx, cy, r, 0, Math.PI * 2);
++    ctx.fill();
++  }
++
++  _animLength(base) {
++    let n = this._animLenCache.get(base);
++    if (n != null) return n;
++    // Probe sequentially up to 16 frames max
++    let c = 0;
++    for (let i = 0; i < 16; i++) {
++      if (this.hasSprite(`${base}-${i}`)) c++; else break;
++    }
++    if (c === 0 && this.hasSprite(base)) c = 1; // treat single frame as 1
++    this._animLenCache.set(base, c);
++    return c;
++  }
++
++  _chooseAnimFrame(base, ticks, fps = 8) {
++    const len = this._animLength(base);
++    if (len <= 0) return null;
++    if (len === 1) return this.hasSprite(base) ? base : null;
++    const idx = Math.floor((ticks * (fps >>> 0)) / 60) % len; // approx 60 tps
++    const name = `${base}-${idx}`;
++    return this.hasSprite(name) ? name : (this.hasSprite(base) ? base : null);
++  }
++
++  render(state, ts = 0) {
++    const c = this.canvas, ctx = this.ctx;
++    if (!c || !ctx) return;
++    if ((c.width | 0) === 0 || (c.height | 0) === 0) return;
++
++    // Clamp ts to sane bounds
++    ts = Number.isFinite(ts) ? Math.max(0, Math.min(ts, 1e9)) : 0;
++    const ticks = Number.isFinite(state?.ticks) ? (state.ticks | 0) : ((ts / 16) | 0);
++
++    const level = state?.level || state;
++    const { width: W, height: H } = getLevelSize(level);
++
++    // Clear
++    ctx.clearRect(0, 0, c.width, c.height);
++    ctx.imageSmoothingEnabled = false;
++
++    const seed = Number.isFinite(state?.seed) ? (state.seed | 0) : 1337;
++    const pTile = playerTileXY(state);
++
++    // Terrain pass (floors, walls, overlays)
++    for (let y = 0; y < H; y++) {
++      const py = y * TILE_SIZE;
++      for (let x = 0; x < W; x++) {
++        const px = x * TILE_SIZE;
++        const t = readTile(level, x, y);
++        const isWall = isWallDefault(t);
++        if (!isWall) {
++          const varIdx = (stableIndex(seed, x, y, 4, 101) + 1) >>> 0; // 1..4
++          const floorName = `terrain/floor-dirt-var${varIdx}`;
++          if (this.hasSprite(floorName)) this._draw(floorName, px, py);
++          else { ctx.fillStyle = '#3b4a2f'; ctx.fillRect(px, py, TILE_SIZE, TILE_SIZE); }
++
++          // Decals: light density with spacing rule (only 1-in-4 cells eligible), variety
++          if (((stableIndex(seed, x, y, 4, 880) | 0) === 0) && chance(seed, x, y, 777, 0.09)) {
++            const kinds = ['decals/pebble-1', 'decals/fern-1', 'decals/flowers-1', 'decals/mushroom-1'];
++            const k = stableIndex(seed, x, y, kinds.length, 999);
++            const dname = kinds[k] || kinds[0];
++            if (this.hasSprite(dname)) this._draw(dname, px, py);
++          }
++        } else {
++          // Wall tops + sides + decorative vines
++          const dir = exposedDir(level, x, y, isWallDefault);
++          const topName = `terrain/wall-top-${dir}`;
++          if (this.hasSprite(topName)) this._draw(topName, px, py);
++          else { ctx.fillStyle = '#1f261d'; ctx.fillRect(px, py, TILE_SIZE, TILE_SIZE); }
++
++          const nWall = isWallDefault(readTile(level, x, y - 1));
++          const eWall = isWallDefault(readTile(level, x + 1, y));
++          const sWall = isWallDefault(readTile(level, x, y + 1));
++          const wWall = isWallDefault(readTile(level, x - 1, y));
++          if (!nWall) { const nm = 'terrain/wall-side-n'; if (this.hasSprite(nm)) this._draw(nm, px, py); }
++          if (!eWall) { const nm = 'terrain/wall-side-e'; if (this.hasSprite(nm)) this._draw(nm, px, py); }
++          if (!sWall) { const nm = 'terrain/wall-side-s'; if (this.hasSprite(nm)) this._draw(nm, px, py); }
++          if (!wWall) { const nm = 'terrain/wall-side-w'; if (this.hasSprite(nm)) this._draw(nm, px, py); }
++
++          // Vines: low probability on exposed edges, avoid edge facing player to reduce occlusion
++          const avoidN = (pTile.x === x && pTile.y === (y - 1));
++          const avoidE = (pTile.x === (x + 1) && pTile.y === y);
++          const avoidS = (pTile.x === x && pTile.y === (y + 1));
++          const avoidW = (pTile.x === (x - 1) && pTile.y === y);
++          if (!nWall && !avoidN && chance(seed, x, y, 4001, 0.06)) { const vn = 'terrain/vine-overhang-n'; if (this.hasSprite(vn)) this._draw(vn, px, py); }
++          if (!eWall && !avoidE && chance(seed, x, y, 4002, 0.06)) { const vn = 'terrain/vine-overhang-e'; if (this.hasSprite(vn)) this._draw(vn, px, py); }
++          if (!sWall && !avoidS && chance(seed, x, y, 4003, 0.06)) { const vn = 'terrain/vine-overhang-s'; if (this.hasSprite(vn)) this._draw(vn, px, py); }
++          if (!wWall && !avoidW && chance(seed, x, y, 4004, 0.06)) { const vn = 'terrain/vine-overhang-w'; if (this.hasSprite(vn)) this._draw(vn, px, py); }
++        }
++      }
++    }
++
++    // Entities: player
++    const p = state?.player;
++    if (p) {
++      const movingCooldown = (state?.movingCooldown ?? p.movingCooldown ?? 0) | 0;
++      const walking = movingCooldown <= 0 && (((p.vx | 0) !== 0) || ((p.vy | 0) !== 0) || p.moving === true);
++      const base = walking ? 'entities/hero-walk' : 'entities/hero-idle';
++      const frameName = this._chooseAnimFrame(base, ticks, 8) || (this.hasSprite('entities/hero') ? 'entities/hero' : null);
++      const px = Number.isFinite(p.x) ? p.x : ((p.tx | 0) * TILE_SIZE);
++      const py = Number.isFinite(p.y) ? p.y : ((p.ty | 0) * TILE_SIZE);
++      if (frameName) this._draw(frameName, px, py); else this._fallbackCircle(px, py, '#4ec9b0');
++    }
++
++    // Enemies
++    if (Array.isArray(state?.enemies)) {
++      for (let i = 0; i < state.enemies.length; i++) {
++        const e = state.enemies[i]; if (!e) continue;
++        const kind = e.kind || 'skeleton';
++        const base = (kind === 'goblin') ? 'enemies/goblin-walk' : 'enemies/skeleton-walk';
++        const frameName = this._chooseAnimFrame(base, ticks, 8) || base;
++        const ex = Number.isFinite(e.x) ? e.x : ((e.tx | 0) * TILE_SIZE);
++        const ey = Number.isFinite(e.y) ? e.y : ((e.ty | 0) * TILE_SIZE);
++        if (this.hasSprite(frameName)) this._draw(frameName, ex, ey); else this._fallbackRect(ex, ey, '#c05050');
++      }
++    }
++
++    // Power-ups
++    if (Array.isArray(state?.powerups)) {
++      for (let i = 0; i < state.powerups.length; i++) {
++        const it = state.powerups[i]; if (!it) continue;
++        const k = it.kind || it.type || 'heal';
++        let sprite = 'powerups/potion-red';
++        if (k === 'shield') sprite = 'powerups/shield-blue';
++        else if (k === 'speed') sprite = 'powerups/tile-lightning';
++        const ix = Number.isFinite(it.x) ? it.x : ((it.tx | 0) * TILE_SIZE);
++        const iy = Number.isFinite(it.y) ? it.y : ((it.ty | 0) * TILE_SIZE);
++        if (this.hasSprite(sprite)) this._draw(sprite, ix, iy); else this._fallbackRect(ix, iy, '#ffd166');
++        const glow = this.hasSprite('fx/glow-small') ? 'fx/glow-small' : (this.hasSprite('fx/glow') ? 'fx/glow' : null);
++        if (glow) this._withAdditive(() => this._draw(glow, ix, iy));
++      }
++    }
++
++    // Traps
++    if (Array.isArray(state?.traps)) {
++      for (let i = 0; i < state.traps.length; i++) {
++        const tr = state.traps[i]; if (!tr) continue;
++        const frame = (ticks & 3) >>> 0; // 0..3
++        const base = 'hazards/spikes-plate';
++        const name = this.hasSprite(`${base}-${frame}`) ? `${base}-${frame}` : base;
++        const tx = Number.isFinite(tr.x) ? tr.x : ((tr.tx | 0) * TILE_SIZE);
++        const ty = Number.isFinite(tr.y) ? tr.y : ((tr.ty | 0) * TILE_SIZE);
++        if (this.hasSprite(name)) this._draw(name, tx, ty); else this._fallbackRect(tx, ty, '#aaaaaa');
++      }
++    }
++
++    // Exit
++    const exit = state?.exit || state?.level?.exit;
++    if (exit) {
++      const ex = Number.isFinite(exit.x) ? exit.x : ((exit.tx | 0) * TILE_SIZE);
++      const ey = Number.isFinite(exit.y) ? exit.y : ((exit.ty | 0) * TILE_SIZE);
++      const dname = 'terrain/door-exit-open';
++      if (this.hasSprite(dname)) this._draw(dname, ex, ey);
++      else {
++        const pulse = 0.6 + 0.4 * Math.sin(((ticks % 120) / 120) * Math.PI * 2);
++        this._withAdditive(() => {
++          this._fallbackGlow(ex + TILE_SIZE / 2, ey + TILE_SIZE / 2, 22, `rgba(120,200,255,${0.5 * pulse})`);
++        });
++      }
++    }
++  }
++}
++
+*** End Patch

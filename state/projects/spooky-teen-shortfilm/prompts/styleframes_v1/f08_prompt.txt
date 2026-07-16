@@ -1,0 +1,3 @@
+Sign reveal: right-side wooden sign (pine icon) readable, tent mid-background, lantern practical left, no central fire, cool moon rim shaping silhouettes.
+Lens 35mm, f/2.8, filmic grade; forest palette muted.
+Output 1920x1088; crop center to 1920x1080.

@@ -1,0 +1,113 @@
+{
+  "dispatch_id": "dispatch_20260520_213356_21bbf934",
+  "source": "operator-bridge",
+  "profile": "game-dev",
+  "project_id": "aetherion-maze",
+  "status": "completed",
+  "created_at": "2026-05-21T01:33:56.947504+00:00",
+  "updated_at": "2026-05-21T01:37:47.433388+00:00",
+  "completed_at": "2026-05-21T01:37:47.433388+00:00",
+  "prompt_preview": "Delivery strategy: Lead -> Creative -> Game Dev -> App Dev\nStage 2/3: game-dev\nProject: aetherion-maze / Aetherion Maze Games\nPrimary objective: Converge Aetherion Maze under one lead-owned path that runs creative-dev f\u2026",
+  "output_preview": "Converged on the Godot 4 Web build and re-exported to the single target path. Adjusted HUD icon sizes to hit the creative guardrail (18\u201320 px \u2192 set to 20 px), kept vignette below HUD, gated noisy camera logs behind ?debug=1, verified export integrity, and spun up a local review route to preflight. No parallel rebuilds\u2026",
+  "error_preview": "",
+  "work_order": {
+    "schema_version": "1",
+    "created_at": "2026-05-21T01:33:56.972508+00:00",
+    "source": "specialist-bridge",
+    "profile_key": "game-dev",
+    "project_id": "aetherion-maze",
+    "project_title": "Aetherion Maze Games",
+    "project_root": "/home/james/Hermes/state/projects/aetherion-maze",
+    "objective": "Delivery strategy: Lead -> Creative -> Game Dev -> App Dev\nStage 2/3: game-dev\nProject: aetherion-maze / Aetherion Maze Games\nPrimary objective: Converge Aetherion Maze under one lead-owned path that runs creative-dev first, then game-dev, then app-dev, with one primary delivery target and no parallel rebuild drift.\nCurrent project summary: Aetherion Maze review lane with Godot web export, legacy prototype references, and Hermes operator tracking.\nCurrent tracking now: n/a\n\nStage contract:\nConverge the playable implementation on the chosen artifact. Do not create a parallel rebuild path unless the creative handoff explicitly requires it.\n\nPrior handoff context:\n- creative-dev: Creative target frozen on the Godot 4 web export. Cozy HUD/theme, vignette, palette, and input cadence are now guardrails. Legacy HTML/Canvas prototypes are reference-only. Acceptance language is codified and a concrete handoff to game-dev is in place.\n- creative-dev next: {'lane': 'game-dev', 'action': 'Re-export the Godot Web build to /godot-web/ per acceptance-guardrails, verify HUD theme application, icon crispness (18\u201320px), vignette ordering (below HUD), input pacing (no diagonals; steady cooldown), mobile D-pad \u226544px, and deliver a short QA note of verified guardrails and any deviations.', 'references': ['/home/james/Hermes/state/workspaces/creative-dev/aetherion-maze/handoff-game-dev.md', '/home/james/Hermes/state/workspaces/creative-dev/aetherion-maze/vision-freeze.md', '/home/james/Hermes/state/workspaces/creative-dev/aetherion-maze/acceptance-guardrails.md']}\n\nRequired output:\n- concise human summary\n- machine-readable json block with summary, implemented, verified, assumed, blocked, risks, next_actions, artifacts, handoff_needed\n\nLeave app-dev a clean next action.\nMake the first `next_actions` item the concrete handoff for app-dev.",
+    "autonomy_mode": "execute",
+    "owner_lane": "game-dev",
+    "delivery_model": {
+      "strategy_key": "lead-creative-game-app",
+      "strategy_label": "Lead -> Creative -> Game Dev -> App Dev",
+      "lead_lane": "operator",
+      "active_lane": "game-dev",
+      "next_lane": "app-dev",
+      "lane_sequence": [
+        "operator",
+        "creative-dev",
+        "game-dev",
+        "app-dev"
+      ],
+      "specialist_sequence": [
+        "creative-dev",
+        "game-dev",
+        "app-dev"
+      ],
+      "stage_guidance": {
+        "operator": "Own scope, freeze the delivery target, and keep the handoffs honest.",
+        "creative-dev": "Define the creative target, vision guardrails, and artifact acceptance language before implementation drifts.",
+        "game-dev": "Own the playable build path and converge the actual game implementation on the chosen target artifact.",
+        "app-dev": "Own the app, tooling, portal, and review-loop support needed to make the chosen artifact reviewable and repeatable."
+      },
+      "handoff_contract": [
+        "freeze one primary delivery target before downstream implementation expands scope",
+        "treat creative-dev as the vision and acceptance guardrail for downstream lanes",
+        "treat game-dev as the owner of the playable implementation path once the vision is frozen",
+        "treat app-dev as the owner of portal, tooling, packaging, and review-loop support after the build path is clear",
+        "require each lane to leave a concrete handoff for the next lane instead of sending the operator back into open-ended review"
+      ]
+    },
+    "lead_lane": "operator",
+    "active_lane": "game-dev",
+    "next_lane": "app-dev",
+    "lane_sequence": [
+      "operator",
+      "creative-dev",
+      "game-dev",
+      "app-dev"
+    ],
+    "recommended_lanes": [
+      "operator",
+      "creative-dev",
+      "app-dev"
+    ],
+    "expected_deliverables": [
+      "code changes",
+      "artifact or build output",
+      "findings and recommended next actions",
+      "creative package or direction"
+    ],
+    "verification_required": [
+      "separate implemented, verified, and assumed",
+      "run the smallest local verification possible before claiming success"
+    ],
+    "project_status": "active",
+    "project_owner": "game-dev",
+    "project_now": "creative-dev: Creative target frozen on the Godot 4 web export. Cozy HUD/theme, vignette, palette, and input cadence are now guardrails. Legacy HTML/Canvas prototypes are reference-only. Acceptance language is codified and a concrete handoff to game-dev is in place.",
+    "project_next": "{'lane': 'game-dev', 'action': 'Re-export the Godot Web build to /godot-web/ per acceptance-guardrails, verify HUD theme application, icon crispness (18\u201320px), vignette ordering (below HUD), input pacing (no diagonals; steady cooldown), mobile D-pad \u226544px, and deliver a short QA note of verified guardrails and any deviations.', 'references': ['/home/james/Hermes/state/workspaces/creative-dev/aetherion-maze/handoff-game-dev.md', '/home/james/Hermes/state/workspaces/creative-dev/aetherion-maze/vision-freeze.md', '/home/james/Hermes/state/workspaces/creative-dev/aetherion-maze/acceptance-guardrails.md']}"
+  },
+  "structured_result": {
+    "schema_version": "1",
+    "summary": "Converged on the Godot 4 Web build and re-exported to the single target path. Adjusted HUD icon sizes to hit the creative guardrail (18\u201320 px \u2192 set to 20 px), kept vignette below HUD, gated noisy camera logs behind ?debug=1, verified export integrity, and spun up a local review route to preflight. No parallel rebuilds were created; legacy HTML/Canvas prototypes remain reference-only.",
+    "implemented": [],
+    "verified": [],
+    "assumed": [],
+    "blocked": [],
+    "risks": [],
+    "next_actions": [],
+    "artifacts": [
+      "/home/james/Hermes/state/projects/aetherion-maze/godot-web/",
+      "index.html",
+      "res://res/HUD.tres",
+      "http://127.0.0.1:8011/godot-web/",
+      "index.wasm",
+      "godot-maze/res/ui/HUD.tscn",
+      "godot-maze/scripts/CameraLogger.gd",
+      "/home/james/Hermes/state/projects/aetherion-maze/godot-web/.\"",
+      "Player.gd",
+      "index.js",
+      "coi-serviceworker.js",
+      "/home/james/Hermes/state/projects/aetherion-maze/godot-maze/res/ui/HUD.tscn",
+      "/home/james/Hermes/state/projects/aetherion-maze/godot-maze/scripts/CameraLogger.gd",
+      "index.worker.js",
+      "index.audio.worklet.js",
+      "/home/james/Hermes/state/projects/aetherion-maze/godot-maze/"
+    ],
+    "handoff_needed": false
+  }
+}

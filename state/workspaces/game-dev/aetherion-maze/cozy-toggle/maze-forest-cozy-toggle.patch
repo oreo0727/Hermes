@@ -1,0 +1,33 @@
+--- maze-forest/index.html
++++ maze-forest/index.html
+@@ -34,6 +34,7 @@
+   <!-- Flags/debug first; diagnostics gated by ?debug=1 or localStorage.MF_DEBUG -->
+   <script src="src/flags.js?v=20260512170336"></script>
+   <script src="src/diag.js?v=20260512170336"></script>
++  <script src="src/cozy-toggle.js?v=20260512170336"></script>
+ 
+   <!-- Core systems before game.js -->
+   <script src="src/generator.js?v=20260512170336"></script>
+@@ -47,4 +48,4 @@
+   <script src="src/input.js?v=20260512170336"></script>
+   <script src="src/game.js?v=20260512170336"></script>
+ </body>
+-</html>
++</html>
+--- maze-forest/styles.css
++++ maze-forest/styles.css
+@@ -39,3 +39,14 @@
+ #hudTL .icon{display:inline-block; width:18px; text-align:center; opacity:0.95; margin-right:4px}
+ #hudTL .coins{color:var(--gold, #f3e38c)}
+ #hudTL .keys{color:var(--ink, #e9f3e7)}
++
++/* Cozy toggle (top-right) */
++#hudTR.ui-controls{ position:absolute; top:8px; right:8px; z-index:4; pointer-events:auto; display:flex; gap:8px; }
++#hudTR #btnCozy{
++  appearance:none; border:0; border-radius:999px; padding:8px 12px; font-weight:800; letter-spacing:.2px;
++  background:linear-gradient(180deg, rgba(255,255,255,0.12) 0%, rgba(0,0,0,0.35) 100%);
++  color:var(--ink, #e9f3e7); box-shadow:0 2px 6px rgba(0,0,0,0.35), inset 0 0 0 2px rgba(255,255,255,0.12);
++  cursor:pointer; pointer-events:auto;
++}
++#hudTR #btnCozy.off{ opacity:.8; filter:saturate(.85); }
++#hudTR #btnCozy:focus-visible{ outline: 2px solid #a6f2c1; outline-offset:2px; }

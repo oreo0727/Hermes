@@ -1,0 +1,64 @@
+*** Begin Patch
+*** Add File: narrative-maze-prototype/js/env.js
++// Environment + cache-busting helpers
++// Reads ?debug=1 or localStorage.DEBUG to toggle diagnostics.
++export const BUILD_VERSION = (document.querySelector('meta[name="build-version"]')?.content) || '0.0.0-dev';
++export const DEBUG = (() => {
++  const usp = new URLSearchParams(location.search);
++  if (usp.has('debug')) return usp.get('debug') !== '0' && usp.get('debug') !== 'false';
++  const ls = localStorage.getItem('DEBUG');
++  return ls === '1' || ls === 'true';
++})();
++
++export function withVersion(url) {
++  const u = new URL(url, location.href);
++  u.searchParams.set('v', BUILD_VERSION);
++  return u.toString();
++}
++
++// Example: gate diagnostics overlay
++export function maybeEnableDiagnostics(enableFn) {
++  if (DEBUG && typeof enableFn === 'function') enableFn();
++}
+*** End Patch
+*** Begin Patch
+*** Update File: narrative-maze-prototype/index.html
+@@
+   <head>
++    <meta name="build-version" content="0.1.0">
+@@
+-    <script src="js/main.js"></script>
++    <script src="js/env.js"></script>
++    <script src="js/main.js"></script>
+*** End Patch
+*** Begin Patch
+*** Add File: maze-forest/js/env.js
++// Environment + cache-busting helpers
++export const BUILD_VERSION = (document.querySelector('meta[name="build-version"]')?.content) || '0.0.0-dev';
++export const DEBUG = (() => {
++  const usp = new URLSearchParams(location.search);
++  if (usp.has('debug')) return usp.get('debug') !== '0' && usp.get('debug') !== 'false';
++  const ls = localStorage.getItem('DEBUG');
++  return ls === '1' || ls === 'true';
++})();
++
++export function withVersion(url) {
++  const u = new URL(url, location.href);
++  u.searchParams.set('v', BUILD_VERSION);
++  return u.toString();
++}
++
++export function maybeEnableDiagnostics(enableFn) {
++  if (DEBUG && typeof enableFn === 'function') enableFn();
++}
+*** End Patch
+*** Begin Patch
+*** Update File: maze-forest/index.html
+@@
+   <head>
++    <meta name="build-version" content="0.1.0">
+@@
+-    <script src="js/main.js"></script>
++    <script src="js/env.js"></script>
++    <script src="js/main.js"></script>
+*** End Patch

@@ -1,0 +1,33 @@
+You are creative-dev for project 'spooky-teen-shortfilm' (Campfire Repeat: 3D woods, five teens, cell service dies; relighting the campfire snaps time back 5 minutes). Deliver rough storyboards before 3D lookdev.
+
+Goal
+- Create 10 rough storyboard frames (PNG), readable beats, grayscale or flat color OK.
+- 16:9 master framing with center-safe composition (we will derive vertical later).
+- If the task is reference-driven, these rough boards still need visibly rendered figures, props, and lighting beats; do not substitute symbolic diagrams and present them as storyboards.
+
+Deliverables & Paths
+- Save frames to: /home/james/Hermes/state/projects/spooky-teen-shortfilm/storyboards/v0/
+  - Filenames: storyboard_f01.png ... storyboard_f10.png
+- Generate a 3x4 or 4x3 contact sheet: storyboard_contact_v0.png
+- Optional captions file alongside: storyboard_captions_v0.csv
+
+Use These Inputs
+- Brief: storyboards/storyboard_brief.md
+- Manifest (10 frames with shot refs, windows, must-includes): storyboards/storyboard_manifest_v0.csv
+- Beats: beats_campfire-repeat.md
+- Shot list: shot_list_v0_campfire-repeat.md
+- VO outline: vo_script_outline_campfire-repeat.md
+- Style cues: lookdev/shader_ramps.md (for lighting mood only; boards can stay simple)
+
+Creative Guardrails
+- Sub–Rated R/PG-13: suspense over gore.
+- Phone battery persistence and the loop rule must be visually legible in at least one frame.
+- Distinct teen silhouettes (hoodie, beanie, flannel, puffer, varsity) — readable in moonlight.
+
+Acceptance for v0
+- 10 PNGs present with clear blocking/lighting intent.
+- Contact sheet present.
+- Center-safe action.
+- If the output is still schematic or placeholder, label it placeholder/schematic and do not mark it ready for review.
+
+When done, print an index of produced files with dimensions. If you need to synthesize visuals, use quick sketch/paint or your image tools; fidelity can be low as long as beats read.

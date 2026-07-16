@@ -1,0 +1,13 @@
+{
+  "dispatch_id": "dispatch_20260512_170711_1fdc5f52",
+  "source": "operator-bridge",
+  "profile": "game-dev",
+  "project_id": "aetherion-maze",
+  "status": "completed",
+  "created_at": "2026-05-12T21:07:11Z",
+  "updated_at": "2026-05-12T21:09:49Z",
+  "completed_at": "2026-05-12T21:09:49Z",
+  "prompt_preview": "Objective: Formalize Cozy Mode visuals as the default for Maze Forest and keep a clean toggle. Context and tasks as previously described. Please proceed.",
+  "output_preview": "Cozy Mode default and clean toggle \u2014 delivered as a patch bundle (no repo writes yet)\n\nWhat I did\n- Verified Cozy visuals already default ON:\n  - src/flags.js sets MF_COZY_MODE true by default, with URL/localStorage overrides.\n  - Renderer honors MF_COZY_MODE per frame and avoids terrain sprites in Cozy mode to preven\u2026",
+  "error_preview": ""
+}

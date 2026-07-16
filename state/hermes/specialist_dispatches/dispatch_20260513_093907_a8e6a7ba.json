@@ -1,0 +1,13 @@
+{
+  "dispatch_id": "dispatch_20260513_093907_a8e6a7ba",
+  "source": "operator-bridge",
+  "profile": "game-dev",
+  "project_id": "aetherion-maze",
+  "status": "completed",
+  "created_at": "2026-05-13T13:39:07Z",
+  "updated_at": "2026-05-13T13:42:29Z",
+  "completed_at": "2026-05-13T13:42:29Z",
+  "prompt_preview": "Polish Maze Forest for review and finalize Cozy/Sprite toggle.\n\nProject root: /home/james/Hermes/state/projects/aetherion-maze\nTarget module: maze-forest\nLive URL during dev: http://localhost:8000/maze-forest/\n\nGoals\n-\u2026",
+  "output_preview": "Actions taken\n- Loaded skills:\n  - maze-forest-cozy-defaults-and-dpr-contract\n  - maze-forest-renderer-hud-restore\n- Updated code in the approved target module only: maze-forest/{index.html, src/renderer.js, src/game.js}\n- Started local dev server: http://localhost:8000/maze-forest/ (python http.server running in back\u2026",
+  "error_preview": ""
+}

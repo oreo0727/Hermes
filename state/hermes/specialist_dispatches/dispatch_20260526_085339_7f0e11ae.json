@@ -1,0 +1,21 @@
+{
+  "dispatch_id": "dispatch_20260526_085339_7f0e11ae",
+  "source": "operator-bridge",
+  "profile": "creative-dev",
+  "project_id": "spooky-teen-shortfilm",
+  "status": "failed",
+  "created_at": "2026-05-26T12:53:39.761542+00:00",
+  "updated_at": "2026-05-26T14:53:11.356356+00:00",
+  "completed_at": "2026-05-26T14:53:11.356356+00:00",
+  "prompt_preview": "Runway motion pass needed: Characters still read static. Use Runway Gen-3 (web or Runway-for-AE plugin if available) to generate subtle character micro-motion from the existing boards. Follow the plan at animatic/runway\u2026",
+  "output_preview": "",
+  "error_preview": "Dispatch marked failed after 119m without completion. The operator bridge likely exited before finalizing the record.",
+  "supervisor": {
+    "status": "running",
+    "attempt_count": 1,
+    "max_attempts": 3,
+    "decision": "",
+    "critique": []
+  },
+  "attempts": []
+}

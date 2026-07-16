@@ -1,0 +1,16 @@
+[Unit]
+Description=Hermes App Dev Gateway
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=%h/Hermes
+ExecStart=%h/Hermes/scripts/run-hermes-gateway.sh app-dev
+Restart=always
+RestartSec=5
+KillSignal=SIGINT
+TimeoutStopSec=30
+
+[Install]
+WantedBy=default.target

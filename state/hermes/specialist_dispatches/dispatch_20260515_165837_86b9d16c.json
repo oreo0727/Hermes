@@ -1,0 +1,13 @@
+{
+  "dispatch_id": "dispatch_20260515_165837_86b9d16c",
+  "source": "operator-bridge",
+  "profile": "game-dev",
+  "project_id": "aetherion-maze",
+  "status": "completed",
+  "created_at": "2026-05-15T20:58:37Z",
+  "updated_at": "2026-05-15T21:01:26Z",
+  "completed_at": "2026-05-15T21:01:26Z",
+  "prompt_preview": "Objective: Rework the Godot 4 maze scene to match the bright top-down forest maze reference and ship a clean Web build.\n\nProject\n- Godot project: /home/james/Hermes/state/projects/aetherion-maze/godot-maze\n- Web export\u2026",
+  "output_preview": "Actions taken\n- Loaded relevant skills:\n  - maze-forest-atlas-load-and-cozy-terrain-gating\n  - maze-forest-renderer-hud-restore\n  - godot-web-pack-swap-responsive-shell\n  - godot-web-blank-canvas-hotfix\n- Audited the Godot project and verified atlas keys and scene wiring.\n- Implemented/confirmed lush forest maze build\u2026",
+  "error_preview": ""
+}

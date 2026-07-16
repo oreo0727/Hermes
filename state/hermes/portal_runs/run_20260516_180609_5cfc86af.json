@@ -1,0 +1,78 @@
+{
+  "run_id": "run_20260516_180609_5cfc86af",
+  "profile_key": "operator",
+  "profile_label": "Operator",
+  "project_id": "aetherion-maze",
+  "session_id": "",
+  "status": "interrupted",
+  "phase": "portal_restart",
+  "created_at": "2026-05-16T22:06:09.878818+00:00",
+  "updated_at": "2026-05-16T22:08:10.294764+00:00",
+  "started_at": "2026-05-16T22:06:09.879495+00:00",
+  "completed_at": "2026-05-16T22:08:10.294776+00:00",
+  "last_checkpoint_at": "2026-05-16T22:08:10.294764+00:00",
+  "latest_checkpoint": "Portal restarted before this run completed.",
+  "objective_preview": "The maze game is still failing badly. Use the current Godot review build at http://127.0.0.1:8000/godot-web/ as the primary artifact for aetherion-maze. Inspect the live build, compare it against the project brief, cano\u2026",
+  "latest_user_message": "The maze game is still failing badly. Use the current Godot review build at http://127.0.0.1:8000/godot-web/ as the primary artifact for aetherion-maze. Inspect the live build, compare it against the project brief, canon, roadmap, and HUD/cozy spec, identify why it still looks like a dark empty room instead of a cozy maze, and make the non-destructive repo changes needed to materially improve it in this turn. Do not hand work back to the user. Return a compact report with Implemented, Verified, Assumed, Target artifact, Checks run, Failing checks, and Next unblocker.",
+  "attachment_count": 0,
+  "prepared_updates": [],
+  "output": "",
+  "error": "Portal restarted before this run completed.",
+  "request_body": {
+    "model": "operator",
+    "messages": [
+      {
+        "role": "system",
+        "content": "Execution contract for this turn:\n- Treat build, fix, create, debug, polish, and review requests as execution work, not just planning work.\n- The user's request is authorization for non-destructive work inside approved roots and the bound repo. Do not bounce the task back for more permission unless the action is destructive, irreversible, or changes product direction in a non-obvious way.\n- Use tools, inspect the real artifact, and run the smallest local verification you can before claiming success.\n- Do not ask the user to run local commands, refresh pages, inspect files, or check localhost routes when you can do that yourself on this machine.\n- Never say fixed, complete, shipped, live, or verified unless you name the exact artifact and the checks you personally ran in this turn.\n- Always separate implemented, verified, and assumed.\n- If the live artifact still misses the brief, canon, or visual target, say that plainly and explain the mismatch.\n- When specialist work is needed, route it explicitly and hold the result to the same execution and verification bar before reporting success.\n- Do not defend a previous run that still looks wrong. Re-inspect the live artifact and call the drift honestly."
+      },
+      {
+        "role": "system",
+        "content": "Bound project context: aetherion-maze / Aetherion Maze Games. Summary: Aetherion Maze review lane with Godot web export, legacy prototype references, and Hermes operator tracking.. Project root: /home/james/Hermes/state/projects/aetherion-maze. Treat this as the canonical delivery target unless the user explicitly overrides it."
+      },
+      {
+        "role": "user",
+        "content": "The maze game is still failing badly. Use the current Godot review build at http://127.0.0.1:8000/godot-web/ as the primary artifact for aetherion-maze. Inspect the live build, compare it against the project brief, canon, roadmap, and HUD/cozy spec, identify why it still looks like a dark empty room instead of a cozy maze, and make the non-destructive repo changes needed to materially improve it in this turn. Do not hand work back to the user. Return a compact report with Implemented, Verified, Assumed, Target artifact, Checks run, Failing checks, and Next unblocker."
+      }
+    ],
+    "stream": false
+  },
+  "checkpoints": [
+    {
+      "at": "2026-05-16T22:06:09.878833+00:00",
+      "status": "queued",
+      "phase": "queued",
+      "message": "Background run accepted by the portal and queued for dispatch."
+    },
+    {
+      "at": "2026-05-16T22:06:09.879501+00:00",
+      "status": "running",
+      "phase": "dispatching",
+      "message": "Dispatching this run to the selected Hermes specialist."
+    },
+    {
+      "at": "2026-05-16T22:06:09.922024+00:00",
+      "status": "running",
+      "phase": "awaiting_response",
+      "message": "Hermes accepted the run and is working in the background."
+    },
+    {
+      "at": "2026-05-16T22:06:54.880351+00:00",
+      "status": "running",
+      "phase": "awaiting_response",
+      "message": "Still running in the background."
+    },
+    {
+      "at": "2026-05-16T22:07:39.882755+00:00",
+      "status": "running",
+      "phase": "awaiting_response",
+      "message": "Still running in the background."
+    },
+    {
+      "at": "2026-05-16T22:08:10.294764+00:00",
+      "status": "interrupted",
+      "phase": "portal_restart",
+      "message": "Portal restarted before this run completed."
+    }
+  ],
+  "response_raw": {}
+}

@@ -1,0 +1,13 @@
+:root{
+  --bg: #0f1720; /* page/backdrop */
+  --panel: #1b2632cc; /* overlay panels */
+  --text: #dce7ef; --muted: #9bb3c4;
+  --hud-text: #ffe37a; --stroke-dark: #3a2a00; --gold: #f2cc4a; --red: #ff4a4a; --blue-ui: #10a1ff;
+  --forest-dark: #0d2b19; --soil: #6f5434; /* alt soil inline: #8a6a3e */
+  --stone: #6a755f; /* alt stone inline: #596756 */
+  --moss: #89c25a; --exitGlow: #fff1a8; --purple-magic: #9a57ff;
+}
+#gameRoot{ position: relative; width:min(90vmin,960px); margin:0 auto; }
+canvas#game{ display:block; width:100%; height:auto; position:relative; aspect-ratio:1; background:#081117; border-radius:12px; box-shadow:0 10px 40px rgba(0,0,0,.45); image-rendering: pixelated; }
+#hudTL{ position:absolute; top:16px; left:16px; z-index:2; pointer-events:none; font-family:'Baloo 2', Fredoka, Nunito, Inter, system-ui; }
+#hudTL :is(button,a,input,[role="button"]) { pointer-events:auto; }

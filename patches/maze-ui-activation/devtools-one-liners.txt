@@ -1,0 +1,21 @@
+// Maze UI Activation quick test (paste into DevTools Console on your running page)
+(()=>{
+  const root = document.getElementById('gameRoot') || document.body;
+  const c = document.getElementById('game') || document.querySelector('canvas');
+  if(root && root !== document.body) root.style.position = 'relative';
+  if(c){ c.style.display='block'; c.style.position='relative'; c.style.zIndex='10'; c.style.width='100%'; c.style.aspectRatio='1'; }
+  let hud = document.getElementById('hudTL');
+  if(!hud){ hud = document.createElement('div'); hud.id='hudTL'; hud.textContent='HUD'; root.appendChild(hud); }
+  Object.assign(hud.style,{position:'absolute',top:'12px',left:'12px',zIndex:'20',pointerEvents:'none',color:'#fff',textShadow:'0 1px 2px rgba(0,0,0,.7)'});
+  hud.querySelectorAll('button,a,[role="button"],input,select,textarea').forEach(el=> el.style.pointerEvents='auto');
+  document.querySelectorAll('.overlay,.vignette,.frame,[data-role="overlay"]').forEach(el=>{el.style.zIndex='1'; el.style.pointerEvents='none';});
+  // UI ACTIVE badge
+  let b = document.getElementById('uiActiveBadge');
+  if(!b){ b = document.createElement('div'); b.id='uiActiveBadge'; b.textContent='UI ACTIVE'; document.body.appendChild(b); }
+  Object.assign(b.style,{position:'fixed',top:'8px',left:'8px',zIndex:100000,background:'#2b8a3e',color:'#fff',padding:'4px 8px',borderRadius:'12px',font:'12px/1.2 system-ui,sans-serif',pointerEvents:'none'});
+  // Keyboard toggles: H for HUD, ? for help
+  let help=document.getElementById('uiHelpPanel'); if(!help){ help=document.createElement('div'); help.id='uiHelpPanel'; help.style.cssText='position:fixed;top:8px;right:8px;z-index:100001;background:rgba(0,0,0,.75);color:#fff;padding:8px 10px;border-radius:8px;display:none;'; help.textContent='HUD Help: H toggle HUD, ? help, Esc closes help'; document.body.appendChild(help); }
+  let hudVisible=true, helpVisible=false; function show(b){ help.style.display=b?'block':'none'; }
+  addEventListener('keydown',e=>{ if(e.key==='H'||e.key==='h'){ hud.style.display=(hudVisible=!hudVisible)?'':''; } else if(e.key==='?'||(e.shiftKey&&e.key=='/')){ show(helpVisible=!helpVisible);} else if(e.key==='Escape'&&helpVisible){helpVisible=false;show(false);} });
+  console.log('[UI-Activate] DevTools one-liner applied: HUD layered and ACTIVE badge shown.');
+})();

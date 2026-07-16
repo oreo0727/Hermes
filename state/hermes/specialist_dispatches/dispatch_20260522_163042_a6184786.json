@@ -1,0 +1,13 @@
+{
+  "dispatch_id": "dispatch_20260522_163042_a6184786",
+  "source": "operator-bridge",
+  "profile": "creative-dev",
+  "project_id": "spooky-teen-shortfilm",
+  "status": "failed",
+  "created_at": "2026-05-22T20:30:42.824207+00:00",
+  "updated_at": "2026-05-23T01:13:19.123470+00:00",
+  "completed_at": "2026-05-23T01:13:19.123470+00:00",
+  "prompt_preview": "You are creative-dev for project 'spooky-teen-shortfilm' (Campfire Repeat: 3D woods, five teens, cell service dies; relighting the campfire snaps time back 5 minutes). Deliver rough storyboards before 3D lookdev.\n\nGoal\u2026",
+  "output_preview": "",
+  "error_preview": "Dispatch marked failed after 282m without completion. The operator bridge likely exited before finalizing the record."
+}

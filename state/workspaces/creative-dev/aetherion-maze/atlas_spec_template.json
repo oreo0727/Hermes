@@ -1,0 +1,79 @@
+{
+  "meta": {
+    "image": "assets/painted/atlases/atlas-64.png",
+    "image@2x": "assets/painted/atlases/atlas-64@2x.png",
+    "tile_size": 64,
+    "type": "uniform-grid",
+    "power_of_two": true,
+    "grid": { "cols": 16, "rows": 16, "padding": 2, "spacing": 2 },
+    "origin": [0.5, 0.5],
+    "format": "RGBA",
+    "version": "1.0"
+  },
+  "frames": {
+    "tilemap/ground/grass/grass-0": {
+      "rect": [0, 0, 64, 64],
+      "layer": "tilemap-floor",
+      "type": "tile",
+      "tags": ["ground", "grass"],
+      "pivot": [0.5, 0.5],
+      "collider": null
+    },
+    "tilemap/walls/wall-h": {
+      "rect": [64, 0, 64, 64],
+      "layer": "tilemap-walls",
+      "type": "tile",
+      "tags": ["wall", "h"],
+      "pivot": [0.5, 0.5],
+      "collider": { "shape": "rect", "x": 0, "y": 0, "w": 64, "h": 64 }
+    },
+    "hero/walk/hero-walk-n-0": {
+      "rect": [0, 64, 64, 64],
+      "layer": "entities",
+      "type": "entity",
+      "tags": ["hero", "walk", "n"],
+      "pivot": [0.5, 0.5],
+      "collider": { "shape": "rect", "x": 0, "y": 48, "w": 64, "h": 16 }
+    },
+    "effects/portal-0": {
+      "rect": [64, 64, 64, 64],
+      "layer": "fx",
+      "type": "effect",
+      "tags": ["portal"],
+      "pivot": [0.5, 0.5],
+      "collider": null
+    },
+    "ui/heart": {
+      "rect": [128, 64, 64, 64],
+      "layer": "ui",
+      "type": "ui",
+      "tags": ["heart"],
+      "pivot": [0.5, 0.5],
+      "collider": null
+    }
+  },
+  "animations": {
+    "hero-walk-n": {
+      "frames": [
+        "hero/walk/hero-walk-n-0",
+        "hero/walk/hero-walk-n-1"
+      ],
+      "fps": 8,
+      "loop": true
+    },
+    "portal": {
+      "frames": [
+        "effects/portal-0",
+        "effects/portal-1",
+        "effects/portal-2",
+        "effects/portal-3"
+      ],
+      "fps": 6,
+      "loop": true
+    }
+  },
+  "aliases": {
+    "key_icon": "ui/key-icon",
+    "shield_icon": "ui/shield-icon"
+  }
+}

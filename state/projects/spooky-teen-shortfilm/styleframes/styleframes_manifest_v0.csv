@@ -1,0 +1,11 @@
+frame_id,title,description,lighting,camera,notes
+sf01,Embers Establishing,Dead camp ring with pulsing coals and fog rows; phone edge light; volumetric rays,Moonlit blue base + ember orange; subtle fog god rays,Wide lockoff,Lock the overall grade and fog density
+sf02,First Relight  Time Pop,Match strike whoosh with refractive/ripple time-pop; faces rim-lit by flare,Fire amber flare vs cool moon fill; emissive bloom,Macro/insert + slight push,Establish the time pop look effect
+sf03,Missing Chair Wide,Camp wide with one unmistakably empty chair; readable silhouettes; rim from fire,Rim/warm on characters; cool ambient; shallow DOF on empty chair,Wide with focus pull on empty chair,Must read at a glance
+sf04,Phones-Only Darkness,Coals buried; faces lit only by phone screens; background near-black,Phones cool white as key; minimal ambient; noise/grain subtle,Medium close group,Prove phones-as-key lighting balance
+sf05,Battery Persists,Phone OTS: time reset but battery icon unchanged; fire bokeh,Fire key with blue fill; bloom subtle,OTS insert shallow DOF,Legibility of battery rule
+sf06,Marker Persists,Stone stack at birch remains identical across loops; leaves drift,Moonlight with bounce,Medium wide,Prop continuity read
+sf07,Live Photo Silhouette,Silhouette appears only during Live Photo scrub; treeline backlight,Moon backlight; phone screen fill,OTS insert with motion bar,Motion-only apparition read
+sf08,Near-Ignition Macro,Coal almost catches; tiny flare dies; fingers resist flare,Dark surrounding; micro-ember flare,Macro CU,Temptation to relight
+sf09,Argue At Boundary,Shape halts at darkness edge; friends debate; wind teases coals,Cool ambient; faint rim; low drone,Wide/medium,Boundary rule read
+sf10,Dawn Button,Blue-to-warm gradient through trees; pocketed ember hint,Warm dawn rim + cool ambient,Long-lens push,Hopeful button with sting

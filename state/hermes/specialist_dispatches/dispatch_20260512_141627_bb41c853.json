@@ -1,0 +1,13 @@
+{
+  "dispatch_id": "dispatch_20260512_141627_bb41c853",
+  "source": "operator-bridge",
+  "profile": "game-dev",
+  "project_id": "aetherion-maze",
+  "status": "completed",
+  "created_at": "2026-05-12T18:16:27Z",
+  "updated_at": "2026-05-12T18:17:10Z",
+  "completed_at": "2026-05-12T18:17:10Z",
+  "prompt_preview": "noop test",
+  "output_preview": "No-op test completed.\n\nWhat I did\n- Verified time and directories.\n- Wrote a heartbeat artifact under the approved workspace (not the project root).\n- Read it back to confirm.\n\nChecks\n- Timestamp (UTC): 2026-05-12T18:16:53Z\n- Workspace exists: yes (/home/james/Hermes/state/workspaces/game-dev)\n- Project root exists: y\u2026",
+  "error_preview": ""
+}

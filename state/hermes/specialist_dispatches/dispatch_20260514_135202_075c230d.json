@@ -1,0 +1,13 @@
+{
+  "dispatch_id": "dispatch_20260514_135202_075c230d",
+  "source": "operator-bridge",
+  "profile": "game-dev",
+  "project_id": "aetherion-maze",
+  "status": "completed",
+  "created_at": "2026-05-14T17:52:02Z",
+  "updated_at": "2026-05-14T18:00:25Z",
+  "completed_at": "2026-05-14T18:00:25Z",
+  "prompt_preview": "Live review shows the Godot Web build rendering the fallback checker grid with a small yellow square and a clipped 'Go' text at http://localhost:8000/godot-web/. Version label visible: 'Etherion Maze \u2014 build dev-2026051\u2026",
+  "output_preview": "Done. I wired the Godot Web build to load the actual main scene, rebuilt the .pck, fixed the layout/overlay, and added mobile input guards. You can refresh http://127.0.0.1:8000/godot-web/ to verify.\n\nWhat I changed\n\n1) Main scene and diagnostic logging\n- Godot project source found at: /home/james/Hermes/state/project\u2026",
+  "error_preview": ""
+}

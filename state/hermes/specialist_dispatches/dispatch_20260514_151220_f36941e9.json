@@ -1,0 +1,13 @@
+{
+  "dispatch_id": "dispatch_20260514_151220_f36941e9",
+  "source": "operator-bridge",
+  "profile": "game-dev",
+  "project_id": "aetherion-maze",
+  "status": "completed",
+  "created_at": "2026-05-14T19:12:20Z",
+  "updated_at": "2026-05-14T19:17:32Z",
+  "completed_at": "2026-05-14T19:17:32Z",
+  "prompt_preview": "Integrate the cozy HUD and vignette per skill 'godot4-cozy-hud-and-vignette-pack' into the Godot project, then export Web if possible.\nProject paths:\n- Godot project: /home/james/Hermes/state/projects/aetherion-maze/god\u2026",
+  "output_preview": "Work completed for project aetherion-maze\n\nActions taken:\n- Integrated cozy HUD and vignette into the Godot project and wired up a proper UI layer stack.\n- Cleaned debug scaffolding per review-build expectations.\n- Fixed resource paths and validated a clean Web export to the requested target directory.\n\nWhat I changed\u2026",
+  "error_preview": ""
+}

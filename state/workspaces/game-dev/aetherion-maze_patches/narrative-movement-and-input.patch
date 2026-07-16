@@ -1,0 +1,119 @@
+*** Begin Patch
+*** Update File: narrative-maze-prototype/js/input.js
+@@
++// Input handling with movement throttling and diagonal prevention
++// Adds: cooldown, key repeat guard, pressed key set, overlay lock check
++
++// Tunables
++export const MOVE_COOLDOWN_MS = 120; // ~8.3 moves/sec; tweak for feel
++
++// Internal state
++let lastMoveAt = 0;
++const pressed = new Set();
++let lastPressedAxis = null; // 'x' | 'y' used to break ties when both axes held
++
++// External hooks (to be wired from game):
++let performMove = null; // function(dx, dy)
++let isOverlayOpen = () => false; // function() -> boolean
++
++export function bindInput({ onMove, overlayOpenFn }) {
++  performMove = onMove;
++  if (overlayOpenFn) isOverlayOpen = overlayOpenFn;
++
++  window.addEventListener('keydown', onKeyDown, { passive: false });
++  window.addEventListener('keyup', onKeyUp, { passive: true });
++}
++
++export function unbindInput() {
++  window.removeEventListener('keydown', onKeyDown);
++  window.removeEventListener('keyup', onKeyUp);
++  pressed.clear();
++}
++
++function onKeyDown(e) {
++  // Prevent page scroll on arrows/space when game focused
++  if (["ArrowUp","ArrowDown","ArrowLeft","ArrowRight"," ","Space","PageUp","PageDown"].includes(e.key)) {
++    e.preventDefault();
++  }
++
++  // Ignore repeats from OS key repeat
++  if (e.repeat) return;
++
++  const now = performance.now();
++  if (isOverlayOpen()) {
++    // While overlay/dialog is open, ignore movement keys
++    return;
++  }
++
++  let axisChanged = false;
++  switch (e.key) {
++    case 'ArrowUp':
++    case 'w':
++    case 'W':
++      pressed.add('up'); lastPressedAxis = 'y'; axisChanged = true; break;
++    case 'ArrowDown':
++    case 's':
++    case 'S':
++      pressed.add('down'); lastPressedAxis = 'y'; axisChanged = true; break;
++    case 'ArrowLeft':
++    case 'a':
++    case 'A':
++      pressed.add('left'); lastPressedAxis = 'x'; axisChanged = true; break;
++    case 'ArrowRight':
++    case 'd':
++    case 'D':
++      pressed.add('right'); lastPressedAxis = 'x'; axisChanged = true; break;
++    default:
++      return;
++  }
++
++  // Throttle movement to one action per cooldown window
++  if (now - lastMoveAt < MOVE_COOLDOWN_MS && !axisChanged) return;
++
++  const { dx, dy } = pickCardinal();
++  if ((dx !== 0 || dy !== 0) && performMove) {
++    lastMoveAt = now;
++    performMove(dx, dy);
++  }
++}
++
++function onKeyUp(e) {
++  switch (e.key) {
++    case 'ArrowUp':
++    case 'w':
++    case 'W':
++      pressed.delete('up'); break;
++    case 'ArrowDown':
++    case 's':
++    case 'S':
++      pressed.delete('down'); break;
++    case 'ArrowLeft':
++    case 'a':
++    case 'A':
++      pressed.delete('left'); break;
++    case 'ArrowRight':
++    case 'd':
++    case 'D':
++      pressed.delete('right'); break;
++  }
++}
++
++function pickCardinal() {
++  // Diagonal prevention: prefer last pressed axis; otherwise x over y for stability
++  const up = pressed.has('up');
++  const down = pressed.has('down');
++  const left = pressed.has('left');
++  const right = pressed.has('right');
++
++  // Resolve vertical
++  let dy = 0;
++  if (up && !down) dy = -1; else if (down && !up) dy = 1;
++  // Resolve horizontal
++  let dx = 0;
++  if (left && !right) dx = -1; else if (right && !left) dx = 1;
++
++  if (dx !== 0 && dy !== 0) {
++    if (lastPressedAxis === 'y') dx = 0; else dy = 0;
++  }
++  return { dx, dy };
++}

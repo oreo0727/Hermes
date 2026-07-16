@@ -1,0 +1,9 @@
+[Unit]
+Description=Hermes Operator Watchdog
+After=network-online.target hermes-operator-gateway.service hermes-operator-portal.service
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=%h/Hermes
+ExecStart=%h/Hermes/scripts/check-hermes-services.sh

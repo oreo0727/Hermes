@@ -1,0 +1,125 @@
+{
+  "dispatch_id": "dispatch_20260520_213019_daac014d",
+  "source": "operator-bridge",
+  "profile": "creative-dev",
+  "project_id": "aetherion-maze",
+  "status": "completed",
+  "created_at": "2026-05-21T01:30:19.430956+00:00",
+  "updated_at": "2026-05-21T01:33:56.855180+00:00",
+  "completed_at": "2026-05-21T01:33:56.855180+00:00",
+  "prompt_preview": "Delivery strategy: Lead -> Creative -> Game Dev -> App Dev\nStage 1/3: creative-dev\nProject: aetherion-maze / Aetherion Maze Games\nPrimary objective: Converge Aetherion Maze under one lead-owned path that runs creative-d\u2026",
+  "output_preview": "Concise summary\nI inspected the live Aetherion Maze project and froze the creative target on the Godot 4 web export path. I produced a vision-freeze and acceptance-guardrails package that names exactly what to preserve, what to drop, and non-drift constraints. I left game-dev a concrete handoff with a short checklist\u2026",
+  "error_preview": "",
+  "work_order": {
+    "schema_version": "1",
+    "created_at": "2026-05-21T01:30:19.455521+00:00",
+    "source": "specialist-bridge",
+    "profile_key": "creative-dev",
+    "project_id": "aetherion-maze",
+    "project_title": "Aetherion Maze Games",
+    "project_root": "/home/james/Hermes/state/projects/aetherion-maze",
+    "objective": "Delivery strategy: Lead -> Creative -> Game Dev -> App Dev\nStage 1/3: creative-dev\nProject: aetherion-maze / Aetherion Maze Games\nPrimary objective: Converge Aetherion Maze under one lead-owned path that runs creative-dev first, then game-dev, then app-dev, with one primary delivery target and no parallel rebuild drift.\nCurrent project summary: Aetherion Maze review lane with Godot web export, legacy prototype references, and Hermes operator tracking.\nCurrent tracking now: n/a\n\nStage contract:\nFreeze the creative target and acceptance language for the primary artifact. Name what to preserve, what to drop, and what the implementation lanes must not drift from.\n\nPrior handoff context:\n- No prior specialist output yet. Start from the project brief and live artifact tree.\n\nRequired output:\n- concise human summary\n- machine-readable json block with summary, implemented, verified, assumed, blocked, risks, next_actions, artifacts, handoff_needed\n\nLeave game-dev a clean next action.\nMake the first `next_actions` item the concrete handoff for game-dev.",
+    "autonomy_mode": "execute",
+    "owner_lane": "creative-dev",
+    "delivery_model": {
+      "strategy_key": "lead-creative-game-app",
+      "strategy_label": "Lead -> Creative -> Game Dev -> App Dev",
+      "lead_lane": "operator",
+      "active_lane": "creative-dev",
+      "next_lane": "game-dev",
+      "lane_sequence": [
+        "operator",
+        "creative-dev",
+        "game-dev",
+        "app-dev"
+      ],
+      "specialist_sequence": [
+        "creative-dev",
+        "game-dev",
+        "app-dev"
+      ],
+      "stage_guidance": {
+        "operator": "Own scope, freeze the delivery target, and keep the handoffs honest.",
+        "creative-dev": "Define the creative target, vision guardrails, and artifact acceptance language before implementation drifts.",
+        "game-dev": "Own the playable build path and converge the actual game implementation on the chosen target artifact.",
+        "app-dev": "Own the app, tooling, portal, and review-loop support needed to make the chosen artifact reviewable and repeatable."
+      },
+      "handoff_contract": [
+        "freeze one primary delivery target before downstream implementation expands scope",
+        "treat creative-dev as the vision and acceptance guardrail for downstream lanes",
+        "treat game-dev as the owner of the playable implementation path once the vision is frozen",
+        "treat app-dev as the owner of portal, tooling, packaging, and review-loop support after the build path is clear",
+        "require each lane to leave a concrete handoff for the next lane instead of sending the operator back into open-ended review"
+      ]
+    },
+    "lead_lane": "operator",
+    "active_lane": "creative-dev",
+    "next_lane": "game-dev",
+    "lane_sequence": [
+      "operator",
+      "creative-dev",
+      "game-dev",
+      "app-dev"
+    ],
+    "recommended_lanes": [
+      "operator",
+      "game-dev",
+      "app-dev"
+    ],
+    "expected_deliverables": [
+      "code changes",
+      "artifact or build output",
+      "findings and recommended next actions",
+      "creative package or direction"
+    ],
+    "verification_required": [
+      "separate implemented, verified, and assumed",
+      "run the smallest local verification possible before claiming success"
+    ],
+    "project_status": "active",
+    "project_owner": "operator",
+    "project_now": "Lead orchestration in motion: Converge Aetherion Maze under one lead-owned path that runs creative-dev first, then game-dev, then app-dev, with one primary delivery target and no parallel rebuild drift.",
+    "project_next": "Run creative-dev"
+  },
+  "structured_result": {
+    "schema_version": "1",
+    "summary": "Creative target frozen on the Godot 4 web export. Cozy HUD/theme, vignette, palette, and input cadence are now guardrails. Legacy HTML/Canvas prototypes are reference-only. Acceptance language is codified and a concrete handoff to game-dev is in place.",
+    "implemented": [
+      "Created vision-freeze document specifying the single canonical target (Godot web), tone, pillars to preserve, what to drop, and do-not-drift constraints",
+      "Created acceptance guardrails with checkable criteria for HUD/theme, icons, vignette, palette, input pacing, packaging, diagnostics, and performance",
+      "Created a game-dev handoff checklist to re-export the Godot web build and verify guardrails"
+    ],
+    "verified": [
+      "Primary paths exist: godot-web/index.html present",
+      "Godot source is present: godot-maze/project.godot",
+      "HUD pack assets exist: godot-maze/res/HUD.tres, res/assets/ui/fonts/*, res/assets/ui/icons/*, res/ui/Vignette.tscn, res/assets/ui/shaders/vignette.gdshader",
+      "Existing UI docs exist: docs/ui/ui/hud-pack.md, docs/ui/ui/palette-cozy.md",
+      "Export config present: godot-maze/export_presets.cfg",
+      "COI dev server script exists at scripts/devserver_coi.py (as referenced by README.md)"
+    ],
+    "assumed": [
+      "Godot 4.x available in the build environment used by game-dev",
+      "NunitoSans variable TTF renders correctly with variation_opentype weights on the target Godot version",
+      "Existing web export reflects current scenes (title/main) without hidden debug overlays"
+    ],
+    "blocked": [],
+    "risks": [
+      "Parallel drift: contributors may resume work on legacy HTML/Canvas prototypes; clarified as reference-only but enforcement relies on process",
+      "Font variation risk: some Godot builds ignore variation_opentype, causing weight fallback and reduced legibility",
+      "Mobile hitbox sizing not runtime-verified yet; D-pad must meet \u226544px targets",
+      "Vignette layer ordering may regress during scene changes if not locked below HUD",
+      "Performance target (\u224860fps) not runtime-measured on modest laptops in this turn"
+    ],
+    "next_actions": [
+      "{'lane': 'game-dev', 'action': 'Re-export the Godot Web build to /godot-web/ per acceptance-guardrails, verify HUD theme application, icon crispness (18\u201320px), vignette ordering (below HUD), input pacing (no diagonals; steady cooldown), mobile D-pad \u226544px, and deliver a short QA note of verified guardrails and any deviations.', 'references': ['/home/james/Hermes/state/workspaces/creative-dev/aetherion-maze/handoff-game-dev.md', '/home/james/Hermes/state/workspaces/creative-dev/aetherion-maze/vision-freeze.md', '/home/james/Hermes/state/workspaces/creative-dev/aetherion-maze/acceptance-guardrails.md']}",
+      "{'lane': 'creative-dev', 'action': 'Be on deck to adjust HUD outline weight or vignette edge_opacity if game-dev reports legibility/performance issues on their target devices.'}",
+      "{'lane': 'game-dev', 'action': 'Run via scripts/devserver_coi.py on :8000 and confirm no console errors in non-debug; attach screenshots of title and in-game HUD at DPR 1 and 3.'}"
+    ],
+    "artifacts": [
+      "/home/james/Hermes/state/workspaces/creative-dev/aetherion-maze/vision-freeze.md",
+      "/home/james/Hermes/state/workspaces/creative-dev/aetherion-maze/acceptance-guardrails.md",
+      "/home/james/Hermes/state/workspaces/creative-dev/aetherion-maze/handoff-game-dev.md"
+    ],
+    "handoff_needed": true
+  }
+}

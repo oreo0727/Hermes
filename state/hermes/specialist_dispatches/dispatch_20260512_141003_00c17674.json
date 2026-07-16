@@ -1,0 +1,13 @@
+{
+  "dispatch_id": "dispatch_20260512_141003_00c17674",
+  "source": "operator-bridge",
+  "profile": "creative-dev",
+  "project_id": "aetherion-maze",
+  "status": "completed",
+  "created_at": "2026-05-12T18:10:03Z",
+  "updated_at": "2026-05-12T18:10:14Z",
+  "completed_at": "2026-05-12T18:10:14Z",
+  "prompt_preview": "Visibility test only. Reply in one short sentence confirming the specialist bridge is active.",
+  "output_preview": "Creative Dev specialist bridge is active and ready.",
+  "error_preview": ""
+}

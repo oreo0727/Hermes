@@ -1,0 +1,18 @@
+cue_id,time_range,description,notes
+SFX_WIND_BASE,00:00:00-00:01:00,Steady night wind bed,Loopable low-volume; roll off <150Hz
+SFX_INSECTS_BED,00:00:00-00:03:17,Night insects ambience,Hard cut to silence at 00:03:17
+SFX_MATCH_WHOOSH,00:00:32-00:00:44,Match strike + whoosh,Layer brief transient + airy whoosh
+SFX_TIME_STING,00:00:44-00:00:56,Subtle time warp sting,One-shot; light shimmer
+SFX_WATER_DOUSE,00:01:23-00:01:35,Pour water + steam,Add quick hi freq hiss
+SFX_MONTAGE_TICKS,00:01:35-00:02:15,Montage ticks/stings,Tempo up then down
+SFX_ROOMTONE_DROP,00:02:15-00:02:30,Room tone drop (uncanny),Suck-out effect
+SFX_UI_TAP,00:02:30-00:02:45,Phone UI tap,Soft click
+SFX_WIND_RISE,00:02:45-00:03:05,Wind rises,Build tension
+SFX_STONE_THUDS,00:03:05-00:03:17,Stone flips/bury coals,Mid thuds
+SFX_SILENCE,00:03:17-00:03:37,Intentional silence,No insects/wind minimal
+SFX_FLARE_DIE,00:03:37-00:03:47,Tiny flare then die out,Short up/down
+SFX_PLASTIC_CRACK,00:03:47-00:03:59,Power bank smash,Crunch + snap
+SFX_LOW_DRONE,00:03:59-00:04:14,Low tension drone,Under 200Hz
+SFX_BIRDS_IN,00:04:26-00:04:46,Dawn birds fade in,Hopeful
+SFX_NOTIF_DROP,00:04:46-00:04:56,Notif blip + power drop,Pitch down tail
+SFX_LIGHTER_CLICK,00:05:04-00:05:14,Lighter click,Single sharp click end

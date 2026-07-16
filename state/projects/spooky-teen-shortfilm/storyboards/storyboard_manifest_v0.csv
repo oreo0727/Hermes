@@ -1,0 +1,11 @@
+frame_id,shot_ref,time_window,title,description,must_include,lighting,camera
+f01,1-2,00:00:00-00:00:20,Embers Establishing,Dead fire ring; pulsing coals; fog rows; phone face-down faint glow,Dead coals; ring; treeline depth; one phone edge glow,Moonlit blue base with ember orange,Wide lockoff
+f02,4,00:00:32-00:00:44,First Relight  Time Pop,Match strike; whoosh; subtle refractive ripple,Match/hand; kindling; flare; ripple visual,Fire flare amber vs. cool moon,Macro/insert CU
+f03,5,00:00:44-00:00:56,Battery Persists,Phone OTS: 12:00 AM; battery unchanged from prior loop,Phone screen UI; battery icon unchanged; fire bokeh,Fire key with blue fill,OTS insert with shallow DOF
+f04,7,00:01:08-00:01:23,Marker Persists,Stone stack by birch; stones identical; leaf positions shift,Stack of 3 stones; birch notch; subtle drift,Moonlight with slight bounce,Medium wide
+f05,9,00:01:35-00:02:15,Loop Montage Beat,Relightdouserelight rhythm; props drift each cycle,Chairs/mug migration across frames,Fire pulses; ambient blue,Graphic montage frame (split or layered)
+f06,10,00:02:15-00:02:30,Missing Chair,Camp wide with obviously empty chair; everyone feels "complete",Four teens visible; one chair empty,Moon key + rim,Wide with shallow DOF on chair
+f07,11,00:02:30-00:02:45,Live Photo Silhouette,Phone OTS playing Live Photo; silhouette appears only during motion,Phone UI scrub; silhouette in treeline,Moon backlight; phone screen fill,OTS insert with motion lines
+f08,14,00:03:17-00:03:37,Darkness Choice,Phones as only light; coals buried; breath visible,Faces lit by screens; buried ring,Phones (cool white) as key; near-black bg,Medium close group
+f09,15,00:03:37-00:03:47,Near-Ignition Flicker,Macro coal almost catches; fingers resist,Tiny coal with micro-flare; fingers nearby,Micro-ember flare; surrounding darkness,Macro CU
+f10,19,00:04:26-00:04:46,Dawn Button,Blue-to-warm gradient through trees; hand pockets faint glowing coal,Hand with coal glow; lighter implied offscreen,Warm dawn rim + cool ambient,Long-lens push

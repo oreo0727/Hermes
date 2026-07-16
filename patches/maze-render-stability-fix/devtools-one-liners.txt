@@ -1,0 +1,63 @@
+// Maze Forest emergency stabilization 
+// Paste the whole block into DevTools Console on the running page.
+(function(){
+  function crisp(canvas){
+    if(!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const dpr = Math.max(1, window.devicePixelRatio||1);
+    const cssW = Math.floor(canvas.clientWidth||canvas.width||0);
+    const cssH = Math.floor(canvas.clientHeight||canvas.height||0);
+    if(cssW && cssH){
+      canvas.width = cssW * dpr;
+      canvas.height = cssH * dpr;
+      ctx.setTransform(dpr,0,0,dpr,0,0);
+      ctx.imageSmoothingEnabled = false;
+      canvas.style.imageRendering = 'pixelated';
+      console.log('[Hotfix] Canvas DPR-fitted, smoothing off');
+    }
+  }
+  const c = document.getElementById('game')||document.querySelector('canvas');
+  crisp(c);
+
+  // drawImage guard (simplified from the runtime shim)
+  const P = CanvasRenderingContext2D && CanvasRenderingContext2D.prototype;
+  if(P && !P.__mazeGuardInstalled){
+    const _d = P.drawImage;
+    P.drawImage = function(img, sx, sy, sw, sh, dx, dy, dw, dh){
+      try{
+        if(arguments.length===9){
+          const iw=(img&&(img.naturalWidth||img.videoWidth||img.width))||0;
+          const ih=(img&&(img.naturalHeight||img.videoHeight||img.height))||0;
+          sx=+sx; sy=+sy; sw=+sw; sh=+sh; dx=+dx; dy=+dy; dw=+dw; dh=+dh;
+          sx=Math.round(sx); sy=Math.round(sy); sw=Math.round(sw); sh=Math.round(sh);
+          if(sw<1||sh<1||iw<1||ih<1||!isFinite(sx)||!isFinite(sy)){
+            this.save(); this.fillStyle='#885'; this.fillRect(Math.round(dx),Math.round(dy),Math.round(dw),Math.round(dh)); this.restore();
+            return;
+          }
+          if(sx<0){ sw+=sx; sx=0; }
+          if(sy<0){ sh+=sy; sy=0; }
+          if(sx+sw>iw){ sw=iw-sx; }
+          if(sy+sh>ih){ sh=ih-sy; }
+          if(sw>2&&sh>2){ sx+=1; sy+=1; sw-=2; sh-=2; }
+          dx=Math.round(dx); dy=Math.round(dy); dw=Math.round(dw); dh=Math.round(dh);
+          return _d.call(this,img,sx,sy,sw,sh,dx,dy,dw,dh);
+        }
+        if(arguments.length===3){ return _d.call(this,arguments[0],Math.round(arguments[1]),Math.round(arguments[2])); }
+        if(arguments.length===5){ return _d.call(this,arguments[0],arguments[1],arguments[2],Math.round(arguments[3]),Math.round(arguments[4])); }
+        return _d.apply(this,arguments);
+      }catch(e){
+        if(arguments.length===9){
+          const dx=Math.round(arguments[5]), dy=Math.round(arguments[6]), dw=Math.round(arguments[7]), dh=Math.round(arguments[8]);
+          this.save(); this.fillStyle='#885'; this.fillRect(dx,dy,dw,dh); this.restore();
+          return;
+        }
+        throw e;
+      }
+    };
+    Object.defineProperty(P,'__mazeGuardInstalled',{value:true});
+    console.log('[Hotfix] drawImage guard installed');
+  }
+
+  // If the game exposes a restart entry, try it
+  (window.restartLevel||window.reloadLevel||window.startLevel||window.boot)&& (window.restartLevel||window.reloadLevel||window.startLevel||window.boot)();
+})();

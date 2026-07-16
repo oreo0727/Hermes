@@ -1,0 +1,11 @@
+frame_id,shot_ref,time_window,title,description,must_include,lighting,camera
+f01,S01,00:00-00:12,Cold coals,The fire is out; just a faint coal glow inside the rock ring. Five logs sit around.,Ring of stones; 5 seating logs; tent silhouette; wood arrow sign; lantern left FG,Moon rim low; no key; deep vignette,Locked-off wide; level horizon
+f02,S02,00:12-00:22,First strike,A match scrapes; a weak flare kisses tinder but dies.,Match hand silhouette near frame edge; ring center,Fire key small; lantern spill faint; cool rim,OTS low angle on ring
+f03,S03,00:22-00:32,Battery at 3%,"Over-the-shoulder of a phone screen: 12:03 AM, Battery 3%. Camp ring soft behind.",Phone UI; time and battery; ring bokeh,Phone glow key on hands; fire dim,"Medium OTS right, shallow DOF"
+f04,S04,00:32-00:45,Marker stones,Right-side birch with three stacked marker stones reads in silhouette.,Birch trunk; 3 flat stones; right-of-frame,Low fire; cool rim accents trunk,Medium right profile
+f05,S05,00:45-00:58,All together,"Full ring composition: five logs, tent back-center, sign on right, lantern left.",Logs x5; tent center-back; sign right; lantern left,Healthy fire key; lantern practical warm; moon rim,Wide establishing
+f06,S06,00:58-01:10,Missing chair,The fourth seat is suddenly empty; others unchanged.,Empty fourth log; ring alignment preserved,Fire lower; shadows longer; subtle chill,Matching wide (for loop-read)
+f07,S07,01:10-01:25,Live Photo find,Phone OTS scrubbing a Live Photo reveals a slim silhouette in treeline.,Scrubber UI; slim silhouette in trees left,Phone glow on hands; background near-dark,Medium OTS; UI readable
+f08,S08,01:25-01:38,Phones only,The fire is fully out; only four phones cast cones of light onto faces/hands.,Four phone beams; faces/hands picks; ring faint,No fire; pure phone keys; blue-cool spill,Symmetric wide; cones visible
+f09,S09,01:38-01:48,Almost ignition,Macro near-ignition — ember brightens but fails; sparks drift.,Macro of center coals; 3–4 sparks,Ember orange micro-key; black surround,Insert macro; center-weighted
+f10,S10,01:48-02:05,Dawn pocket glow,Blue dawn gradient returns; pocket glows warm near a jacket; ring resets.,Jacket pocket warm dot; tent silhouette; sign,Pre-dawn cool ambient + tiny warm dot,Locked-off wide; gentle tilt

@@ -1,0 +1,52 @@
+// Maze Forest c instant stabilize (DevTools paste)
+localStorage.setItem('mf_debug','1');
+localStorage.setItem('mf_no_sprites','1');
+console.log('[Hotfix] Diagnostics on, sprites gated');
+
+// Install a safe addLoops to prevent generator crashes (even if original is brittle)
+(function(){
+  var DIRS = (window.DIRS && Array.isArray(window.DIRS)) ? window.DIRS : [[1,0],[-1,0],[0,1],[0,-1]];
+  function isArray2D(g){ return Array.isArray(g) && g.length>0 && Array.isArray(g[0]); }
+  function addLoopsSafe(grid, loops, rng){
+    if(!isArray2D(grid)) return 0;
+    var h = grid.length, w = grid[0].length;
+    if(!w || !h) return 0;
+    function isWall(x,y){ return y>=0 && y<h && x>=0 && x<w && grid[y] && grid[y][x]===1; }
+    function isFloor(x,y){ return y>=0 && y<h && x>=0 && x<w && grid[y] && grid[y][x]===0; }
+    var added=0, attempts=0, maxAttempts=Math.max((loops|0)*40, 200);
+    var R = (typeof rng==='function') ? rng : Math.random;
+    while(added < (loops|0) && attempts < maxAttempts){
+      attempts++;
+      var x = 1 + ((R()*(w-2))|0);
+      var y = 1 + ((R()*(h-2))|0);
+      if(!isWall(x,y)) continue;
+      var floors=0; for(var i=0;i<4;i++){ var d=DIRS[i]||[0,0]; var nx=x+(d[0]|0), ny=y+(d[1]|0); if(isFloor(nx,ny)) floors++; }
+      if(floors>=2){ grid[y][x]=0; added++; }
+    }
+    return added;
+  }
+  // Try to patch any visible addLoops. Best-effort; harmless if not found.
+  try{ if(typeof window.addLoops==='function') window.addLoops = addLoopsSafe; }catch(_){ }
+  // If the generator object is namespaced, try a few common places
+  try{ if(window.Generator && typeof window.Generator.addLoops==='function') window.Generator.addLoops = addLoopsSafe; }catch(_){ }
+  console.log('[Hotfix] addLoopsSafe installed where possible');
+})();
+
+// Basic DPR-fit + smoothing-off so tiles align and stay crisp
+(function(){
+  var c = document.getElementById('game'); if(!c) return;
+  var ctx = c.getContext('2d'); if(!ctx) return;
+  function fit(){
+    var dpr = Math.max(1, devicePixelRatio||1);
+    var cssW = Math.floor(c.clientWidth||720), cssH = Math.floor(c.clientHeight||720);
+    if(!cssW || !cssH) return;
+    c.width = Math.max(1, cssW*dpr); c.height = Math.max(1, cssH*dpr);
+    ctx.setTransform(dpr,0,0,dpr,0,0); ctx.imageSmoothingEnabled=false;
+  }
+  fit(); addEventListener('resize', ()=>setTimeout(fit,0));
+  console.log('[Hotfix] Canvas DPR-fitted, smoothing off');
+})();
+
+// Restart the level if the app exposes an entry point
+try{ typeof window.startLevel==='function' && window.startLevel(1); }catch(_){}
+console.log('[Hotfix] Attempted level restart');

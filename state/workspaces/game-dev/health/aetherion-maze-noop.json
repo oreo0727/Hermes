@@ -1,0 +1,15 @@
+{
+  "project_id": "aetherion-maze",
+  "project_title": "Aetherion Maze Games",
+  "status": "active",
+  "stage": "framing",
+  "progress_percent": 52,
+  "timestamp_utc": "2026-05-12T18:16:53Z",
+  "workspace_root": "/home/james/Hermes/state/workspaces/game-dev",
+  "project_root": "/home/james/Hermes/state/projects/aetherion-maze",
+  "checks": {
+    "workspace_exists": true,
+    "project_root_exists": true
+  },
+  "note": "noop heartbeat file; safe to delete"
+}

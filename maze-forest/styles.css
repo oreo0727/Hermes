@@ -1,0 +1,30 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+:root{
+  --bg:#0e1410; /* deep forest */
+  --forest-dark:#0d2b19;
+  --grass1:#1f2b1f;
+  --grass2:#233223;
+  --tree:#20351f;
+  --tree-edge:#2e4a2b;
+  --path:#2c412e;
+  --soil:#6f5434; /* warm soil */
+  --stone:#6a755f; /* mossy stone */
+  --exitGlow:#fff1a8;
+  --gold:#f3e38c;
+  --exit:#a6f2c1;
+  --enemy:#c35d58; /* legacy; renderer now uses --red */
+  --red:#ff4a4a;
+  --blue-ui:#10a1ff;
+  --trap:#c7a56b;
+  --power:#83c8f1;
+  --ink:#e9f3e7;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;background:radial-gradient(1000px 700px at 70% 10%,#142015 0%, var(--bg) 60%);color:var(--ink);font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
+#ui{position:absolute;inset:16px auto auto 16px;display:flex;flex-direction:column;gap:6px;z-index:2}
+#title{font-weight:600;opacity:.9}
+#hud{display:flex;gap:14px;align-items:center;opacity:.9}
+#help{opacity:.7;font-size:12px;margin-top:4px}
+.hidden{display:none}
+#gameRoot{position:relative;width:min(98vmin,1024px);margin:0 auto;}
+canvas#game{display:block;width:100%;height:auto;aspect-ratio:1;border-radius:12px;box-shadow:0 12px 48px rgba(0,0,0,.38), inset 0 0 48px rgba(166,242,193,.06);image-rendering: pixelated;image-rendering: crisp-edges;}

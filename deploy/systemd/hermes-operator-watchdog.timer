@@ -1,0 +1,11 @@
+[Unit]
+Description=Run the Hermes Operator Watchdog regularly
+
+[Timer]
+OnBootSec=2min
+OnUnitActiveSec=2min
+Unit=hermes-operator-watchdog.service
+Persistent=true
+
+[Install]
+WantedBy=timers.target
