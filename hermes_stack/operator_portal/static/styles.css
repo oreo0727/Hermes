@@ -782,6 +782,182 @@ svg {
   color: var(--text-muted);
 }
 
+.sheldon-chat-widget {
+  position: fixed;
+  right: 28px;
+  bottom: 26px;
+  z-index: 80;
+  display: grid;
+  justify-items: end;
+  gap: 14px;
+  pointer-events: none;
+}
+
+.sheldon-chat-toggle,
+.sheldon-chat-popover {
+  pointer-events: auto;
+}
+
+.sheldon-chat-toggle {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 66px;
+  padding: 8px 16px 8px 8px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 999px;
+  color: #fff;
+  background:
+    radial-gradient(circle at 18% 18%, rgba(255, 204, 140, 0.28), transparent 34%),
+    linear-gradient(145deg, rgba(31, 36, 78, 0.96), rgba(12, 16, 38, 0.96));
+  box-shadow: 0 22px 60px rgba(0, 0, 0, 0.42), 0 0 0 7px rgba(91, 126, 255, 0.08);
+  cursor: pointer;
+  transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
+}
+
+.sheldon-chat-toggle:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255, 204, 140, 0.42);
+  box-shadow: 0 28px 70px rgba(0, 0, 0, 0.48), 0 0 0 9px rgba(255, 178, 93, 0.09);
+}
+
+.sheldon-chat-toggle img {
+  width: 50px;
+  height: 50px;
+  border-radius: 999px;
+  object-fit: cover;
+  border: 2px solid rgba(126, 228, 128, 0.75);
+}
+
+.bubble-pulse {
+  position: absolute;
+  left: 46px;
+  bottom: 10px;
+  width: 13px;
+  height: 13px;
+  border-radius: 999px;
+  background: var(--green);
+  box-shadow: 0 0 0 0 rgba(126, 228, 128, 0.6);
+  animation: bubblePulse 1.8s infinite;
+}
+
+.bubble-label {
+  font-weight: 900;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+
+.sheldon-chat-popover {
+  width: min(430px, calc(100vw - 32px));
+  max-height: min(680px, calc(100vh - 130px));
+  display: grid;
+  grid-template-rows: auto minmax(160px, 1fr) auto;
+  overflow: hidden;
+  border-radius: 28px;
+  color: var(--text);
+  background:
+    radial-gradient(circle at top left, rgba(255, 178, 93, 0.16), transparent 40%),
+    linear-gradient(160deg, rgba(30, 35, 72, 0.98), rgba(9, 13, 31, 0.98));
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.58);
+}
+
+.sheldon-chat-popover[hidden] {
+  display: none;
+}
+
+.sheldon-chat-head {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.sheldon-chat-head strong,
+.sheldon-chat-head span {
+  display: block;
+}
+
+.sheldon-chat-head span {
+  margin-top: 3px;
+  color: var(--text-soft);
+  font-size: 0.86rem;
+}
+
+.sheldon-chat-head span[data-tone="busy"] {
+  color: #ffe4b2;
+}
+
+.sheldon-chat-head span[data-tone="error"] {
+  color: #ffc7cf;
+}
+
+.floating-close {
+  width: 34px;
+  height: 34px;
+  border: 0;
+  border-radius: 999px;
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.08);
+  cursor: pointer;
+  font-size: 1.35rem;
+  line-height: 1;
+}
+
+.floating-close:hover {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.floating-chat-log {
+  max-height: none;
+  min-height: 220px;
+  padding: 16px;
+}
+
+.floating-chat-log .chat-bubble {
+  max-width: 86%;
+}
+
+.floating-chat-form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  padding: 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.floating-chat-form textarea {
+  width: 100%;
+  min-height: 54px;
+  resize: none;
+  padding: 12px 13px;
+  border-radius: 16px;
+  color: var(--text);
+  background: rgba(4, 7, 19, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  outline: none;
+}
+
+.floating-chat-form textarea:focus {
+  border-color: rgba(255, 204, 140, 0.58);
+  box-shadow: 0 0 0 4px rgba(255, 178, 93, 0.1);
+}
+
+@keyframes bubblePulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(126, 228, 128, 0.56);
+  }
+  70% {
+    box-shadow: 0 0 0 12px rgba(126, 228, 128, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(126, 228, 128, 0);
+  }
+}
+
 .queue-task strong {
   display: block;
 }
@@ -995,5 +1171,27 @@ svg {
 
   .sidebar {
     padding: 16px;
+  }
+
+  .sheldon-chat-widget {
+    right: 16px;
+    bottom: 16px;
+  }
+
+  .bubble-label {
+    display: none;
+  }
+
+  .sheldon-chat-toggle {
+    min-height: 62px;
+    padding: 6px;
+  }
+
+  .floating-chat-form {
+    grid-template-columns: 1fr;
+  }
+
+  .floating-chat-form .button {
+    width: 100%;
   }
 }

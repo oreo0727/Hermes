@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Hermes v2 Command Deck</title>
-    <link rel="stylesheet" href="/styles.css?v=chat-20260716" />
+    <link rel="stylesheet" href="/styles.css?v=bubble-20260716" />
   </head>
   <body>
     <div class="app-shell">
@@ -246,6 +246,46 @@
       </main>
     </div>
 
+    <aside id="sheldon-chat-widget" class="sheldon-chat-widget" aria-label="Sheldon chat widget">
+      <section id="sheldon-chat-popover" class="sheldon-chat-popover" hidden>
+        <header class="sheldon-chat-head">
+          <div class="chat-avatar">
+            <img src="/branding/sheldon.png" alt="Sheldon" />
+          </div>
+          <div>
+            <strong>Sheldon</strong>
+            <span id="floating-chat-status">Ready</span>
+          </div>
+          <button id="sheldon-chat-close" class="floating-close" type="button" aria-label="Close Sheldon chat">×</button>
+        </header>
+        <div id="floating-chat-log" class="chat-log floating-chat-log" aria-live="polite">
+          <article class="chat-message assistant">
+            <div class="chat-avatar">
+              <img src="/branding/sheldon.png" alt="Sheldon" />
+            </div>
+            <div class="chat-bubble">
+              <strong>Sheldon</strong>
+              <p>I am back in bubble form. Slightly more portable than a command deck.</p>
+            </div>
+          </article>
+        </div>
+        <form id="floating-chat-form" class="floating-chat-form">
+          <textarea
+            id="floating-chat-input"
+            rows="2"
+            placeholder="Message Sheldon..."
+            aria-label="Message Sheldon from floating chat"
+          ></textarea>
+          <button id="floating-chat-send" class="button primary" type="submit">Send</button>
+        </form>
+      </section>
+      <button id="sheldon-chat-toggle" class="sheldon-chat-toggle" type="button" aria-label="Open Sheldon chat">
+        <img src="/branding/sheldon.png" alt="" />
+        <span class="bubble-pulse"></span>
+        <span class="bubble-label">Ask Sheldon</span>
+      </button>
+    </aside>
+
     <template id="empty-state-template">
       <article class="empty-state">
         <strong>Nothing here yet.</strong>
@@ -253,6 +293,6 @@
       </article>
     </template>
 
-    <script src="/app.js?v=chat-20260716"></script>
+    <script src="/app.js?v=bubble-20260716"></script>
   </body>
 </html>

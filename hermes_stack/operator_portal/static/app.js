@@ -31,6 +31,15 @@ const elements = {
   chatLog: document.querySelector("#chat-log"),
   chatSend: document.querySelector("#chat-send"),
   chatStatus: document.querySelector("#chat-status"),
+  floatingChatWidget: document.querySelector("#sheldon-chat-widget"),
+  floatingChatToggle: document.querySelector("#sheldon-chat-toggle"),
+  floatingChatPopover: document.querySelector("#sheldon-chat-popover"),
+  floatingChatClose: document.querySelector("#sheldon-chat-close"),
+  floatingChatForm: document.querySelector("#floating-chat-form"),
+  floatingChatInput: document.querySelector("#floating-chat-input"),
+  floatingChatLog: document.querySelector("#floating-chat-log"),
+  floatingChatSend: document.querySelector("#floating-chat-send"),
+  floatingChatStatus: document.querySelector("#floating-chat-status"),
   queueTable: document.querySelector("#queue-table"),
   agentTeam: document.querySelector("#agent-team"),
   activityFeed: document.querySelector("#activity-feed"),
@@ -97,25 +106,17 @@ function relativeTime(value) {
 }
 
 function setChatStatus(label, tone = "ready") {
-  if (!elements.chatStatus) {
-    return;
+  if (elements.chatStatus) {
+    elements.chatStatus.textContent = label;
+    elements.chatStatus.dataset.tone = tone;
   }
-  elements.chatStatus.textContent = label;
-  elements.chatStatus.dataset.tone = tone;
+  if (elements.floatingChatStatus) {
+    elements.floatingChatStatus.textContent = label;
+    elements.floatingChatStatus.dataset.tone = tone;
+  }
 }
 
-function appendChatMessage(role, content) {
-  if (!elements.chatLog) {
-    return;
-  }
-  const message = {
-    role,
-    content: String(content || "").trim(),
-  };
-  if (!message.content) {
-    return;
-  }
-  state.chatMessages.push(message);
+function chatMessageElement(role, content) {
   const isUser = role === "user";
   const article = document.createElement("article");
   article.className = `chat-message ${isUser ? "user" : "assistant"}`;
@@ -129,21 +130,69 @@ function appendChatMessage(role, content) {
     </div>
     <div class="chat-bubble">
       <strong>${isUser ? "You" : "Sheldon"}</strong>
-      <p>${nl2br(message.content)}</p>
+      <p>${nl2br(content)}</p>
     </div>
   `;
-  elements.chatLog.append(article);
-  elements.chatLog.scrollTop = elements.chatLog.scrollHeight;
+  return article;
+}
+
+function appendChatMessage(role, content) {
+  const message = {
+    role,
+    content: String(content || "").trim(),
+  };
+  if (!message.content) {
+    return;
+  }
+  state.chatMessages.push(message);
+  for (const log of [elements.chatLog, elements.floatingChatLog]) {
+    if (!log) {
+      continue;
+    }
+    log.append(chatMessageElement(role, message.content));
+    log.scrollTop = log.scrollHeight;
+  }
 }
 
 function setChatLoading(loading) {
   state.chatLoading = loading;
-  if (elements.chatInput) {
-    elements.chatInput.disabled = loading;
+  for (const input of [elements.chatInput, elements.floatingChatInput]) {
+    if (input) {
+      input.disabled = loading;
+    }
   }
-  if (elements.chatSend) {
-    elements.chatSend.disabled = loading;
-    elements.chatSend.textContent = loading ? "Thinking..." : "Send";
+  for (const sendButton of [elements.chatSend, elements.floatingChatSend]) {
+    if (sendButton) {
+      sendButton.disabled = loading;
+      sendButton.textContent = loading ? "Thinking..." : "Send";
+    }
+  }
+}
+
+function openFloatingChat() {
+  if (!elements.floatingChatWidget || !elements.floatingChatPopover) {
+    return;
+  }
+  elements.floatingChatWidget.classList.add("open");
+  elements.floatingChatPopover.hidden = false;
+  elements.floatingChatToggle?.setAttribute("aria-label", "Close Sheldon chat");
+  setTimeout(() => elements.floatingChatInput?.focus(), 80);
+}
+
+function closeFloatingChat() {
+  if (!elements.floatingChatWidget || !elements.floatingChatPopover) {
+    return;
+  }
+  elements.floatingChatWidget.classList.remove("open");
+  elements.floatingChatPopover.hidden = true;
+  elements.floatingChatToggle?.setAttribute("aria-label", "Open Sheldon chat");
+}
+
+function toggleFloatingChat() {
+  if (elements.floatingChatWidget?.classList.contains("open")) {
+    closeFloatingChat();
+  } else {
+    openFloatingChat();
   }
 }
 
@@ -154,8 +203,10 @@ async function sendChatMessage(content) {
   }
 
   appendChatMessage("user", outgoing);
-  if (elements.chatInput) {
-    elements.chatInput.value = "";
+  for (const input of [elements.chatInput, elements.floatingChatInput]) {
+    if (input) {
+      input.value = "";
+    }
   }
   setChatLoading(true);
   setChatStatus("Sheldon is thinking", "busy");
@@ -182,7 +233,11 @@ async function sendChatMessage(content) {
     setChatStatus("Gateway error", "error");
   } finally {
     setChatLoading(false);
-    elements.chatInput?.focus();
+    if (elements.floatingChatWidget?.classList.contains("open")) {
+      elements.floatingChatInput?.focus();
+    } else {
+      elements.chatInput?.focus();
+    }
   }
 }
 
@@ -626,6 +681,23 @@ elements.chatInput?.addEventListener("keydown", (event) => {
   if (event.key === "Enter" && !event.shiftKey) {
     event.preventDefault();
     elements.chatForm?.requestSubmit();
+  }
+});
+elements.floatingChatToggle?.addEventListener("click", toggleFloatingChat);
+elements.floatingChatClose?.addEventListener("click", closeFloatingChat);
+elements.floatingChatForm?.addEventListener("submit", (event) => {
+  event.preventDefault();
+  sendChatMessage(elements.floatingChatInput?.value || "");
+});
+elements.floatingChatInput?.addEventListener("keydown", (event) => {
+  if (event.key === "Enter" && !event.shiftKey) {
+    event.preventDefault();
+    elements.floatingChatForm?.requestSubmit();
+  }
+});
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") {
+    closeFloatingChat();
   }
 });
 
