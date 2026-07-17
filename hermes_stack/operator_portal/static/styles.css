@@ -416,12 +416,26 @@ svg {
   border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: 14px;
   padding: 14px 16px;
+  color: inherit;
+  text-align: left;
 }
 
 .stat-pill strong {
   display: block;
   margin-top: 4px;
   font-size: 1.65rem;
+}
+
+.stat-button {
+  cursor: pointer;
+  transition: transform 0.16s ease, border-color 0.16s ease, background 0.16s ease;
+}
+
+.stat-button:hover,
+.stat-button[aria-expanded="true"] {
+  transform: translateY(-1px);
+  border-color: rgba(255, 204, 140, 0.38);
+  background: rgba(240, 165, 84, 0.16);
 }
 
 .hero-strip {
@@ -439,6 +453,57 @@ svg {
 .hero-strip strong {
   display: block;
   margin-top: 4px;
+}
+
+.blocked-details {
+  margin-top: 16px;
+  padding: 14px;
+  border-radius: 18px;
+  background: rgba(8, 11, 26, 0.38);
+  border: 1px solid rgba(255, 204, 140, 0.18);
+}
+
+.blocked-details[hidden] {
+  display: none;
+}
+
+.blocked-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.blocked-head strong {
+  display: block;
+  margin-top: 3px;
+}
+
+.blocked-list {
+  display: grid;
+  gap: 10px;
+}
+
+.blocked-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  padding: 12px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.045);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.blocked-row p {
+  margin: 5px 0;
+  color: #ffd3a7;
+}
+
+.blocked-row span {
+  color: var(--text-muted);
+  font-size: 0.88rem;
 }
 
 .panel {

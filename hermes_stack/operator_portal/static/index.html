@@ -132,11 +132,11 @@
                     <strong id="metric-tasks">0</strong>
                     <p>Tasks</p>
                   </article>
-                  <article class="stat-pill">
+                  <button id="blocked-pill" class="stat-pill stat-button" type="button" aria-expanded="false" aria-controls="blocked-details">
                     <span class="metric-label">Blocked</span>
                     <strong id="metric-blocked">0</strong>
                     <p>Needs attention</p>
-                  </article>
+                  </button>
                   <article class="stat-pill">
                     <span class="metric-label">Completed</span>
                     <strong id="metric-completed">0</strong>
@@ -154,6 +154,17 @@
                     <strong id="operator-proof">No proof attached</strong>
                   </div>
                 </div>
+
+                <section id="blocked-details" class="blocked-details" hidden>
+                  <div class="blocked-head">
+                    <div>
+                      <span class="meta-label">Blocked Items</span>
+                      <strong>What needs attention</strong>
+                    </div>
+                    <button id="blocked-close" class="row-action quiet" type="button">Close</button>
+                  </div>
+                  <div id="blocked-list" class="blocked-list"></div>
+                </section>
               </article>
 
               <aside class="quote-card">
@@ -313,6 +324,6 @@
       </article>
     </template>
 
-    <script src="/app.js?v=always-on-20260717"></script>
+    <script src="/app.js?v=blocked-details-20260717"></script>
   </body>
 </html>

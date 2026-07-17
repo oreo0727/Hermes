@@ -25,6 +25,10 @@ const elements = {
   metricTasks: document.querySelector("#metric-tasks"),
   metricBlocked: document.querySelector("#metric-blocked"),
   metricCompleted: document.querySelector("#metric-completed"),
+  blockedPill: document.querySelector("#blocked-pill"),
+  blockedDetails: document.querySelector("#blocked-details"),
+  blockedClose: document.querySelector("#blocked-close"),
+  blockedList: document.querySelector("#blocked-list"),
   activeProjects: document.querySelector("#active-projects"),
   chatForm: document.querySelector("#chat-form"),
   chatInput: document.querySelector("#chat-input"),
@@ -361,6 +365,66 @@ function renderHero() {
   elements.footerSystem.textContent = liveAgents === (snapshot.agents || []).length
     ? "All systems operational"
     : `${liveAgents}/${(snapshot.agents || []).length} lanes live`;
+
+  renderBlockedDetails();
+}
+
+function blockedItems() {
+  const rows = [];
+  for (const project of state.snapshot?.projects || []) {
+    const blocked = Array.isArray(project.blocked) ? project.blocked : [];
+    for (const item of blocked) {
+      const detail = String(item || "").trim();
+      if (!detail) {
+        continue;
+      }
+      rows.push({ project, detail });
+    }
+  }
+  return rows;
+}
+
+function blockedRowMarkup(row) {
+  const project = row.project || {};
+  return `
+    <article class="blocked-row">
+      <div>
+        <strong>${escapeHtml(text(project.title, project.project_id))}</strong>
+        <p>${escapeHtml(row.detail)}</p>
+        <span>${escapeHtml(text(project.next, "No next step recorded."))}</span>
+      </div>
+      <button class="row-action" type="button" data-action="focus" data-project-id="${escapeHtml(project.project_id)}">Focus</button>
+    </article>
+  `;
+}
+
+function renderBlockedDetails() {
+  if (!elements.blockedList) {
+    return;
+  }
+  const rows = blockedItems();
+  if (!rows.length) {
+    elements.blockedList.innerHTML = `
+      <article class="empty-state">
+        <strong>No blockers recorded.</strong>
+        <p class="meta">Hermes does not currently have a blocked item in project state.</p>
+      </article>
+    `;
+    return;
+  }
+  elements.blockedList.innerHTML = rows.map(blockedRowMarkup).join("");
+}
+
+function setBlockedDetailsOpen(open) {
+  if (!elements.blockedDetails || !elements.blockedPill) {
+    return;
+  }
+  elements.blockedDetails.hidden = !open;
+  elements.blockedPill.setAttribute("aria-expanded", open ? "true" : "false");
+  if (open) {
+    renderBlockedDetails();
+    elements.blockedDetails.scrollIntoView({ block: "nearest", behavior: "smooth" });
+  }
 }
 
 function progressBarMarkup(percent) {
@@ -758,6 +822,13 @@ elements.refreshButton.addEventListener("click", () => {
   loadDashboard();
 });
 elements.activeProjects.addEventListener("click", handleProjectAction);
+elements.blockedPill?.addEventListener("click", () => {
+  setBlockedDetailsOpen(elements.blockedDetails?.hidden !== false);
+});
+elements.blockedClose?.addEventListener("click", () => {
+  setBlockedDetailsOpen(false);
+});
+elements.blockedList?.addEventListener("click", handleProjectAction);
 elements.chatForm?.addEventListener("submit", (event) => {
   event.preventDefault();
   sendChatMessage(elements.chatInput?.value || "");
