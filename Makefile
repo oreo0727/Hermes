@@ -1,4 +1,4 @@
-.PHONY: help bootstrap install services-install portal gateway-operator gateway-app gateway-game gateway-creative dashboard-operator snapshot configure-postgres seed-memory memory-summary seed-cognition cognition-summary activate-cognition detect-contradictions dream-cycle experiment-cycle evolve-skills autonomy-decision always-on-cycle always-on-summary always-on-loop council write-reflection create-project update-project orchestrate
+.PHONY: help bootstrap install services-install portal gateway-operator gateway-app gateway-game gateway-creative dashboard-operator snapshot configure-postgres seed-memory memory-summary seed-cognition cognition-summary activate-cognition detect-contradictions dream-cycle experiment-cycle evolve-skills autonomy-decision always-on-cycle always-on-summary always-on-loop always-on-start always-on-stop always-on-status council write-reflection create-project update-project orchestrate
 
 help:
 	@echo "Hermes Standalone Stack"
@@ -25,6 +25,8 @@ help:
 	@echo "  make autonomy-decision QUERY='...' RISK=medium - score autonomy"
 	@echo "  make always-on-cycle   - run one listening/proactive agent cycle"
 	@echo "  make always-on-loop INTERVAL=60 - run continuous agent radar loop"
+	@echo "  make always-on-start INTERVAL=60 - start continuous agent radar loop in background"
+	@echo "  make always-on-status  - show background agent radar loop status"
 	@echo "  make council TOPIC='...' - run agent council deliberation"
 	@echo "  make create-project PROJECT_ID=id TITLE='Title' - scaffold a persistent project"
 	@echo "  make update-project PROJECT_ID=id NOW='...' NEXT='...' - update persistent project tracking"
@@ -101,6 +103,15 @@ always-on-summary:
 
 always-on-loop:
 	@python3 -m hermes_stack.scaffold --root-dir . --interval "$(or $(INTERVAL),60)" --cycles "$(or $(CYCLES),0)" always-on-loop
+
+always-on-start:
+	@INTERVAL="$(or $(INTERVAL),60)" ./scripts/run-always-on-loop.sh start
+
+always-on-stop:
+	@./scripts/run-always-on-loop.sh stop
+
+always-on-status:
+	@./scripts/run-always-on-loop.sh status
 
 council:
 	@python3 -m hermes_stack.scaffold --root-dir . --project-id "$(PROJECT_ID)" --topic "$(TOPIC)" council

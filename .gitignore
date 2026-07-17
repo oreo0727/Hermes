@@ -22,6 +22,8 @@ state/hermes/profiles/
 state/hermes/portal_uploads/
 state/hermes/kanban/
 state/hermes/*.lock
+state/hermes/always-on-loop.env
+state/hermes/always-on-loop.pid
 state/projects/*/pmbwork/
 state/projects/*/tools/
 state/workspaces/creative-dev/aetherion-maze-hud-pack/
