@@ -8,6 +8,7 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 from unittest.mock import patch
 
+from hermes_stack.autonomy import decide_autonomy
 from hermes_stack.orchestration import (
     build_delivery_model,
     build_work_order,
@@ -624,6 +625,39 @@ class HermesProjectTests(unittest.TestCase):
             self.assertEqual(4, result["evolution_count"])
             self.assertTrue(any(row["agent_slug"] == "sheldon" for row in sheldon_evolutions))
             self.assertTrue(any("skill evolution" in row["title"].lower() for row in reflections))
+
+    def test_autonomy_decision_auto_executes_low_risk_high_confidence_work(self) -> None:
+        with TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir) / "repo"
+            root.mkdir()
+            _write_workspace_policy(root)
+
+            decision = decide_autonomy(
+                root,
+                objective="summarize the active project status",
+                risk="low",
+                confidence=0.9,
+            )
+            stored = list_cognitive_records(root, "autonomy_decisions", limit=10)
+
+            self.assertEqual("auto_execute", decision["decision"])
+            self.assertTrue(stored)
+
+    def test_autonomy_decision_escalates_high_risk_work(self) -> None:
+        with TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir) / "repo"
+            root.mkdir()
+            _write_workspace_policy(root)
+
+            decision = decide_autonomy(
+                root,
+                objective="deploy a production portal change",
+                risk="high",
+                confidence=0.95,
+            )
+
+            self.assertEqual("ask_operator", decision["decision"])
+            self.assertIn("high-risk", " ".join(decision["reasons"]))
 
     def test_project_action_payload_reflects_latest_focus_state(self) -> None:
         with TemporaryDirectory() as temp_dir:

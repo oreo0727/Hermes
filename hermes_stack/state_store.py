@@ -361,6 +361,19 @@ def ensure_postgres_ready(root_dir: str | Path | None = None) -> None:
                     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
                 );
 
+                CREATE TABLE IF NOT EXISTS hermes_autonomy_decisions (
+                    decision_id TEXT PRIMARY KEY,
+                    project_id TEXT NOT NULL DEFAULT '',
+                    objective TEXT NOT NULL,
+                    risk TEXT NOT NULL DEFAULT 'medium',
+                    confidence DOUBLE PRECISION NOT NULL DEFAULT 0.0,
+                    decision TEXT NOT NULL,
+                    reasons JSONB NOT NULL DEFAULT '[]'::jsonb,
+                    payload JSONB NOT NULL DEFAULT '{}'::jsonb,
+                    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+                    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+                );
+
                 CREATE INDEX IF NOT EXISTS hermes_cognitive_events_agent_idx
                     ON hermes_cognitive_events (agent_slug, event_type, occurred_at DESC);
 
@@ -378,6 +391,9 @@ def ensure_postgres_ready(root_dir: str | Path | None = None) -> None:
 
                 CREATE INDEX IF NOT EXISTS hermes_skill_evolutions_agent_idx
                     ON hermes_skill_evolutions (agent_slug, skill_area, confidence DESC);
+
+                CREATE INDEX IF NOT EXISTS hermes_autonomy_decisions_risk_idx
+                    ON hermes_autonomy_decisions (risk, decision, updated_at DESC);
                 """
             )
 
@@ -471,6 +487,7 @@ def _load_cognition_file(root_dir: str | Path | None = None) -> dict[str, Any]:
         "council_records": {},
         "experiments": {},
         "skill_evolutions": {},
+        "autonomy_decisions": {},
     }
     if not path.exists():
         return sections
@@ -1171,6 +1188,7 @@ COGNITIVE_TABLES: dict[str, dict[str, str]] = {
     "council_records": {"table": "hermes_council_records", "id": "council_id", "order": "created_at DESC"},
     "experiments": {"table": "hermes_experiments", "id": "experiment_id", "order": "updated_at DESC"},
     "skill_evolutions": {"table": "hermes_skill_evolutions", "id": "evolution_id", "order": "updated_at DESC"},
+    "autonomy_decisions": {"table": "hermes_autonomy_decisions", "id": "decision_id", "order": "updated_at DESC"},
 }
 
 
@@ -1319,6 +1337,21 @@ def _cognitive_json_expr(kind: str) -> str:
                 'evidence', evidence,
                 'recommendation', recommendation,
                 'confidence', confidence,
+                'payload', payload,
+                'created_at', created_at::text,
+                'updated_at', updated_at::text
+            )
+        """
+    if kind == "autonomy_decisions":
+        return """
+            jsonb_build_object(
+                'decision_id', decision_id,
+                'project_id', project_id,
+                'objective', objective,
+                'risk', risk,
+                'confidence', confidence,
+                'decision', decision,
+                'reasons', reasons,
                 'payload', payload,
                 'created_at', created_at::text,
                 'updated_at', updated_at::text
@@ -1653,6 +1686,35 @@ def upsert_cognitive_record(root_dir: str | Path | None, kind: str, payload: dic
                         str(payload.get("evidence") or "").strip(),
                         str(payload.get("recommendation") or "").strip(),
                         float(payload.get("confidence") or 0.0),
+                        json.dumps(payload.get("payload") if isinstance(payload.get("payload"), dict) else {}),
+                    ),
+                )
+            elif kind == "autonomy_decisions":
+                cur.execute(
+                    """
+                    INSERT INTO hermes_autonomy_decisions (
+                        decision_id, project_id, objective, risk, confidence,
+                        decision, reasons, payload, updated_at
+                    )
+                    VALUES (%s, %s, %s, %s, %s, %s, %s::jsonb, %s::jsonb, NOW())
+                    ON CONFLICT (decision_id) DO UPDATE
+                    SET project_id = EXCLUDED.project_id,
+                        objective = EXCLUDED.objective,
+                        risk = EXCLUDED.risk,
+                        confidence = EXCLUDED.confidence,
+                        decision = EXCLUDED.decision,
+                        reasons = EXCLUDED.reasons,
+                        payload = EXCLUDED.payload,
+                        updated_at = NOW()
+                    """,
+                    (
+                        record_id,
+                        str(payload.get("project_id") or "").strip(),
+                        str(payload.get("objective") or "").strip(),
+                        str(payload.get("risk") or "medium").strip(),
+                        float(payload.get("confidence") or 0.0),
+                        str(payload.get("decision") or "").strip(),
+                        json.dumps(payload.get("reasons") if isinstance(payload.get("reasons"), list) else []),
                         json.dumps(payload.get("payload") if isinstance(payload.get("payload"), dict) else {}),
                     ),
                 )

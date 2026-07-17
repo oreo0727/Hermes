@@ -24,6 +24,7 @@ from hermes_stack.projects import (
     update_project,
 )
 from hermes_stack.agents import build_agent_registry
+from hermes_stack.autonomy import decide_autonomy
 from hermes_stack.cognitive_kernel import (
     activate_cognition,
     cognitive_summary,
@@ -843,6 +844,8 @@ def _main() -> int:
     parser.add_argument("--query", default="", help="Query text for cognitive activation")
     parser.add_argument("--topic", default="", help="Topic for council deliberation")
     parser.add_argument("--content", default="", help="Content for write-reflection")
+    parser.add_argument("--risk", default="medium", help="Risk level for autonomy-decision")
+    parser.add_argument("--confidence", type=float, help="Optional confidence override for autonomy-decision")
     parser.add_argument(
         "action",
         nargs="?",
@@ -861,6 +864,7 @@ def _main() -> int:
             "dream-cycle",
             "experiment-cycle",
             "evolve-skills",
+            "autonomy-decision",
             "council",
             "write-reflection",
             "create-project",
@@ -927,6 +931,22 @@ def _main() -> int:
         return 0
     if args.action == "evolve-skills":
         print(json.dumps(consolidate_experiment_memory(args.root_dir), indent=2))
+        return 0
+    if args.action == "autonomy-decision":
+        if not args.query:
+            parser.error("--query is required for autonomy-decision")
+        print(
+            json.dumps(
+                decide_autonomy(
+                    args.root_dir,
+                    objective=args.query,
+                    project_id=args.project_id or "",
+                    risk=args.risk,
+                    confidence=args.confidence,
+                ),
+                indent=2,
+            )
+        )
         return 0
     if args.action == "council":
         if not args.topic:

@@ -328,6 +328,8 @@ that knowledge gets used over time:
   risk, confidence, and results.
 - `hermes_skill_evolutions` stores agent-specific learning distilled from
   experiments.
+- `hermes_autonomy_decisions` stores confidence-gated approvals, council
+  reviews, and operator-escalation decisions.
 
 Seed the cognitive kernel:
 
@@ -347,6 +349,7 @@ Run the experimental idle-thinking and council loops:
 make dream-cycle
 make experiment-cycle
 make evolve-skills
+make autonomy-decision QUERY="refresh the active project status" RISK=low CONFIDENCE=0.9
 make council TOPIC="What is the safest next slice for the active project?"
 ```
 
