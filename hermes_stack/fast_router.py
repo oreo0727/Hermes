@@ -96,6 +96,25 @@ def _team_line() -> str:
     )
 
 
+def _is_small_talk(text: str) -> bool:
+    return _has_intent(
+        text,
+        (
+            "how are you",
+            "how are things",
+            "how is it going",
+            "hows it going",
+            "how's it going",
+            "great",
+            "nice",
+            "thanks",
+            "thank you",
+            "cool",
+            "awesome",
+        ),
+    )
+
+
 def _compose_fast_reply(
     *,
     query: str,
@@ -108,6 +127,13 @@ def _compose_fast_reply(
     chosen_action = str(activation.get("chosen_action") or "operator_synthesize")
     confidence = float(activation.get("confidence") or 0.0)
     project_lines = _project_lines(project)
+
+    if _is_small_talk(normalized):
+        return (
+            "Going smoothly. The bubble is online, the fast route is behaving, "
+            "and I am keeping one eye on the active project without turning every pleasantry into a quarterly report.\n"
+            f"{project_lines[0]}"
+        )
 
     if _has_intent(normalized, ("hi", "hello", "hey", "online", "ready")):
         return (

@@ -580,6 +580,23 @@ class HermesProjectTests(unittest.TestCase):
             assert response is not None
             self.assertNotIn("Tiny lab coat", response["content"])
 
+    def test_fast_router_handles_small_talk_without_status_dump(self) -> None:
+        with TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir) / "repo"
+            root.mkdir()
+            _write_workspace_policy(root)
+
+            response = fast_route_chat(
+                root,
+                profile_key="operator",
+                messages=[{"role": "user", "content": "great hows it going"}],
+            )
+
+            self.assertIsNotNone(response)
+            assert response is not None
+            self.assertIn("Going smoothly", response["content"])
+            self.assertNotIn("Status snapshot", response["content"])
+
     def test_fast_router_escalates_heavy_build_requests(self) -> None:
         with TemporaryDirectory() as temp_dir:
             root = Path(temp_dir) / "repo"

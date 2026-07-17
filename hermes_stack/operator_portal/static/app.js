@@ -122,11 +122,11 @@ function chatMessageElement(role, content) {
   const article = document.createElement("article");
   article.className = `chat-message ${isUser ? "user" : "assistant"}`;
   article.innerHTML = `
-    <div class="chat-avatar">
+    <div class="chat-avatar" aria-hidden="true">
       ${
         isUser
-          ? "<span>You</span>"
-          : '<img src="/branding/sheldon.png" alt="Sheldon" />'
+          ? '<span aria-hidden="true">You</span>'
+          : '<img src="/branding/sheldon.png" alt="" draggable="false" />'
       }
     </div>
     <div class="chat-bubble">

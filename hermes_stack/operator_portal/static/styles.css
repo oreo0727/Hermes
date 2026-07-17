@@ -707,6 +707,7 @@ svg {
   color: #fff;
   background: linear-gradient(145deg, rgba(255, 178, 93, 0.28), rgba(91, 126, 255, 0.18));
   border: 1px solid rgba(255, 255, 255, 0.12);
+  user-select: none;
 }
 
 .chat-avatar img {
