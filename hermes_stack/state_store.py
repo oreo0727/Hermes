@@ -349,6 +349,18 @@ def ensure_postgres_ready(root_dir: str | Path | None = None) -> None:
                     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
                 );
 
+                CREATE TABLE IF NOT EXISTS hermes_skill_evolutions (
+                    evolution_id TEXT PRIMARY KEY,
+                    agent_slug TEXT NOT NULL,
+                    skill_area TEXT NOT NULL,
+                    evidence TEXT NOT NULL,
+                    recommendation TEXT NOT NULL,
+                    confidence DOUBLE PRECISION NOT NULL DEFAULT 0.0,
+                    payload JSONB NOT NULL DEFAULT '{}'::jsonb,
+                    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+                    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+                );
+
                 CREATE INDEX IF NOT EXISTS hermes_cognitive_events_agent_idx
                     ON hermes_cognitive_events (agent_slug, event_type, occurred_at DESC);
 
@@ -363,6 +375,9 @@ def ensure_postgres_ready(root_dir: str | Path | None = None) -> None:
 
                 CREATE INDEX IF NOT EXISTS hermes_experiments_status_idx
                     ON hermes_experiments (status, risk, updated_at DESC);
+
+                CREATE INDEX IF NOT EXISTS hermes_skill_evolutions_agent_idx
+                    ON hermes_skill_evolutions (agent_slug, skill_area, confidence DESC);
                 """
             )
 
@@ -455,6 +470,7 @@ def _load_cognition_file(root_dir: str | Path | None = None) -> dict[str, Any]:
         "dream_jobs": {},
         "council_records": {},
         "experiments": {},
+        "skill_evolutions": {},
     }
     if not path.exists():
         return sections
@@ -1154,6 +1170,7 @@ COGNITIVE_TABLES: dict[str, dict[str, str]] = {
     "dream_jobs": {"table": "hermes_dream_jobs", "id": "job_id", "order": "updated_at DESC"},
     "council_records": {"table": "hermes_council_records", "id": "council_id", "order": "created_at DESC"},
     "experiments": {"table": "hermes_experiments", "id": "experiment_id", "order": "updated_at DESC"},
+    "skill_evolutions": {"table": "hermes_skill_evolutions", "id": "evolution_id", "order": "updated_at DESC"},
 }
 
 
@@ -1288,6 +1305,20 @@ def _cognitive_json_expr(kind: str) -> str:
                 'risk', risk,
                 'confidence', confidence,
                 'result', result,
+                'payload', payload,
+                'created_at', created_at::text,
+                'updated_at', updated_at::text
+            )
+        """
+    if kind == "skill_evolutions":
+        return """
+            jsonb_build_object(
+                'evolution_id', evolution_id,
+                'agent_slug', agent_slug,
+                'skill_area', skill_area,
+                'evidence', evidence,
+                'recommendation', recommendation,
+                'confidence', confidence,
                 'payload', payload,
                 'created_at', created_at::text,
                 'updated_at', updated_at::text
@@ -1598,6 +1629,33 @@ def upsert_cognitive_record(root_dir: str | Path | None, kind: str, payload: dic
                         json.dumps(payload.get("payload") if isinstance(payload.get("payload"), dict) else {}),
                     ),
                 )
+            elif kind == "skill_evolutions":
+                cur.execute(
+                    """
+                    INSERT INTO hermes_skill_evolutions (
+                        evolution_id, agent_slug, skill_area, evidence,
+                        recommendation, confidence, payload, updated_at
+                    )
+                    VALUES (%s, %s, %s, %s, %s, %s, %s::jsonb, NOW())
+                    ON CONFLICT (evolution_id) DO UPDATE
+                    SET agent_slug = EXCLUDED.agent_slug,
+                        skill_area = EXCLUDED.skill_area,
+                        evidence = EXCLUDED.evidence,
+                        recommendation = EXCLUDED.recommendation,
+                        confidence = EXCLUDED.confidence,
+                        payload = EXCLUDED.payload,
+                        updated_at = NOW()
+                    """,
+                    (
+                        record_id,
+                        str(payload.get("agent_slug") or "").strip(),
+                        str(payload.get("skill_area") or "").strip(),
+                        str(payload.get("evidence") or "").strip(),
+                        str(payload.get("recommendation") or "").strip(),
+                        float(payload.get("confidence") or 0.0),
+                        json.dumps(payload.get("payload") if isinstance(payload.get("payload"), dict) else {}),
+                    ),
+                )
     return payload
 
 
@@ -1626,7 +1684,7 @@ def list_cognitive_records(
     expr = _cognitive_json_expr(kind)
     with _connect(root) as conn:
         with conn.cursor() as cur:
-            if normalized_slug and kind in {"events", "procedures", "reflections", "activations", "beliefs", "dream_jobs"}:
+            if normalized_slug and kind in {"events", "procedures", "reflections", "activations", "beliefs", "dream_jobs", "skill_evolutions"}:
                 cur.execute(
                     f"""
                     SELECT {expr}

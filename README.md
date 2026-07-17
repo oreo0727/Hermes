@@ -326,6 +326,8 @@ that knowledge gets used over time:
   arbitration decision.
 - `hermes_experiments` stores autonomous project-scientist hypotheses, metrics,
   risk, confidence, and results.
+- `hermes_skill_evolutions` stores agent-specific learning distilled from
+  experiments.
 
 Seed the cognitive kernel:
 
@@ -344,6 +346,7 @@ Run the experimental idle-thinking and council loops:
 ```bash
 make dream-cycle
 make experiment-cycle
+make evolve-skills
 make council TOPIC="What is the safest next slice for the active project?"
 ```
 

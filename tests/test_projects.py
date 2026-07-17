@@ -39,6 +39,7 @@ from hermes_stack.operator_portal.server import (
     _sync_project_after_run,
 )
 from hermes_stack.scaffold import bootstrap_runtime, build_snapshot
+from hermes_stack.skill_evolution import consolidate_experiment_memory
 from hermes_stack.state_store import list_cognitive_records
 
 
@@ -600,6 +601,29 @@ class HermesProjectTests(unittest.TestCase):
 
             self.assertGreaterEqual(cycle["persisted_count"], 1)
             self.assertTrue(any("blocker" in row["hypothesis"].lower() for row in stored))
+
+    def test_skill_evolution_consolidates_experiments_into_agent_learning(self) -> None:
+        with TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir) / "repo"
+            root.mkdir()
+            _write_workspace_policy(root)
+
+            create_project(
+                root,
+                project_id="signal-house",
+                title="Signal House",
+                summary="Cross-media project for app, game, and storyboard work.",
+                specialists=("operator", "app-dev"),
+            )
+            run_experiment_cycle(root)
+
+            result = consolidate_experiment_memory(root)
+            sheldon_evolutions = list_cognitive_records(root, "skill_evolutions", agent_slug="sheldon", limit=10)
+            reflections = list_cognitive_records(root, "reflections", agent_slug="sheldon", limit=10)
+
+            self.assertEqual(4, result["evolution_count"])
+            self.assertTrue(any(row["agent_slug"] == "sheldon" for row in sheldon_evolutions))
+            self.assertTrue(any("skill evolution" in row["title"].lower() for row in reflections))
 
     def test_project_action_payload_reflects_latest_focus_state(self) -> None:
         with TemporaryDirectory() as temp_dir:

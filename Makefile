@@ -1,4 +1,4 @@
-.PHONY: help bootstrap install services-install portal gateway-operator gateway-app gateway-game gateway-creative dashboard-operator snapshot configure-postgres seed-memory memory-summary seed-cognition cognition-summary activate-cognition detect-contradictions dream-cycle experiment-cycle council write-reflection create-project update-project orchestrate
+.PHONY: help bootstrap install services-install portal gateway-operator gateway-app gateway-game gateway-creative dashboard-operator snapshot configure-postgres seed-memory memory-summary seed-cognition cognition-summary activate-cognition detect-contradictions dream-cycle experiment-cycle evolve-skills council write-reflection create-project update-project orchestrate
 
 help:
 	@echo "Hermes Standalone Stack"
@@ -21,6 +21,7 @@ help:
 	@echo "  make activate-cognition QUERY='...' PROFILE=sheldon - activate memory/facts/procedures"
 	@echo "  make dream-cycle       - run idle cognition jobs"
 	@echo "  make experiment-cycle  - propose autonomous project experiments"
+	@echo "  make evolve-skills     - distill experiments into agent skill evolution"
 	@echo "  make council TOPIC='...' - run agent council deliberation"
 	@echo "  make create-project PROJECT_ID=id TITLE='Title' - scaffold a persistent project"
 	@echo "  make update-project PROJECT_ID=id NOW='...' NEXT='...' - update persistent project tracking"
@@ -82,6 +83,9 @@ dream-cycle:
 
 experiment-cycle:
 	@python3 -m hermes_stack.scaffold --root-dir . experiment-cycle
+
+evolve-skills:
+	@python3 -m hermes_stack.scaffold --root-dir . evolve-skills
 
 council:
 	@python3 -m hermes_stack.scaffold --root-dir . --project-id "$(PROJECT_ID)" --topic "$(TOPIC)" council
