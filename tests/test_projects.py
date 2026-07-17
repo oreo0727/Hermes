@@ -597,6 +597,74 @@ class HermesProjectTests(unittest.TestCase):
             self.assertIn("Going smoothly", response["content"])
             self.assertNotIn("Status snapshot", response["content"])
 
+    def test_fast_router_resumes_named_project_focus(self) -> None:
+        with TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir) / "repo"
+            root.mkdir()
+            _write_workspace_policy(root)
+
+            create_project(
+                root,
+                project_id="operator-mobile-app",
+                title="Operator Mobile App",
+                summary="Mobile chat client.",
+                specialists=("operator", "app-dev"),
+            )
+            create_project(
+                root,
+                project_id="spooky-teen-shortfilm",
+                title="Midnight Signals — AI Spooky Short for Teens",
+                summary="AI horror short for teen audiences.",
+                specialists=("operator", "creative-dev"),
+            )
+            archive_project(root, project_id="spooky-teen-shortfilm", reason="Paused by operator")
+            activate_project(root, project_id="operator-mobile-app", reason="Current focus")
+
+            response = fast_route_chat(
+                root,
+                profile_key="operator",
+                messages=[
+                    {
+                        "role": "user",
+                        "content": "can we pick back up on this project Midnight Signals — AI Spooky Short for Teens",
+                    }
+                ],
+            )
+            projects = discover_projects(root)
+            resumed = next(row for row in projects if row["project_id"] == "spooky-teen-shortfilm")
+
+            self.assertIsNotNone(response)
+            assert response is not None
+            self.assertEqual("spooky-teen-shortfilm", response["project_id"])
+            self.assertEqual("focus_project", response["work_order"]["action_type"])
+            self.assertIn("Focused Midnight Signals", response["content"])
+            self.assertEqual("spooky-teen-shortfilm", portfolio_snapshot(root)["active_project_id"])
+            self.assertEqual("active", resumed["status"])
+            self.assertIn("Resume by", resumed["next"])
+            self.assertTrue(resumed["portfolio"]["active"])
+
+            update_project(
+                root,
+                project_id="spooky-teen-shortfilm",
+                status="active",
+                next_value="Global stop requested by operator (pause all projects)",
+            )
+            stale_response = fast_route_chat(
+                root,
+                profile_key="operator",
+                messages=[
+                    {
+                        "role": "user",
+                        "content": "pick back up on Midnight Signals",
+                    }
+                ],
+            )
+            self.assertIsNotNone(stale_response)
+            assert stale_response is not None
+            self.assertEqual("spooky-teen-shortfilm", stale_response["project_id"])
+            refreshed = next(row for row in discover_projects(root) if row["project_id"] == "spooky-teen-shortfilm")
+            self.assertIn("Resume by", refreshed["next"])
+
     def test_fast_router_escalates_heavy_build_requests(self) -> None:
         with TemporaryDirectory() as temp_dir:
             root = Path(temp_dir) / "repo"

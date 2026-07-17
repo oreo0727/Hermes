@@ -9,7 +9,7 @@ import hashlib
 import re
 
 from hermes_stack.cognitive_kernel import activate_cognition, cognitive_summary
-from hermes_stack.projects import discover_projects, portfolio_snapshot
+from hermes_stack.projects import activate_project, discover_projects, portfolio_snapshot, update_project
 
 
 HEAVY_REQUEST_PATTERN = re.compile(
@@ -56,6 +56,62 @@ def _active_project(projects: list[dict[str, Any]], project_id: str) -> dict[str
     return next((row for row in projects if bool((row.get("portfolio") or {}).get("active"))), None)
 
 
+def _normalize_match_text(value: object) -> str:
+    normalized = re.sub(r"[^a-z0-9]+", " ", str(value or "").lower())
+    return " ".join(normalized.split())
+
+
+def _looks_like_focus_request(query: str) -> bool:
+    normalized = _normalize_match_text(query)
+    return _has_intent(
+        normalized,
+        (
+            "pick back up",
+            "back up on",
+            "continue",
+            "resume",
+            "switch to",
+            "focus",
+            "open project",
+            "work on",
+        ),
+    )
+
+
+def _resolve_requested_project(query: str, projects: list[dict[str, Any]]) -> dict[str, Any] | None:
+    normalized_query = _normalize_match_text(query)
+    if not normalized_query:
+        return None
+    scored: list[tuple[float, dict[str, Any]]] = []
+    query_tokens = set(normalized_query.split())
+    for project in projects:
+        project_id = str(project.get("project_id") or "")
+        title = str(project.get("title") or "")
+        candidates = (
+            _normalize_match_text(project_id),
+            _normalize_match_text(project_id.replace("-", " ")),
+            _normalize_match_text(title),
+        )
+        best_score = 0.0
+        for candidate in candidates:
+            if not candidate:
+                continue
+            if candidate in normalized_query:
+                best_score = max(best_score, 1.0)
+                continue
+            candidate_tokens = set(candidate.split())
+            if candidate_tokens:
+                overlap_count = len(query_tokens & candidate_tokens)
+                overlap = overlap_count / len(candidate_tokens)
+                if overlap_count >= 2:
+                    overlap = max(overlap, 0.72)
+                best_score = max(best_score, overlap)
+        if best_score >= 0.55:
+            scored.append((best_score, project))
+    scored.sort(key=lambda row: row[0], reverse=True)
+    return scored[0][1] if scored else None
+
+
 def _is_fast_safe(query: str) -> bool:
     compact = " ".join(query.split())
     if not compact:
@@ -64,6 +120,8 @@ def _is_fast_safe(query: str) -> bool:
         return False
     if HEAVY_REQUEST_PATTERN.search(compact):
         return False
+    if _looks_like_focus_request(compact):
+        return True
     return bool(FAST_REQUEST_PATTERN.search(compact)) or len(compact.split()) <= 4
 
 
@@ -87,6 +145,35 @@ def _project_lines(project: dict[str, Any] | None) -> list[str]:
         f"Blocked: {blocked[0] if blocked else 'none recorded.'}",
         f"Proof: {done[0] if done else 'no proof signal attached yet.'}",
     ]
+
+
+def _focus_reply(project: dict[str, Any], *, revived: bool) -> str:
+    title = str(project.get("title") or project.get("project_id") or "the project")
+    blocked = [str(item).strip() for item in project.get("blocked") or [] if str(item).strip()]
+    next_value = str(project.get("next") or "").strip()
+    lines = [
+        f"Focused {title}.",
+        "I revived it from archived state and made it the active project." if revived else "I made it the active project.",
+    ]
+    if next_value:
+        lines.append(f"Next: {next_value}")
+    if blocked:
+        lines.append(f"First blocker: {blocked[0]}")
+    else:
+        lines.append("No blocker is recorded right now.")
+    return "\n".join(lines)
+
+
+def _resume_next_value(project: dict[str, Any]) -> str:
+    blocked = [str(item).strip() for item in project.get("blocked") or [] if str(item).strip()]
+    if blocked:
+        return "Resume by resolving or bypassing the first recorded blocker, then refresh the production slice."
+    return "Resume by refreshing the current milestone and choosing the next concrete production slice."
+
+
+def _has_stale_pause_next(project: dict[str, Any]) -> bool:
+    next_value = str(project.get("next") or "").strip().lower()
+    return any(token in next_value for token in ("global stop", "pause", "paused", "archived", "archive"))
 
 
 def _team_line() -> str:
@@ -191,6 +278,48 @@ def fast_route_chat(
     root = Path(root_dir).resolve() if root_dir is not None else Path.cwd()
     projects = discover_projects(root)
     portfolio = portfolio_snapshot(root)
+    focus_project = _resolve_requested_project(query, projects) if _looks_like_focus_request(query) else None
+    if focus_project is not None:
+        focus_project_id = str(focus_project.get("project_id") or "").strip()
+        revived = str(focus_project.get("status") or "").strip().lower() == "archived"
+        if revived or _has_stale_pause_next(focus_project):
+            update_project(root, project_id=focus_project_id, status="active", next_value=_resume_next_value(focus_project))
+        activate_project(root, project_id=focus_project_id, reason=f"Focused from portal chat: {query[:160]}")
+        projects = discover_projects(root)
+        project = _active_project(projects, focus_project_id) or focus_project
+        activation = activate_cognition(
+            root,
+            query=query,
+            agent_slug="sheldon",
+            project_id=focus_project_id,
+            limit=5,
+        )
+        session_id = f"fast:{_stable_id(focus_project_id, query, _now()[:13])}"
+        return {
+            "ok": True,
+            "profile": profile_key,
+            "project_id": focus_project_id,
+            "label": "Operator",
+            "session_id": "",
+            "content": _focus_reply(project, revived=revived),
+            "structured_result": {},
+            "work_order": {
+                "action_type": "focus_project",
+                "source": "portal-chat-fast-router",
+                "project_id": focus_project_id,
+                "chosen_action": activation.get("chosen_action"),
+                "confidence": activation.get("confidence"),
+            },
+            "quality_flags": [],
+            "prepared_updates": [],
+            "raw": {
+                "fast_router": True,
+                "generated_at": _now(),
+                "activation_id": activation.get("activation_id"),
+                "synthetic_session_id": session_id,
+            },
+            "fast_path": True,
+        }
     effective_project_id = project_id.strip() or str(portfolio.get("active_project_id") or "").strip()
     project = _active_project(projects, effective_project_id)
     if project and not effective_project_id:
