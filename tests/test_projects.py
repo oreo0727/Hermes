@@ -562,6 +562,23 @@ class HermesProjectTests(unittest.TestCase):
             self.assertTrue(response["fast_path"])
             self.assertIn("Status snapshot", response["content"])
             self.assertEqual("fast_reflex", response["work_order"]["action_type"])
+            self.assertEqual("", response["session_id"])
+
+    def test_fast_router_does_not_treat_this_as_hi(self) -> None:
+        with TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir) / "repo"
+            root.mkdir()
+            _write_workspace_policy(root)
+
+            response = fast_route_chat(
+                root,
+                profile_key="operator",
+                messages=[{"role": "user", "content": "what is this?"}],
+            )
+
+            self.assertIsNotNone(response)
+            assert response is not None
+            self.assertNotIn("Tiny lab coat", response["content"])
 
     def test_fast_router_escalates_heavy_build_requests(self) -> None:
         with TemporaryDirectory() as temp_dir:

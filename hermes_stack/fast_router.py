@@ -67,6 +67,14 @@ def _is_fast_safe(query: str) -> bool:
     return bool(FAST_REQUEST_PATTERN.search(compact)) or len(compact.split()) <= 4
 
 
+def _has_intent(text: str, intents: tuple[str, ...]) -> bool:
+    for intent in intents:
+        pattern = r"\b" + re.escape(intent).replace(r"\ ", r"\s+") + r"\b"
+        if re.search(pattern, text):
+            return True
+    return False
+
+
 def _project_lines(project: dict[str, Any] | None) -> list[str]:
     if not project:
         return ["No active project is focused right now."]
@@ -101,7 +109,7 @@ def _compose_fast_reply(
     confidence = float(activation.get("confidence") or 0.0)
     project_lines = _project_lines(project)
 
-    if any(word in normalized for word in ("hi", "hello", "hey", "online", "ready")):
+    if _has_intent(normalized, ("hi", "hello", "hey", "online", "ready")):
         return (
             "I am online in fast-router mode. Tiny lab coat, very low latency.\n"
             f"{project_lines[0]}\n"
@@ -109,7 +117,7 @@ def _compose_fast_reply(
             "ask me to build or fix something and I will escalate to deep Sheldon."
         )
 
-    if any(word in normalized for word in ("memory", "cognition", "brain", "synapse")):
+    if _has_intent(normalized, ("memory", "cognition", "brain", "synapse")):
         return (
             "Cognitive layer is active.\n"
             f"Storage: {summary.get('storage') or 'unknown'}.\n"
@@ -118,13 +126,13 @@ def _compose_fast_reply(
             f"Latest activation routed this as `{chosen_action}` with confidence {confidence:.2f}."
         )
 
-    if any(word in normalized for word in ("who", "agent", "team", "route")):
+    if _has_intent(normalized, ("who", "agent", "team", "route")):
         return (
             f"{_team_line()}\n"
             f"For this message, my cognitive router chose `{chosen_action}` at confidence {confidence:.2f}."
         )
 
-    if any(word in normalized for word in ("slow", "portal", "chat", "gateway")):
+    if _has_intent(normalized, ("slow", "portal", "chat", "gateway")):
         return (
             "The portal now has a reflex path: lightweight status/routing questions answer locally first. "
             "Heavier build/fix requests still go through the full operator gateway so we do not fake work.\n"
@@ -181,7 +189,7 @@ def fast_route_chat(
         "profile": profile_key,
         "project_id": effective_project_id,
         "label": "Operator",
-        "session_id": session_id,
+        "session_id": "",
         "content": content,
         "structured_result": {},
         "work_order": {
@@ -197,6 +205,7 @@ def fast_route_chat(
             "fast_router": True,
             "generated_at": _now(),
             "activation_id": activation.get("activation_id"),
+            "synthetic_session_id": session_id,
         },
         "fast_path": True,
     }

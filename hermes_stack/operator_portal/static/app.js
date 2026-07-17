@@ -226,7 +226,9 @@ async function sendChatMessage(content) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     });
-    state.chatSessionId = response.session_id || state.chatSessionId;
+    if (!response.fast_path && response.session_id) {
+      state.chatSessionId = response.session_id;
+    }
     appendChatMessage("assistant", response.content || "I received the message, but no response text came back.");
     setChatStatus(response.fast_path ? "Fast route" : (response.session_id ? "Session linked" : "Ready"), "ready");
   } catch (error) {
