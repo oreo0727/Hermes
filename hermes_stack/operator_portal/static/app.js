@@ -43,6 +43,7 @@ const elements = {
   queueTable: document.querySelector("#queue-table"),
   agentTeam: document.querySelector("#agent-team"),
   agentTheater: document.querySelector("#agent-theater"),
+  agentRadar: document.querySelector("#agent-radar"),
   activityFeed: document.querySelector("#activity-feed"),
   emptyStateTemplate: document.querySelector("#empty-state-template"),
 };
@@ -556,6 +557,48 @@ function renderTheater() {
   elements.agentTheater.innerHTML = rows.map(theaterRowMarkup).join("");
 }
 
+function latestByAgent(rows = []) {
+  const result = new Map();
+  for (const row of rows) {
+    const slug = String(row.agent_slug || "");
+    if (!slug || result.has(slug)) {
+      continue;
+    }
+    result.set(slug, row);
+  }
+  return result;
+}
+
+function radarRowMarkup(agent) {
+  const heartbeats = latestByAgent(state.snapshot?.always_on?.heartbeats || []);
+  const intentions = latestByAgent(state.snapshot?.always_on?.intentions || []);
+  const heartbeat = heartbeats.get(agent.slug) || {};
+  const intention = intentions.get(agent.slug) || {};
+  const status = text(heartbeat.status, "waiting");
+  const decision = text(intention.autonomy_decision, "listening");
+  return `
+    <article class="radar-row" style="--agent-accent:${escapeHtml(agent.accent || "#84a5ff")}">
+      <div class="radar-pulse"></div>
+      <div class="radar-copy">
+        <strong>${escapeHtml(agent.character_name)} <span>${escapeHtml(status)}</span></strong>
+        <p>${escapeHtml(text(heartbeat.observation, agent.role_summary))}</p>
+        <small>${escapeHtml(text(intention.title, heartbeat.intention || "No proposed action yet."))}</small>
+      </div>
+      <b>${escapeHtml(decision)}</b>
+    </article>
+  `;
+}
+
+function renderRadar() {
+  const agents = state.snapshot?.agents || [];
+  elements.agentRadar.innerHTML = "";
+  if (!agents.length) {
+    elements.agentRadar.append(cloneEmptyState());
+    return;
+  }
+  elements.agentRadar.innerHTML = agents.map(radarRowMarkup).join("");
+}
+
 function buildActivityFeed() {
   const activities = [];
   for (const run of state.runs.slice(0, 6)) {
@@ -668,6 +711,7 @@ async function loadDashboard() {
     renderQueue();
     renderAgents();
     renderTheater();
+    renderRadar();
     renderActivity();
   } catch (error) {
     console.error(error);

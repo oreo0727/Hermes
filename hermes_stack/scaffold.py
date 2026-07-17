@@ -24,6 +24,7 @@ from hermes_stack.projects import (
     update_project,
 )
 from hermes_stack.agents import build_agent_registry
+from hermes_stack.always_on import always_on_summary, run_always_on_cycle, run_always_on_loop
 from hermes_stack.autonomy import decide_autonomy
 from hermes_stack.cognitive_kernel import (
     activate_cognition,
@@ -794,6 +795,7 @@ def build_snapshot(root_dir: str | Path | None = None) -> dict[str, Any]:
         },
         "state_storage": storage,
         "cognition": cognitive_summary(root),
+        "always_on": always_on_summary(root),
         "live_theater": build_live_theater(root),
         "profiles": profile_rows,
         "agents": build_agent_registry(root, profile_rows),
@@ -848,6 +850,8 @@ def _main() -> int:
     parser.add_argument("--content", default="", help="Content for write-reflection")
     parser.add_argument("--risk", default="medium", help="Risk level for autonomy-decision")
     parser.add_argument("--confidence", type=float, help="Optional confidence override for autonomy-decision")
+    parser.add_argument("--interval", type=int, default=60, help="Seconds between always-on daemon cycles")
+    parser.add_argument("--cycles", type=int, default=0, help="Number of always-on daemon cycles; 0 means forever")
     parser.add_argument(
         "action",
         nargs="?",
@@ -867,6 +871,9 @@ def _main() -> int:
             "experiment-cycle",
             "evolve-skills",
             "autonomy-decision",
+            "always-on-cycle",
+            "always-on-summary",
+            "always-on-loop",
             "council",
             "write-reflection",
             "create-project",
@@ -949,6 +956,15 @@ def _main() -> int:
                 indent=2,
             )
         )
+        return 0
+    if args.action == "always-on-cycle":
+        print(json.dumps(run_always_on_cycle(args.root_dir), indent=2))
+        return 0
+    if args.action == "always-on-summary":
+        print(json.dumps(always_on_summary(args.root_dir), indent=2))
+        return 0
+    if args.action == "always-on-loop":
+        run_always_on_loop(args.root_dir, interval_seconds=args.interval, cycles=args.cycles)
         return 0
     if args.action == "council":
         if not args.topic:

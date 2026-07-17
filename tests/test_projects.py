@@ -9,6 +9,7 @@ from tempfile import TemporaryDirectory
 from unittest.mock import patch
 
 from hermes_stack.autonomy import decide_autonomy
+from hermes_stack.always_on import run_always_on_cycle
 from hermes_stack.orchestration import (
     build_delivery_model,
     build_work_order,
@@ -535,6 +536,7 @@ class HermesProjectTests(unittest.TestCase):
             self.assertIn("live_theater", snapshot)
             self.assertEqual(4, len(snapshot["live_theater"]))
             self.assertIn("current_thought", snapshot["live_theater"][0])
+            self.assertIn("always_on", snapshot)
 
     def test_fast_router_answers_safe_status_requests(self) -> None:
         with TemporaryDirectory() as temp_dir:
@@ -814,6 +816,30 @@ class HermesProjectTests(unittest.TestCase):
 
             self.assertEqual("ask_operator", decision["decision"])
             self.assertIn("high-risk", " ".join(decision["reasons"]))
+
+    def test_always_on_cycle_writes_agent_heartbeats_and_intentions(self) -> None:
+        with TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir) / "repo"
+            root.mkdir()
+            _write_workspace_policy(root)
+
+            create_project(
+                root,
+                project_id="spooky-teen-shortfilm",
+                title="Midnight Signals — AI Spooky Short for Teens",
+                summary="AI horror short for teen audiences.",
+                specialists=("operator", "creative-dev"),
+            )
+
+            result = run_always_on_cycle(root)
+            heartbeats = list_cognitive_records(root, "agent_heartbeats", limit=10)
+            intentions = list_cognitive_records(root, "agent_intentions", limit=10)
+
+            self.assertEqual(4, result["heartbeat_count"])
+            self.assertEqual(4, result["intention_count"])
+            self.assertEqual(4, len(heartbeats))
+            self.assertTrue(any(row["agent_slug"] == "sheldon" for row in intentions))
+            self.assertTrue(all(str(row.get("autonomy_decision") or "") for row in intentions))
 
     def test_project_action_payload_reflects_latest_focus_state(self) -> None:
         with TemporaryDirectory() as temp_dir:

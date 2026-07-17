@@ -1158,6 +1158,68 @@ svg {
   text-transform: uppercase;
 }
 
+.radar-list {
+  display: grid;
+  gap: 11px;
+}
+
+.radar-row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  padding: 13px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.045);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.radar-pulse {
+  width: 15px;
+  height: 15px;
+  border-radius: 999px;
+  background: var(--agent-accent);
+  box-shadow: 0 0 0 0 color-mix(in srgb, var(--agent-accent) 52%, transparent);
+  animation: bubblePulse 2.2s infinite;
+}
+
+.radar-copy strong,
+.radar-copy span,
+.radar-copy small {
+  display: block;
+}
+
+.radar-copy strong {
+  color: var(--text);
+}
+
+.radar-copy strong span {
+  margin-top: 2px;
+  color: #cdf8bd;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.radar-copy p,
+.radar-copy small {
+  margin: 4px 0 0;
+  color: var(--text-soft);
+  line-height: 1.38;
+}
+
+.radar-copy small {
+  color: var(--text-muted);
+}
+
+.radar-row b {
+  max-width: 96px;
+  color: #ffcc8c;
+  font-size: 0.72rem;
+  text-align: right;
+  text-transform: uppercase;
+}
+
 .empty-state {
   padding: 20px;
   background: rgba(255, 255, 255, 0.03);

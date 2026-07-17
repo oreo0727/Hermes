@@ -330,6 +330,10 @@ that knowledge gets used over time:
   experiments.
 - `hermes_autonomy_decisions` stores confidence-gated approvals, council
   reviews, and operator-escalation decisions.
+- `hermes_agent_heartbeats` stores each agent's latest listening state,
+  observation, intention, and confidence.
+- `hermes_agent_intentions` stores proactive proposed actions and the autonomy
+  decision attached to each proposal.
 
 Seed the cognitive kernel:
 
@@ -350,7 +354,15 @@ make dream-cycle
 make experiment-cycle
 make evolve-skills
 make autonomy-decision QUERY="refresh the active project status" RISK=low CONFIDENCE=0.9
+make always-on-cycle
+make always-on-summary
 make council TOPIC="What is the safest next slice for the active project?"
+```
+
+Run the always-on loop:
+
+```bash
+make always-on-loop INTERVAL=60
 ```
 
 Inspect current cognitive state:

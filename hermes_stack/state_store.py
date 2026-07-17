@@ -374,6 +374,34 @@ def ensure_postgres_ready(root_dir: str | Path | None = None) -> None:
                     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
                 );
 
+                CREATE TABLE IF NOT EXISTS hermes_agent_heartbeats (
+                    heartbeat_id TEXT PRIMARY KEY,
+                    agent_slug TEXT NOT NULL,
+                    project_id TEXT NOT NULL DEFAULT '',
+                    status TEXT NOT NULL DEFAULT 'listening',
+                    observation TEXT NOT NULL,
+                    intention TEXT NOT NULL,
+                    confidence DOUBLE PRECISION NOT NULL DEFAULT 0.0,
+                    payload JSONB NOT NULL DEFAULT '{}'::jsonb,
+                    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+                    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+                );
+
+                CREATE TABLE IF NOT EXISTS hermes_agent_intentions (
+                    intention_id TEXT PRIMARY KEY,
+                    agent_slug TEXT NOT NULL,
+                    project_id TEXT NOT NULL DEFAULT '',
+                    title TEXT NOT NULL,
+                    action_type TEXT NOT NULL,
+                    status TEXT NOT NULL DEFAULT 'proposed',
+                    risk TEXT NOT NULL DEFAULT 'low',
+                    confidence DOUBLE PRECISION NOT NULL DEFAULT 0.0,
+                    autonomy_decision TEXT NOT NULL DEFAULT '',
+                    payload JSONB NOT NULL DEFAULT '{}'::jsonb,
+                    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+                    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+                );
+
                 CREATE INDEX IF NOT EXISTS hermes_cognitive_events_agent_idx
                     ON hermes_cognitive_events (agent_slug, event_type, occurred_at DESC);
 
@@ -394,6 +422,12 @@ def ensure_postgres_ready(root_dir: str | Path | None = None) -> None:
 
                 CREATE INDEX IF NOT EXISTS hermes_autonomy_decisions_risk_idx
                     ON hermes_autonomy_decisions (risk, decision, updated_at DESC);
+
+                CREATE INDEX IF NOT EXISTS hermes_agent_heartbeats_agent_idx
+                    ON hermes_agent_heartbeats (agent_slug, status, updated_at DESC);
+
+                CREATE INDEX IF NOT EXISTS hermes_agent_intentions_status_idx
+                    ON hermes_agent_intentions (status, risk, updated_at DESC);
                 """
             )
 
@@ -488,6 +522,8 @@ def _load_cognition_file(root_dir: str | Path | None = None) -> dict[str, Any]:
         "experiments": {},
         "skill_evolutions": {},
         "autonomy_decisions": {},
+        "agent_heartbeats": {},
+        "agent_intentions": {},
     }
     if not path.exists():
         return sections
@@ -1189,6 +1225,8 @@ COGNITIVE_TABLES: dict[str, dict[str, str]] = {
     "experiments": {"table": "hermes_experiments", "id": "experiment_id", "order": "updated_at DESC"},
     "skill_evolutions": {"table": "hermes_skill_evolutions", "id": "evolution_id", "order": "updated_at DESC"},
     "autonomy_decisions": {"table": "hermes_autonomy_decisions", "id": "decision_id", "order": "updated_at DESC"},
+    "agent_heartbeats": {"table": "hermes_agent_heartbeats", "id": "heartbeat_id", "order": "updated_at DESC"},
+    "agent_intentions": {"table": "hermes_agent_intentions", "id": "intention_id", "order": "updated_at DESC"},
 }
 
 
@@ -1352,6 +1390,38 @@ def _cognitive_json_expr(kind: str) -> str:
                 'confidence', confidence,
                 'decision', decision,
                 'reasons', reasons,
+                'payload', payload,
+                'created_at', created_at::text,
+                'updated_at', updated_at::text
+            )
+        """
+    if kind == "agent_heartbeats":
+        return """
+            jsonb_build_object(
+                'heartbeat_id', heartbeat_id,
+                'agent_slug', agent_slug,
+                'project_id', project_id,
+                'status', status,
+                'observation', observation,
+                'intention', intention,
+                'confidence', confidence,
+                'payload', payload,
+                'created_at', created_at::text,
+                'updated_at', updated_at::text
+            )
+        """
+    if kind == "agent_intentions":
+        return """
+            jsonb_build_object(
+                'intention_id', intention_id,
+                'agent_slug', agent_slug,
+                'project_id', project_id,
+                'title', title,
+                'action_type', action_type,
+                'status', status,
+                'risk', risk,
+                'confidence', confidence,
+                'autonomy_decision', autonomy_decision,
                 'payload', payload,
                 'created_at', created_at::text,
                 'updated_at', updated_at::text
@@ -1718,6 +1788,69 @@ def upsert_cognitive_record(root_dir: str | Path | None, kind: str, payload: dic
                         json.dumps(payload.get("payload") if isinstance(payload.get("payload"), dict) else {}),
                     ),
                 )
+            elif kind == "agent_heartbeats":
+                cur.execute(
+                    """
+                    INSERT INTO hermes_agent_heartbeats (
+                        heartbeat_id, agent_slug, project_id, status, observation,
+                        intention, confidence, payload, updated_at
+                    )
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s::jsonb, NOW())
+                    ON CONFLICT (heartbeat_id) DO UPDATE
+                    SET agent_slug = EXCLUDED.agent_slug,
+                        project_id = EXCLUDED.project_id,
+                        status = EXCLUDED.status,
+                        observation = EXCLUDED.observation,
+                        intention = EXCLUDED.intention,
+                        confidence = EXCLUDED.confidence,
+                        payload = EXCLUDED.payload,
+                        updated_at = NOW()
+                    """,
+                    (
+                        record_id,
+                        str(payload.get("agent_slug") or "").strip(),
+                        str(payload.get("project_id") or "").strip(),
+                        str(payload.get("status") or "listening").strip(),
+                        str(payload.get("observation") or "").strip(),
+                        str(payload.get("intention") or "").strip(),
+                        float(payload.get("confidence") or 0.0),
+                        json.dumps(payload.get("payload") if isinstance(payload.get("payload"), dict) else {}),
+                    ),
+                )
+            elif kind == "agent_intentions":
+                cur.execute(
+                    """
+                    INSERT INTO hermes_agent_intentions (
+                        intention_id, agent_slug, project_id, title, action_type,
+                        status, risk, confidence, autonomy_decision, payload,
+                        updated_at
+                    )
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s::jsonb, NOW())
+                    ON CONFLICT (intention_id) DO UPDATE
+                    SET agent_slug = EXCLUDED.agent_slug,
+                        project_id = EXCLUDED.project_id,
+                        title = EXCLUDED.title,
+                        action_type = EXCLUDED.action_type,
+                        status = EXCLUDED.status,
+                        risk = EXCLUDED.risk,
+                        confidence = EXCLUDED.confidence,
+                        autonomy_decision = EXCLUDED.autonomy_decision,
+                        payload = EXCLUDED.payload,
+                        updated_at = NOW()
+                    """,
+                    (
+                        record_id,
+                        str(payload.get("agent_slug") or "").strip(),
+                        str(payload.get("project_id") or "").strip(),
+                        str(payload.get("title") or "").strip(),
+                        str(payload.get("action_type") or "").strip(),
+                        str(payload.get("status") or "proposed").strip(),
+                        str(payload.get("risk") or "low").strip(),
+                        float(payload.get("confidence") or 0.0),
+                        str(payload.get("autonomy_decision") or "").strip(),
+                        json.dumps(payload.get("payload") if isinstance(payload.get("payload"), dict) else {}),
+                    ),
+                )
     return payload
 
 
@@ -1746,7 +1879,7 @@ def list_cognitive_records(
     expr = _cognitive_json_expr(kind)
     with _connect(root) as conn:
         with conn.cursor() as cur:
-            if normalized_slug and kind in {"events", "procedures", "reflections", "activations", "beliefs", "dream_jobs", "skill_evolutions"}:
+            if normalized_slug and kind in {"events", "procedures", "reflections", "activations", "beliefs", "dream_jobs", "skill_evolutions", "agent_heartbeats", "agent_intentions"}:
                 cur.execute(
                     f"""
                     SELECT {expr}

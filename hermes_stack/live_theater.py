@@ -23,6 +23,16 @@ def _confidence(*values: object) -> float:
 def build_live_theater(root_dir: str | Path | None = None) -> list[dict[str, Any]]:
     root = repo_root(root_dir)
     recent_decision = _first(list_cognitive_records(root, "autonomy_decisions", limit=1))
+    heartbeats = {
+        str(row.get("agent_slug") or ""): row
+        for row in list_cognitive_records(root, "agent_heartbeats", limit=24)
+        if isinstance(row, dict)
+    }
+    intentions = {
+        str(row.get("agent_slug") or ""): row
+        for row in list_cognitive_records(root, "agent_intentions", limit=24)
+        if isinstance(row, dict)
+    }
     rows: list[dict[str, Any]] = []
 
     for spec in AGENT_SPECS:
@@ -30,9 +40,11 @@ def build_live_theater(root_dir: str | Path | None = None) -> list[dict[str, Any
         activation = _first(list_cognitive_records(root, "activations", agent_slug=slug, limit=1))
         reflection = _first(list_cognitive_records(root, "reflections", agent_slug=slug, limit=1))
         evolution = _first(list_cognitive_records(root, "skill_evolutions", agent_slug=slug, limit=1))
-        thought = str(activation.get("query") or reflection.get("title") or spec.role_summary).strip()
+        heartbeat = heartbeats.get(slug, {})
+        intention_record = intentions.get(slug, {})
+        thought = str(heartbeat.get("observation") or activation.get("query") or reflection.get("title") or spec.role_summary).strip()
         learning = str(evolution.get("recommendation") or reflection.get("content") or spec.closure_rule).strip()
-        confidence = _confidence(activation.get("confidence"), evolution.get("confidence"), recent_decision.get("confidence"))
+        confidence = _confidence(heartbeat.get("confidence"), intention_record.get("confidence"), activation.get("confidence"), evolution.get("confidence"), recent_decision.get("confidence"))
         rows.append(
             {
                 "agent_slug": slug,
@@ -41,12 +53,13 @@ def build_live_theater(root_dir: str | Path | None = None) -> list[dict[str, Any
                 "title": spec.title,
                 "avatar_path": spec.avatar_path,
                 "accent": spec.accent,
-                "status": "watching",
+                "status": str(heartbeat.get("status") or "watching"),
                 "current_thought": thought[:220],
-                "working_on": spec.owns[0],
+                "working_on": str(heartbeat.get("intention") or spec.owns[0]),
                 "learning": learning[:240],
                 "confidence": confidence,
-                "next_move": str(recent_decision.get("decision") or activation.get("chosen_action") or "observe_and_update"),
+                "next_move": str(intention_record.get("title") or recent_decision.get("decision") or activation.get("chosen_action") or "observe_and_update"),
+                "autonomy_decision": str(intention_record.get("autonomy_decision") or recent_decision.get("decision") or ""),
                 "proof_gate": spec.verification_method,
             }
         )
