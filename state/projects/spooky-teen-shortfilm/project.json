@@ -2,33 +2,28 @@
   "project_id": "spooky-teen-shortfilm",
   "title": "Midnight Signals \u2014 AI Spooky Short for Teens",
   "summary": "Develop a 5\u20137 minute AI-generated spooky short film for a teen audience (PG-13 vibe): suspense over gore, phone-native storytelling, clear consent/safety boundaries, and a fast, reproducible AI production pipeline (script \u2192 boards \u2192 animatics \u2192 final).",
-  "status": "archived",
+  "status": "active",
   "specialists": [
     "operator",
     "creative-dev"
   ],
   "tracking": {
-    "owner": "none",
-    "now": "",
-    "next": "Global stop requested by operator (pause all projects)",
-    "blocked": [
-      "True Runway Gen-3 generation is still blocked pending authentication/access in-lane.",
-      "artifacts/animatic_v3_runway.mp4 is rebuilt from upgraded placeholder clips, not final Gen-3 motion."
-    ],
+    "owner": "creative-dev",
+    "now": "Unblocked on local_motionfx: artifacts/animatic_v3_motionfx.mp4.",
+    "next": "Review the free local motion pass for story quality; optionally upgrade later with Hugging Face or another provider if credentials/GPU become available.",
+    "blocked": [],
     "done": [
-      "Runway source stills for shots 003/006/012/013/014/018 were upgraded from text slates to image-grounded frames, and the placeholder Runway pack was rebuilt against them.",
-      "Reference board and storyboard brief are captured in-project.",
-      "Storyboard v2 was invalidated as schematic placeholder work and clearly relabeled.",
-      "Reference-grounded storyboard pack v3 was generated with 10 final frames plus contact sheet."
+      "Video lane switched away from Runway-only blocking to a provider adapter with local no-cost fallback first.",
+      "Selected local_motionfx and verified artifacts/animatic_v3_motionfx.mp4 (first_frame_size=1920x1080; ffprobe unavailable, verified first frame with imageio)."
     ],
     "priority": 50,
-    "percent": 0
+    "percent": 65
   },
   "control": {
     "project_kind": "creative",
     "control_mode": "orchestrated",
-    "delivery_target": "paused by operator",
-    "primary_artifact": "artifacts/contact_sheet_runway_sources_v2.png, artifacts/contact_sheet_runway_v1.png, artifacts/animatic_v3_runway.mp4, artifacts/runway_input_upgrade_v2.md",
+    "delivery_target": "free local motion animatic with optional provider upgrades",
+    "primary_artifact": "artifacts/animatic_v3_motionfx.mp4, artifacts/video_provider_status.md",
     "acceptance": [
       "Five teens are visibly rendered as characters, not seat markers or abstract geometry.",
       "The boards visibly mirror the supplied camp reference: tent back-center, lantern left foreground, sign on right, central fire, moonlit forest palette.",
@@ -41,11 +36,8 @@
       "creative-dev"
     ],
     "strict_dispatch": true,
-    "capability_gaps": [
-      "creative-dev supervised evidence compliance; image-gen env portability",
-      "Runway Gen-3 authentication/access is not available in-lane"
-    ]
+    "capability_gaps": []
   },
   "created_at": "2026-05-22T19:36:04.527118+00:00",
-  "updated_at": "2026-06-08T13:19:30.418737+00:00"
+  "updated_at": "2026-07-17T20:12:54.645086+00:00"
 }

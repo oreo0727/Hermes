@@ -201,7 +201,7 @@ def _project_followup_reply(project: dict[str, Any], *, kind: str) -> str:
                 [
                     f"For {title}, the first blocker is:",
                     first_blocker,
-                    "Best move: decide whether we can authenticate/access Runway Gen-3 now. If not, bypass it and package the strongest reviewable animatic from the upgraded stills and placeholder motion.",
+                    "Best move: run the video provider ladder. Prefer the free local motion pass first, then upgrade later through Hugging Face, OpenAI, Runway, or manual clip drop-in only if access is available.",
                 ]
             )
         return f"For {title}, I do not have a blocker recorded. The next useful move is: {next_value}"
