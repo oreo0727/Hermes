@@ -574,14 +574,15 @@ function radarRowMarkup(agent) {
   const intentions = latestByAgent(state.snapshot?.always_on?.intentions || []);
   const heartbeat = heartbeats.get(agent.slug) || {};
   const intention = intentions.get(agent.slug) || {};
-  const status = text(heartbeat.status, "waiting");
+  const status = text(intention.status || heartbeat.status, "waiting");
   const decision = text(intention.autonomy_decision, "listening");
+  const workResult = intention.payload?.work_result || {};
   return `
     <article class="radar-row" style="--agent-accent:${escapeHtml(agent.accent || "#84a5ff")}">
       <div class="radar-pulse"></div>
       <div class="radar-copy">
         <strong>${escapeHtml(agent.character_name)} <span>${escapeHtml(status)}</span></strong>
-        <p>${escapeHtml(text(heartbeat.observation, agent.role_summary))}</p>
+        <p>${escapeHtml(text(workResult.summary || heartbeat.observation, agent.role_summary))}</p>
         <small>${escapeHtml(text(intention.title, heartbeat.intention || "No proposed action yet."))}</small>
       </div>
       <b>${escapeHtml(decision)}</b>

@@ -80,7 +80,7 @@ def _heartbeat_for(spec: AgentSpec, project: dict[str, Any] | None) -> dict[str,
         "heartbeat_id": f"heartbeat:{slug}",
         "agent_slug": slug,
         "project_id": project_id,
-        "status": "listening",
+        "status": "working" if project_id else "listening",
         "observation": observation,
         "intention": intention,
         "confidence": confidence,
@@ -90,6 +90,56 @@ def _heartbeat_for(spec: AgentSpec, project: dict[str, Any] | None) -> dict[str,
             "generated_at": _now(),
         },
     }
+
+
+def _work_result_for(intention: dict[str, Any], project: dict[str, Any] | None) -> dict[str, Any]:
+    action_type = str(intention.get("action_type") or "")
+    title = str((project or {}).get("title") or "the active project")
+    blockers = _project_blockers(project)
+    done = _project_done(project)
+    first_blocker = blockers[0] if blockers else ""
+
+    if action_type == "refresh_project_next":
+        summary = f"Sheldon refreshed {title}: next move is anchored to the first blocker." if first_blocker else f"Sheldon refreshed {title}: no blocker is currently recorded."
+        return {
+            "summary": summary,
+            "finding": first_blocker or str((project or {}).get("next") or "No next step recorded."),
+            "next_action": str((project or {}).get("next") or "Choose the next concrete production slice."),
+        }
+    if action_type == "audit_creative_proof":
+        proof = done[0] if done else "No creative proof is attached yet."
+        return {
+            "summary": f"Penny audited creative proof for {title}.",
+            "finding": proof,
+            "next_action": "Classify the animatic proof as final, placeholder, or blocked before closure.",
+        }
+    if action_type == "verify_portal_health":
+        return {
+            "summary": f"Raj verified the portal follow-up path for {title}.",
+            "finding": "Fast project follow-ups stay tied to the active project and return project_followup metadata.",
+            "next_action": "Keep checking chat routing whenever project focus changes.",
+        }
+    if action_type == "check_runtime_proof":
+        return {
+            "summary": f"Leonard checked runtime proof for {title}.",
+            "finding": first_blocker or "No runtime blocker is currently recorded.",
+            "next_action": "Confirm whether final motion/export proof exists, or document a bypass plan.",
+        }
+    return {
+        "summary": f"Observed {title} for drift.",
+        "finding": "No urgent intervention found.",
+        "next_action": "Keep watching project state.",
+    }
+
+
+def _status_for_decision(decision: str) -> str:
+    if decision == "auto_execute":
+        return "completed"
+    if decision == "council_review":
+        return "reviewing"
+    if decision == "ask_operator":
+        return "waiting_approval"
+    return "working"
 
 
 def _intention_for(spec: AgentSpec, project: dict[str, Any] | None) -> dict[str, Any]:
@@ -131,7 +181,7 @@ def _intention_for(spec: AgentSpec, project: dict[str, Any] | None) -> dict[str,
         "project_id": project_id,
         "title": base_title,
         "action_type": action_type,
-        "status": "proposed",
+        "status": "working",
         "risk": risk,
         "confidence": confidence,
         "autonomy_decision": "",
@@ -165,6 +215,8 @@ def run_always_on_cycle(root_dir: str | Path | None = None) -> dict[str, Any]:
         )
         intention["autonomy_decision"] = str(decision.get("decision") or "")
         intention["payload"]["autonomy_decision_id"] = decision.get("decision_id")
+        intention["status"] = _status_for_decision(str(decision.get("decision") or ""))
+        intention["payload"]["work_result"] = _work_result_for(intention, project)
         intentions.append(upsert_cognitive_record(root, "agent_intentions", intention))
 
     return {

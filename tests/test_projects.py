@@ -840,6 +840,9 @@ class HermesProjectTests(unittest.TestCase):
             self.assertEqual(4, len(heartbeats))
             self.assertTrue(any(row["agent_slug"] == "sheldon" for row in intentions))
             self.assertTrue(all(str(row.get("autonomy_decision") or "") for row in intentions))
+            self.assertTrue(any(str(row.get("status") or "") == "working" for row in heartbeats))
+            self.assertTrue(all(str(row.get("status") or "") in {"completed", "reviewing", "waiting_approval", "working"} for row in intentions))
+            self.assertTrue(all((row.get("payload") or {}).get("work_result") for row in intentions))
 
     def test_project_action_payload_reflects_latest_focus_state(self) -> None:
         with TemporaryDirectory() as temp_dir:
