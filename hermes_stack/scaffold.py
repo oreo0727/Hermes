@@ -34,6 +34,7 @@ from hermes_stack.cognitive_kernel import (
     write_reflection,
 )
 from hermes_stack.memory import agent_memory_summary, seed_agent_memory
+from hermes_stack.project_scientist import run_experiment_cycle
 from hermes_stack.state_store import configure_runtime, runtime_settings
 
 
@@ -857,6 +858,7 @@ def _main() -> int:
             "activate-cognition",
             "detect-contradictions",
             "dream-cycle",
+            "experiment-cycle",
             "council",
             "write-reflection",
             "create-project",
@@ -917,6 +919,9 @@ def _main() -> int:
         return 0
     if args.action == "dream-cycle":
         print(json.dumps(run_dream_cycle(args.root_dir), indent=2))
+        return 0
+    if args.action == "experiment-cycle":
+        print(json.dumps(run_experiment_cycle(args.root_dir), indent=2))
         return 0
     if args.action == "council":
         if not args.topic:

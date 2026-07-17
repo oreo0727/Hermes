@@ -19,6 +19,7 @@ from hermes_stack.orchestration import (
     supervisor_review,
 )
 from hermes_stack.fast_router import fast_route_chat
+from hermes_stack.project_scientist import propose_experiments, run_experiment_cycle
 from hermes_stack.projects import (
     _count_files,
     _project_file_rows,
@@ -38,6 +39,7 @@ from hermes_stack.operator_portal.server import (
     _sync_project_after_run,
 )
 from hermes_stack.scaffold import bootstrap_runtime, build_snapshot
+from hermes_stack.state_store import list_cognitive_records
 
 
 def _write_workspace_policy(root: Path) -> None:
@@ -569,6 +571,35 @@ class HermesProjectTests(unittest.TestCase):
             )
 
             self.assertIsNone(response)
+
+    def test_project_scientist_persists_blocker_experiments(self) -> None:
+        with TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir) / "repo"
+            root.mkdir()
+            _write_workspace_policy(root)
+
+            create_project(
+                root,
+                project_id="signal-house",
+                title="Signal House",
+                summary="Cross-media project for app, game, and storyboard work.",
+                specialists=("operator", "app-dev"),
+            )
+            update_project(
+                root,
+                project_id="signal-house",
+                status="blocked",
+                blocked=("Need a deployment target.",),
+                done=(),
+            )
+
+            proposed = propose_experiments(root)
+            self.assertTrue(any(row["project_id"] == "signal-house" for row in proposed))
+            cycle = run_experiment_cycle(root)
+            stored = list_cognitive_records(root, "experiments", limit=20)
+
+            self.assertGreaterEqual(cycle["persisted_count"], 1)
+            self.assertTrue(any("blocker" in row["hypothesis"].lower() for row in stored))
 
     def test_project_action_payload_reflects_latest_focus_state(self) -> None:
         with TemporaryDirectory() as temp_dir:

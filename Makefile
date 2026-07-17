@@ -1,4 +1,4 @@
-.PHONY: help bootstrap install services-install portal gateway-operator gateway-app gateway-game gateway-creative dashboard-operator snapshot configure-postgres seed-memory memory-summary seed-cognition cognition-summary activate-cognition detect-contradictions dream-cycle council write-reflection create-project update-project orchestrate
+.PHONY: help bootstrap install services-install portal gateway-operator gateway-app gateway-game gateway-creative dashboard-operator snapshot configure-postgres seed-memory memory-summary seed-cognition cognition-summary activate-cognition detect-contradictions dream-cycle experiment-cycle council write-reflection create-project update-project orchestrate
 
 help:
 	@echo "Hermes Standalone Stack"
@@ -20,6 +20,7 @@ help:
 	@echo "  make cognition-summary - inspect cognitive kernel state"
 	@echo "  make activate-cognition QUERY='...' PROFILE=sheldon - activate memory/facts/procedures"
 	@echo "  make dream-cycle       - run idle cognition jobs"
+	@echo "  make experiment-cycle  - propose autonomous project experiments"
 	@echo "  make council TOPIC='...' - run agent council deliberation"
 	@echo "  make create-project PROJECT_ID=id TITLE='Title' - scaffold a persistent project"
 	@echo "  make update-project PROJECT_ID=id NOW='...' NEXT='...' - update persistent project tracking"
@@ -78,6 +79,9 @@ detect-contradictions:
 
 dream-cycle:
 	@python3 -m hermes_stack.scaffold --root-dir . dream-cycle
+
+experiment-cycle:
+	@python3 -m hermes_stack.scaffold --root-dir . experiment-cycle
 
 council:
 	@python3 -m hermes_stack.scaffold --root-dir . --project-id "$(PROJECT_ID)" --topic "$(TOPIC)" council

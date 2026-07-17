@@ -517,6 +517,7 @@ def cognitive_summary(root_dir: str | Path | None = None) -> dict[str, Any]:
             "contradictions",
             "dream_jobs",
             "council_records",
+            "experiments",
         )
     }
     open_contradictions = [

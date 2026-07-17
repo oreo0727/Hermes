@@ -324,6 +324,8 @@ that knowledge gets used over time:
 - `hermes_dream_jobs` stores idle cognition passes.
 - `hermes_council_records` stores multi-agent deliberation and the final
   arbitration decision.
+- `hermes_experiments` stores autonomous project-scientist hypotheses, metrics,
+  risk, confidence, and results.
 
 Seed the cognitive kernel:
 
@@ -341,6 +343,7 @@ Run the experimental idle-thinking and council loops:
 
 ```bash
 make dream-cycle
+make experiment-cycle
 make council TOPIC="What is the safest next slice for the active project?"
 ```
 
