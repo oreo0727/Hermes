@@ -25,11 +25,16 @@ case "$ACTION" in
       echo "Always-on loop already running (PID $(cat "$PID_FILE"))."
       exit 0
     fi
-    nohup python3 -m hermes_stack.scaffold \
-      --root-dir "$ROOT_DIR" \
-      --interval "$INTERVAL" \
-      --cycles 0 \
-      always-on-loop > "$LOG_FILE" 2>&1 &
+    nohup bash -c '
+      set -u
+      while true; do
+        printf "[%s] always-on-cycle start\n" "$(date -Is)"
+        if ! python3 -m hermes_stack.scaffold --root-dir "$1" always-on-cycle >/dev/null; then
+          printf "[%s] always-on-cycle failed\n" "$(date -Is)" >&2
+        fi
+        sleep "$2"
+      done
+    ' _ "$ROOT_DIR" "$INTERVAL" > "$LOG_FILE" 2>&1 &
     echo "$!" > "$PID_FILE"
     echo "INTERVAL=$INTERVAL" > "$ENV_FILE"
     echo "Started always-on loop (PID $(cat "$PID_FILE"), interval ${INTERVAL}s)."
