@@ -24,7 +24,7 @@ FAST_REQUEST_PATTERN = re.compile(
     r"\b("
     r"hi|hello|hey|status|where|what'?s|what is|queue|project|blocked|proof|"
     r"memory|cognition|brain|synapse|route|agent|team|who|slow|portal|chat|"
-    r"gateway|online|ready|brief|summary|recap"
+    r"gateway|online|ready|brief|summary|recap|next|continue|blocker"
     r")\b",
     re.IGNORECASE,
 )
@@ -78,6 +78,19 @@ def _looks_like_focus_request(query: str) -> bool:
     )
 
 
+def _project_followup_kind(query: str) -> str:
+    normalized = _normalize_match_text(query)
+    if _has_intent(normalized, ("blocker", "blocked", "first blocker")):
+        return "blocker"
+    if _has_intent(normalized, ("what do we need to do next", "what next", "next step", "next", "where were we")):
+        return "next"
+    if _has_intent(normalized, ("ok lets continue", "lets continue", "continue", "resume", "pick back up")):
+        return "continue"
+    if _has_intent(normalized, ("work on the first blocker", "work on first blocker", "work on blocker")):
+        return "blocker"
+    return ""
+
+
 def _resolve_requested_project(query: str, projects: list[dict[str, Any]]) -> dict[str, Any] | None:
     normalized_query = _normalize_match_text(query)
     if not normalized_query:
@@ -121,6 +134,8 @@ def _is_fast_safe(query: str) -> bool:
     if HEAVY_REQUEST_PATTERN.search(compact):
         return False
     if _looks_like_focus_request(compact):
+        return True
+    if _project_followup_kind(compact):
         return True
     return bool(FAST_REQUEST_PATTERN.search(compact)) or len(compact.split()) <= 4
 
@@ -171,6 +186,40 @@ def _resume_next_value(project: dict[str, Any]) -> str:
     return "Resume by refreshing the current milestone and choosing the next concrete production slice."
 
 
+def _project_followup_reply(project: dict[str, Any], *, kind: str) -> str:
+    title = str(project.get("title") or project.get("project_id") or "the active project")
+    next_value = str(project.get("next") or "").strip() or _resume_next_value(project)
+    now_value = str(project.get("now") or "").strip()
+    blocked = [str(item).strip() for item in project.get("blocked") or [] if str(item).strip()]
+    first_blocker = blocked[0] if blocked else ""
+    done = [str(item).strip() for item in project.get("done") or [] if str(item).strip()]
+    proof = done[0] if done else ""
+
+    if kind == "blocker":
+        if first_blocker:
+            return "\n".join(
+                [
+                    f"For {title}, the first blocker is:",
+                    first_blocker,
+                    "Best move: decide whether we can authenticate/access Runway Gen-3 now. If not, bypass it and package the strongest reviewable animatic from the upgraded stills and placeholder motion.",
+                ]
+            )
+        return f"For {title}, I do not have a blocker recorded. The next useful move is: {next_value}"
+
+    lines = [
+        f"Yes. We are on {title}.",
+        f"Next move: {next_value}",
+    ]
+    if first_blocker:
+        lines.append(f"First blocker: {first_blocker}")
+    if now_value and now_value != "Define the current milestone.":
+        lines.append(f"Current milestone: {now_value}")
+    if proof:
+        lines.append(f"Last proof: {proof}")
+    lines.append("I would keep this tight: resolve/bypass the blocker, refresh the slice, then only call it done when the animatic or replacement proof is actually attached.")
+    return "\n".join(lines)
+
+
 def _has_stale_pause_next(project: dict[str, Any]) -> bool:
     next_value = str(project.get("next") or "").strip().lower()
     return any(token in next_value for token in ("global stop", "pause", "paused", "archived", "archive"))
@@ -214,6 +263,10 @@ def _compose_fast_reply(
     chosen_action = str(activation.get("chosen_action") or "operator_synthesize")
     confidence = float(activation.get("confidence") or 0.0)
     project_lines = _project_lines(project)
+    followup_kind = _project_followup_kind(query)
+
+    if followup_kind and project is not None:
+        return _project_followup_reply(project, kind=followup_kind)
 
     if _is_small_talk(normalized):
         return (
@@ -324,6 +377,7 @@ def fast_route_chat(
     project = _active_project(projects, effective_project_id)
     if project and not effective_project_id:
         effective_project_id = str(project.get("project_id") or "")
+    followup_kind = _project_followup_kind(query)
     activation = activate_cognition(
         root,
         query=query,
@@ -348,9 +402,10 @@ def fast_route_chat(
         "content": content,
         "structured_result": {},
         "work_order": {
-            "action_type": "fast_reflex",
+            "action_type": "project_followup" if followup_kind and project is not None else "fast_reflex",
             "source": "portal-chat-fast-router",
             "project_id": effective_project_id,
+            "followup_kind": followup_kind,
             "chosen_action": activation.get("chosen_action"),
             "confidence": activation.get("confidence"),
         },

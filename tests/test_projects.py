@@ -665,6 +665,57 @@ class HermesProjectTests(unittest.TestCase):
             refreshed = next(row for row in discover_projects(root) if row["project_id"] == "spooky-teen-shortfilm")
             self.assertIn("Resume by", refreshed["next"])
 
+    def test_fast_router_handles_active_project_followups_without_status_dump(self) -> None:
+        with TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir) / "repo"
+            root.mkdir()
+            _write_workspace_policy(root)
+
+            create_project(
+                root,
+                project_id="spooky-teen-shortfilm",
+                title="Midnight Signals — AI Spooky Short for Teens",
+                summary="AI horror short for teen audiences.",
+                specialists=("operator", "creative-dev"),
+            )
+            update_project(
+                root,
+                project_id="spooky-teen-shortfilm",
+                status="active",
+                next_value="Resume by resolving or bypassing the first recorded blocker, then refresh the production slice.",
+                blocked=("True Runway Gen-3 generation is still blocked pending authentication/access in-lane.",),
+                done=("Reference-grounded storyboard pack v3 was generated.",),
+            )
+            activate_project(root, project_id="spooky-teen-shortfilm", reason="Current focus")
+
+            continue_response = fast_route_chat(
+                root,
+                profile_key="operator",
+                messages=[{"role": "user", "content": "ok lets continue"}],
+            )
+            next_response = fast_route_chat(
+                root,
+                profile_key="operator",
+                messages=[{"role": "user", "content": "what do we need to do next"}],
+            )
+            blocker_response = fast_route_chat(
+                root,
+                profile_key="operator",
+                messages=[{"role": "user", "content": "what is the blocker"}],
+            )
+
+            self.assertIsNotNone(continue_response)
+            self.assertIsNotNone(next_response)
+            self.assertIsNotNone(blocker_response)
+            assert continue_response is not None
+            assert next_response is not None
+            assert blocker_response is not None
+            self.assertIn("We are on Midnight Signals", continue_response["content"])
+            self.assertEqual("project_followup", continue_response["work_order"]["action_type"])
+            self.assertNotIn("Status snapshot", continue_response["content"])
+            self.assertIn("Next move", next_response["content"])
+            self.assertIn("Runway Gen-3", blocker_response["content"])
+
     def test_fast_router_escalates_heavy_build_requests(self) -> None:
         with TemporaryDirectory() as temp_dir:
             root = Path(temp_dir) / "repo"
