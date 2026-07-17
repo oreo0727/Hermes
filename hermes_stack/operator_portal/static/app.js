@@ -215,6 +215,7 @@ async function sendChatMessage(content) {
     const active = activeProject();
     const payload = {
       profile: "operator",
+      fast: true,
       project_id: active?.project_id || "",
       session_id: state.chatSessionId,
       messages: state.chatMessages.slice(-12),
@@ -226,7 +227,7 @@ async function sendChatMessage(content) {
     });
     state.chatSessionId = response.session_id || state.chatSessionId;
     appendChatMessage("assistant", response.content || "I received the message, but no response text came back.");
-    setChatStatus(response.session_id ? "Session linked" : "Ready", "ready");
+    setChatStatus(response.fast_path ? "Fast route" : (response.session_id ? "Session linked" : "Ready"), "ready");
   } catch (error) {
     const message = String(error.message || error);
     appendChatMessage("assistant", `I could not reach the operator gateway cleanly: ${message}`);

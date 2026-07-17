@@ -18,6 +18,7 @@ from hermes_stack.orchestration import (
     supervisor_revision_prompt,
     supervisor_review,
 )
+from hermes_stack.fast_router import fast_route_chat
 from hermes_stack.projects import (
     _count_files,
     _project_file_rows,
@@ -527,6 +528,47 @@ class HermesProjectTests(unittest.TestCase):
             self.assertEqual("Hermes v2 Command Deck", snapshot["portal"]["label"])
             self.assertIn("agents", snapshot)
             self.assertEqual("Sheldon", snapshot["agents"][0]["character_name"])
+
+    def test_fast_router_answers_safe_status_requests(self) -> None:
+        with TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir) / "repo"
+            root.mkdir()
+            _write_workspace_policy(root)
+
+            create_project(
+                root,
+                project_id="signal-house",
+                title="Signal House",
+                summary="Cross-media project for app, game, and storyboard work.",
+                specialists=("operator", "app-dev"),
+            )
+
+            response = fast_route_chat(
+                root,
+                profile_key="operator",
+                project_id="signal-house",
+                messages=[{"role": "user", "content": "what is the status?"}],
+            )
+
+            self.assertIsNotNone(response)
+            assert response is not None
+            self.assertTrue(response["fast_path"])
+            self.assertIn("Status snapshot", response["content"])
+            self.assertEqual("fast_reflex", response["work_order"]["action_type"])
+
+    def test_fast_router_escalates_heavy_build_requests(self) -> None:
+        with TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir) / "repo"
+            root.mkdir()
+            _write_workspace_policy(root)
+
+            response = fast_route_chat(
+                root,
+                profile_key="operator",
+                messages=[{"role": "user", "content": "build the new portal feature"}],
+            )
+
+            self.assertIsNone(response)
 
     def test_project_action_payload_reflects_latest_focus_state(self) -> None:
         with TemporaryDirectory() as temp_dir:

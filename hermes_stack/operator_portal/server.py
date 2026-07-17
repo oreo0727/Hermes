@@ -23,6 +23,7 @@ from urllib.error import HTTPError, URLError
 from urllib.parse import parse_qs, urlparse
 from urllib.request import Request, urlopen
 
+from hermes_stack.fast_router import fast_route_chat
 from hermes_stack.orchestration import (
     clip_text,
     closure_gate_review,
@@ -1637,6 +1638,18 @@ class PortalHandler(BaseHTTPRequestHandler):
             explicit_project_id=explicit_project_id,
             messages=prepared_messages,
         )
+        requested_fast = bool(payload.get("fast") or str(payload.get("mode") or "").strip().lower() == "fast")
+        if requested_fast:
+            fast_response = fast_route_chat(
+                self.server.repo_root,
+                profile_key=profile_key,
+                project_id=effective_project_id,
+                messages=[message for message in prepared_messages if isinstance(message, dict)],
+            )
+            if fast_response is not None:
+                fast_response["prepared_updates"] = prepared_updates
+                self._send_json(fast_response)
+                return
         projects = discover_projects(self.server.repo_root)
         project = next((row for row in projects if str(row.get("project_id") or "") == effective_project_id), None)
         context_message = _project_context_message(self.server.repo_root, effective_project_id)
