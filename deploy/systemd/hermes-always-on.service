@@ -1,0 +1,17 @@
+[Unit]
+Description=Hermes Always-On Agent Radar
+After=network-online.target hermes-operator-portal.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=%h/Hermes
+Environment=INTERVAL=30
+ExecStart=%h/Hermes/scripts/run-always-on-loop.sh run
+Restart=always
+RestartSec=5
+KillSignal=SIGINT
+TimeoutStopSec=30
+
+[Install]
+WantedBy=default.target

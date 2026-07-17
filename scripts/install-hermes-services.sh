@@ -12,6 +12,7 @@ install -m 0644 \
   "$UNIT_SOURCE_DIR/hermes-creative-dev-gateway.service" \
   "$UNIT_SOURCE_DIR/hermes-operator-gateway.service" \
   "$UNIT_SOURCE_DIR/hermes-operator-portal.service" \
+  "$UNIT_SOURCE_DIR/hermes-always-on.service" \
   "$UNIT_SOURCE_DIR/hermes-operator-watchdog.service" \
   "$UNIT_SOURCE_DIR/hermes-operator-watchdog.timer" \
   "$USER_UNIT_DIR/"
@@ -22,7 +23,8 @@ systemctl --user enable --now \
   hermes-app-dev-gateway.service \
   hermes-game-dev-gateway.service \
   hermes-creative-dev-gateway.service \
-  hermes-operator-portal.service
+  hermes-operator-portal.service \
+  hermes-always-on.service
 systemctl --user enable --now hermes-operator-watchdog.timer
 
 linger_status=""
@@ -45,4 +47,5 @@ echo "  systemctl --user status hermes-app-dev-gateway.service"
 echo "  systemctl --user status hermes-game-dev-gateway.service"
 echo "  systemctl --user status hermes-creative-dev-gateway.service"
 echo "  systemctl --user status hermes-operator-portal.service"
+echo "  systemctl --user status hermes-always-on.service"
 echo "  systemctl --user status hermes-operator-watchdog.timer"

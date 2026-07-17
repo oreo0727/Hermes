@@ -19,22 +19,26 @@ is_running() {
   kill -0 "$pid" 2>/dev/null
 }
 
+run_loop() {
+  while true; do
+    printf "[%s] always-on-cycle start\n" "$(date -Is)"
+    if ! python3 -m hermes_stack.scaffold --root-dir "$ROOT_DIR" always-on-cycle >/dev/null; then
+      printf "[%s] always-on-cycle failed\n" "$(date -Is)" >&2
+    fi
+    sleep "$INTERVAL"
+  done
+}
+
 case "$ACTION" in
+  run)
+    run_loop
+    ;;
   start)
     if is_running; then
       echo "Always-on loop already running (PID $(cat "$PID_FILE"))."
       exit 0
     fi
-    nohup bash -c '
-      set -u
-      while true; do
-        printf "[%s] always-on-cycle start\n" "$(date -Is)"
-        if ! python3 -m hermes_stack.scaffold --root-dir "$1" always-on-cycle >/dev/null; then
-          printf "[%s] always-on-cycle failed\n" "$(date -Is)" >&2
-        fi
-        sleep "$2"
-      done
-    ' _ "$ROOT_DIR" "$INTERVAL" > "$LOG_FILE" 2>&1 &
+    nohup "$0" run > "$LOG_FILE" 2>&1 &
     echo "$!" > "$PID_FILE"
     echo "INTERVAL=$INTERVAL" > "$ENV_FILE"
     echo "Started always-on loop (PID $(cat "$PID_FILE"), interval ${INTERVAL}s)."
@@ -69,7 +73,7 @@ case "$ACTION" in
     tail -n "${LINES:-80}" "$LOG_FILE"
     ;;
   *)
-    echo "usage: $0 {start|stop|restart|status|log}" >&2
+    echo "usage: $0 {run|start|stop|restart|status|log}" >&2
     exit 2
     ;;
 esac
