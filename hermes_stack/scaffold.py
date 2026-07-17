@@ -35,6 +35,7 @@ from hermes_stack.cognitive_kernel import (
     write_reflection,
 )
 from hermes_stack.memory import agent_memory_summary, seed_agent_memory
+from hermes_stack.live_theater import build_live_theater
 from hermes_stack.project_scientist import run_experiment_cycle
 from hermes_stack.skill_evolution import consolidate_experiment_memory
 from hermes_stack.state_store import configure_runtime, runtime_settings
@@ -793,6 +794,7 @@ def build_snapshot(root_dir: str | Path | None = None) -> dict[str, Any]:
         },
         "state_storage": storage,
         "cognition": cognitive_summary(root),
+        "live_theater": build_live_theater(root),
         "profiles": profile_rows,
         "agents": build_agent_registry(root, profile_rows),
         "projects": projects,

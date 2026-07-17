@@ -1092,6 +1092,71 @@ svg {
   background: var(--green);
 }
 
+.theater-list {
+  display: grid;
+  gap: 12px;
+}
+
+.theater-row {
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+  border-radius: 18px;
+  background:
+    radial-gradient(circle at top left, color-mix(in srgb, var(--agent-accent) 24%, transparent), transparent 45%),
+    rgba(255, 255, 255, 0.045);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.theater-row::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 4px;
+  background: var(--agent-accent);
+  opacity: 0.9;
+}
+
+.theater-head {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+}
+
+.theater-head strong,
+.theater-head span {
+  display: block;
+}
+
+.theater-head span {
+  color: var(--text-muted);
+  font-size: 0.82rem;
+}
+
+.theater-head b {
+  color: #cdf8bd;
+  font-size: 0.86rem;
+}
+
+.theater-row p {
+  margin: 0;
+  color: var(--text-soft);
+  line-height: 1.42;
+}
+
+.theater-row p span {
+  display: block;
+  margin-bottom: 3px;
+  color: #ffcc8c;
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
 .empty-state {
   padding: 20px;
   background: rgba(255, 255, 255, 0.03);

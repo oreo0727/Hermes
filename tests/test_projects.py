@@ -532,6 +532,9 @@ class HermesProjectTests(unittest.TestCase):
             self.assertEqual("Hermes v2 Command Deck", snapshot["portal"]["label"])
             self.assertIn("agents", snapshot)
             self.assertEqual("Sheldon", snapshot["agents"][0]["character_name"])
+            self.assertIn("live_theater", snapshot)
+            self.assertEqual(4, len(snapshot["live_theater"]))
+            self.assertIn("current_thought", snapshot["live_theater"][0])
 
     def test_fast_router_answers_safe_status_requests(self) -> None:
         with TemporaryDirectory() as temp_dir:

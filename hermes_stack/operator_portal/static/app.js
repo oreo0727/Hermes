@@ -42,6 +42,7 @@ const elements = {
   floatingChatStatus: document.querySelector("#floating-chat-status"),
   queueTable: document.querySelector("#queue-table"),
   agentTeam: document.querySelector("#agent-team"),
+  agentTheater: document.querySelector("#agent-theater"),
   activityFeed: document.querySelector("#activity-feed"),
   emptyStateTemplate: document.querySelector("#empty-state-template"),
 };
@@ -518,6 +519,41 @@ function renderAgents() {
   elements.agentTeam.innerHTML = agents.map(teamRowMarkup).join("");
 }
 
+function theaterRowMarkup(row) {
+  const confidence = Math.round(Number(row.confidence || 0) * 100);
+  return `
+    <article class="theater-row" style="--agent-accent:${escapeHtml(row.accent || "#84a5ff")}">
+      <div class="theater-head">
+        <div class="tiny-avatar">
+          ${
+            row.avatar_path
+              ? `<img src="${escapeHtml(row.avatar_path)}" alt="${escapeHtml(row.character_name)}" />`
+              : `<span>${escapeHtml(text(row.character_name, "?").slice(0, 1))}</span>`
+          }
+        </div>
+        <div>
+          <strong>${escapeHtml(text(row.character_name))}</strong>
+          <span>${escapeHtml(text(row.next_move, "observe_and_update"))}</span>
+        </div>
+        <b>${escapeHtml(String(confidence))}%</b>
+      </div>
+      <p><span>Thought</span>${escapeHtml(text(row.current_thought))}</p>
+      <p><span>Learning</span>${escapeHtml(text(row.learning))}</p>
+      <p><span>Proof Gate</span>${escapeHtml(text(row.proof_gate))}</p>
+    </article>
+  `;
+}
+
+function renderTheater() {
+  const rows = state.snapshot?.live_theater || [];
+  elements.agentTheater.innerHTML = "";
+  if (!rows.length) {
+    elements.agentTheater.append(cloneEmptyState());
+    return;
+  }
+  elements.agentTheater.innerHTML = rows.map(theaterRowMarkup).join("");
+}
+
 function buildActivityFeed() {
   const activities = [];
   for (const run of state.runs.slice(0, 6)) {
@@ -629,6 +665,7 @@ async function loadDashboard() {
     renderProjects();
     renderQueue();
     renderAgents();
+    renderTheater();
     renderActivity();
   } catch (error) {
     console.error(error);
