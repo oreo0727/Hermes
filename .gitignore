@@ -16,6 +16,7 @@ state/workspaces/*/.venv/
 # Hermes local runtime state
 .http_pid
 .http_pid_*
+private/apple-signing/
 state/hermes/runtime.env
 state/hermes/snapshot.json
 state/hermes/profiles/
