@@ -104,7 +104,7 @@ struct DriveChatView: View {
                 .padding(.horizontal, 18)
                 .padding(.vertical, 10)
             }
-            .onChange(of: viewModel.messages.count) {
+            .onChange(of: viewModel.messages.count) { _ in
                 guard let last = viewModel.messages.last else { return }
                 withAnimation(.spring(response: 0.36, dampingFraction: 0.86)) {
                     proxy.scrollTo(last.id, anchor: .bottom)

@@ -38,7 +38,11 @@ final class SpeechController: NSObject, ObservableObject, SFSpeechRecognizerDele
                 continuation.resume(returning: status == .authorized)
             }
         }
-        let micAllowed = await AVAudioApplication.requestRecordPermission()
+        let micAllowed = await withCheckedContinuation { continuation in
+            AVAudioSession.sharedInstance().requestRecordPermission { allowed in
+                continuation.resume(returning: allowed)
+            }
+        }
         return speechAllowed && micAllowed
     }
 

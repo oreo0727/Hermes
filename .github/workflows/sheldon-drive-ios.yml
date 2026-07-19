@@ -1,0 +1,32 @@
+name: Sheldon Drive iOS
+
+on:
+  push:
+    paths:
+      - "apps/sheldon-drive-ios/**"
+      - ".github/workflows/sheldon-drive-ios.yml"
+  pull_request:
+    paths:
+      - "apps/sheldon-drive-ios/**"
+      - ".github/workflows/sheldon-drive-ios.yml"
+  workflow_dispatch:
+
+jobs:
+  simulator-build:
+    name: Build iOS Simulator App
+    runs-on: macos-15
+    defaults:
+      run:
+        working-directory: apps/sheldon-drive-ios
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Show Xcode version
+        run: xcodebuild -version
+
+      - name: Show available iOS runtimes
+        run: xcrun simctl list runtimes
+
+      - name: Build Sheldon Drive
+        run: ./scripts/build-for-iphone13-promax.sh
