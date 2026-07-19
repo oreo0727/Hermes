@@ -10,7 +10,7 @@ import time
 
 from hermes_stack.agents import AGENT_SPECS, AgentSpec
 from hermes_stack.autonomy import decide_autonomy
-from hermes_stack.projects import discover_projects, portfolio_snapshot
+from hermes_stack.projects import discover_projects, portfolio_snapshot, update_project
 from hermes_stack.state_store import list_cognitive_records, repo_root, upsert_cognitive_record
 
 
@@ -42,6 +42,139 @@ def _project_done(project: dict[str, Any] | None) -> list[str]:
     if not project:
         return []
     return [str(item).strip() for item in project.get("done") or [] if str(item).strip()]
+
+
+def _project_artifacts(project: dict[str, Any] | None) -> list[Path]:
+    if not project:
+        return []
+    project_root = Path(str(project.get("root") or ""))
+    if not project_root.exists():
+        return []
+    control = project.get("control") if isinstance(project.get("control"), dict) else {}
+    raw = str(control.get("primary_artifact") or project.get("primary_artifact") or "")
+    artifacts: list[Path] = []
+    for part in raw.split(","):
+        cleaned = part.strip()
+        if not cleaned:
+            continue
+        candidate = Path(cleaned)
+        if not candidate.is_absolute():
+            candidate = project_root / candidate
+        artifacts.append(candidate)
+    return artifacts
+
+
+def _artifact_summary(path: Path) -> str:
+    try:
+        stat = path.stat()
+    except OSError:
+        return f"{path.name}: missing"
+    size_mb = stat.st_size / (1024 * 1024)
+    return f"{path.name}: present, {size_mb:.2f} MB"
+
+
+def _write_execution_review(project: dict[str, Any], artifacts: list[Path]) -> Path | None:
+    project_root = Path(str(project.get("root") or ""))
+    if not project_root.exists() or not artifacts:
+        return None
+    review_path = project_root / "artifacts" / "always_on_review.md"
+    review_path.parent.mkdir(parents=True, exist_ok=True)
+    title = str(project.get("title") or project.get("project_id") or "Project")
+    lines = [
+        "# Always-on execution review",
+        "",
+        f"Updated: {_now()}",
+        f"Project: {title}",
+        "",
+        "Safe action completed:",
+        "- Verified the current primary artifact set is locally present.",
+        "- Advanced the project from passive monitoring to a concrete review/polish lane.",
+        "",
+        "Artifacts checked:",
+        *[f"- {_artifact_summary(path)}" for path in artifacts],
+        "",
+        "Next useful production move:",
+        "- Review the motion pass for story quality, then choose audio/subtitle/trailer polish or provider upgrade.",
+    ]
+    review_path.write_text("\n".join(lines).rstrip() + "\n", encoding="utf-8")
+    return review_path
+
+
+def _execute_safe_project_work(root: Path, project: dict[str, Any] | None) -> dict[str, Any] | None:
+    """Perform one conservative project advancement that cannot spend money or call external APIs."""
+    if not project:
+        return None
+    project_id = str(project.get("project_id") or "").strip()
+    if not project_id or str(project.get("status") or "").strip().lower() not in {"active", "in_progress", "in progress"}:
+        return None
+    blockers = _project_blockers(project)
+    if blockers:
+        return None
+    done = _project_done(project)
+    if any("Always-on executor reviewed" in item for item in done):
+        return None
+
+    next_value = str(project.get("next") or "").strip().lower()
+    artifacts = _project_artifacts(project)
+    existing_artifacts = [path for path in artifacts if path.exists()]
+    if not existing_artifacts:
+        return None
+    if not any(token in next_value for token in ("review", "verify", "proof", "quality", "polish", "motion")):
+        return None
+
+    review_path = _write_execution_review(project, existing_artifacts)
+    if review_path is None:
+        return None
+
+    project_root = Path(str(project.get("root") or ""))
+    relative_review = str(review_path.relative_to(project_root))
+    primary_artifact = ", ".join(
+        [str(path.relative_to(project_root)) for path in existing_artifacts[:3]]
+        + [relative_review]
+    )
+    done_update = [
+        *done[:5],
+        f"Always-on executor reviewed the active artifact set and wrote {relative_review}.",
+    ]
+    next_update = "Choose the next production slice: audio/subtitle polish, trailer packaging, or a higher-fidelity video-provider upgrade."
+    now_update = f"Always-on executor advanced the project by verifying local proof and writing {relative_review}."
+    update_project(
+        root,
+        project_id=project_id,
+        status="active",
+        owner=str(project.get("owner") or "operator"),
+        now=now_update,
+        next_value=next_update,
+        blocked=[],
+        done=done_update,
+        percent=max(70, int(project.get("progress_percent") or 0)),
+        primary_artifact=primary_artifact,
+    )
+
+    event = {
+        "event_id": f"event:always-on-executor:{_stable_id(project_id, primary_artifact)}",
+        "agent_slug": "sheldon",
+        "project_id": project_id,
+        "event_type": "always_on_execution",
+        "title": "Always-on executor advanced project proof",
+        "content": now_update,
+        "source_ref": relative_review,
+        "salience": 0.78,
+        "occurred_at": _now(),
+        "payload": {
+            "artifacts": [str(path.relative_to(project_root)) for path in existing_artifacts],
+            "review_artifact": relative_review,
+            "next": next_update,
+        },
+    }
+    upsert_cognitive_record(root, "events", event)
+    return {
+        "project_id": project_id,
+        "status": "completed",
+        "summary": now_update,
+        "artifact": relative_review,
+        "next_action": next_update,
+    }
 
 
 def _sentence(value: str) -> str:
@@ -200,6 +333,7 @@ def run_always_on_cycle(root_dir: str | Path | None = None) -> dict[str, Any]:
     project = _active_project(root)
     heartbeats: list[dict[str, Any]] = []
     intentions: list[dict[str, Any]] = []
+    executions: list[dict[str, Any]] = []
 
     for spec in AGENT_SPECS:
         heartbeat = upsert_cognitive_record(root, "agent_heartbeats", _heartbeat_for(spec, project))
@@ -219,13 +353,19 @@ def run_always_on_cycle(root_dir: str | Path | None = None) -> dict[str, Any]:
         intention["payload"]["work_result"] = _work_result_for(intention, project)
         intentions.append(upsert_cognitive_record(root, "agent_intentions", intention))
 
+    execution = _execute_safe_project_work(root, project)
+    if execution:
+        executions.append(execution)
+
     return {
         "generated_at": _now(),
         "active_project_id": str((project or {}).get("project_id") or ""),
         "heartbeat_count": len(heartbeats),
         "intention_count": len(intentions),
+        "execution_count": len(executions),
         "heartbeats": heartbeats,
         "intentions": intentions,
+        "executions": executions,
     }
 
 

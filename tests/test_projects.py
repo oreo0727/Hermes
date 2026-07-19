@@ -844,6 +844,47 @@ class HermesProjectTests(unittest.TestCase):
             self.assertTrue(all(str(row.get("status") or "") in {"completed", "reviewing", "waiting_approval", "working"} for row in intentions))
             self.assertTrue(all((row.get("payload") or {}).get("work_result") for row in intentions))
 
+    def test_always_on_cycle_executes_safe_artifact_review_once(self) -> None:
+        with TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir) / "repo"
+            root.mkdir()
+            _write_workspace_policy(root)
+
+            create_project(
+                root,
+                project_id="spooky-teen-shortfilm",
+                title="Midnight Signals — AI Spooky Short for Teens",
+                summary="AI horror short for teen audiences.",
+                specialists=("operator", "creative-dev"),
+            )
+            artifact = root / "state" / "projects" / "spooky-teen-shortfilm" / "artifacts" / "animatic_v3_motionfx.mp4"
+            artifact.parent.mkdir(parents=True, exist_ok=True)
+            artifact.write_bytes(b"fake mp4 proof")
+            update_project(
+                root,
+                project_id="spooky-teen-shortfilm",
+                status="active",
+                next_value="Review the free local motion pass for story quality.",
+                done=("Video provider fallback selected.",),
+                primary_artifact="artifacts/animatic_v3_motionfx.mp4",
+            )
+
+            result = run_always_on_cycle(root)
+            projects = discover_projects(root)
+            project = next(row for row in projects if row["project_id"] == "spooky-teen-shortfilm")
+            review = root / "state" / "projects" / "spooky-teen-shortfilm" / "artifacts" / "always_on_review.md"
+            events = list_cognitive_records(root, "events", limit=5)
+
+            self.assertEqual(1, result["execution_count"])
+            self.assertTrue(review.exists())
+            self.assertIn("Always-on executor advanced", project["now"])
+            self.assertIn("Choose the next production slice", project["next"])
+            self.assertTrue(any("Always-on executor reviewed" in item for item in project["done"]))
+            self.assertTrue(any(row.get("event_type") == "always_on_execution" for row in events))
+
+            second = run_always_on_cycle(root)
+            self.assertEqual(0, second["execution_count"])
+
     def test_project_action_payload_reflects_latest_focus_state(self) -> None:
         with TemporaryDirectory() as temp_dir:
             root = Path(temp_dir) / "repo"

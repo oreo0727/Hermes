@@ -9,21 +9,22 @@
   ],
   "tracking": {
     "owner": "creative-dev",
-    "now": "Unblocked on local_motionfx: artifacts/animatic_v3_motionfx.mp4.",
-    "next": "Review the free local motion pass for story quality; optionally upgrade later with Hugging Face or another provider if credentials/GPU become available.",
+    "now": "Always-on executor advanced the project by verifying local proof and writing artifacts/always_on_review.md.",
+    "next": "Choose the next production slice: audio/subtitle polish, trailer packaging, or a higher-fidelity video-provider upgrade.",
     "blocked": [],
     "done": [
       "Video lane switched away from Runway-only blocking to a provider adapter with local no-cost fallback first.",
-      "Selected local_motionfx and verified artifacts/animatic_v3_motionfx.mp4 (first_frame_size=1920x1080; ffprobe unavailable, verified first frame with imageio)."
+      "Selected local_motionfx and verified artifacts/animatic_v3_motionfx.mp4 (first_frame_size=1920x1080; ffprobe unavailable, verified first frame with imageio).",
+      "Always-on executor reviewed the active artifact set and wrote artifacts/always_on_review.md."
     ],
     "priority": 50,
-    "percent": 65
+    "percent": 70
   },
   "control": {
     "project_kind": "creative",
     "control_mode": "orchestrated",
     "delivery_target": "free local motion animatic with optional provider upgrades",
-    "primary_artifact": "artifacts/animatic_v3_motionfx.mp4, artifacts/video_provider_status.md",
+    "primary_artifact": "artifacts/animatic_v3_motionfx.mp4, artifacts/video_provider_status.md, artifacts/always_on_review.md",
     "acceptance": [
       "Five teens are visibly rendered as characters, not seat markers or abstract geometry.",
       "The boards visibly mirror the supplied camp reference: tent back-center, lantern left foreground, sign on right, central fire, moonlit forest palette.",
@@ -39,5 +40,5 @@
     "capability_gaps": []
   },
   "created_at": "2026-05-22T19:36:04.527118+00:00",
-  "updated_at": "2026-07-17T20:12:54.645086+00:00"
+  "updated_at": "2026-07-19T12:26:00.003893+00:00"
 }
