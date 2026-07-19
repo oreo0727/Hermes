@@ -47,7 +47,7 @@ const elements = {
   floatingChatLog: document.querySelector("#floating-chat-log"),
   floatingChatSend: document.querySelector("#floating-chat-send"),
   floatingChatStatus: document.querySelector("#floating-chat-status"),
-  floatingVoiceToggle: document.querySelector("#floating-voice-toggle"),
+  voiceToggles: Array.from(document.querySelectorAll("[data-voice-toggle]")),
   queueTable: document.querySelector("#queue-table"),
   agentTeam: document.querySelector("#agent-team"),
   agentTheater: document.querySelector("#agent-theater"),
@@ -128,11 +128,13 @@ function setChatStatus(label, tone = "ready") {
 
 function setVoiceButtonState(listening) {
   state.voiceListening = Boolean(listening);
-  if (!elements.floatingVoiceToggle) {
+  if (!elements.voiceToggles.length) {
     return;
   }
-  elements.floatingVoiceToggle.setAttribute("aria-pressed", listening ? "true" : "false");
-  elements.floatingVoiceToggle.textContent = listening ? "Listening..." : "Voice";
+  for (const button of elements.voiceToggles) {
+    button.setAttribute("aria-pressed", listening ? "true" : "false");
+    button.textContent = listening ? "Listening..." : "Voice";
+  }
 }
 
 function speakSheldonReply(content) {
@@ -154,13 +156,15 @@ function speakSheldonReply(content) {
 function initVoiceMode() {
   const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   state.voiceSupported = Boolean(Recognition && "speechSynthesis" in window);
-  if (!elements.floatingVoiceToggle) {
+  if (!elements.voiceToggles.length) {
     return;
   }
   if (!state.voiceSupported) {
-    elements.floatingVoiceToggle.disabled = true;
-    elements.floatingVoiceToggle.textContent = "No Voice";
-    elements.floatingVoiceToggle.title = "This browser does not expose speech recognition and speech synthesis.";
+    for (const button of elements.voiceToggles) {
+      button.disabled = true;
+      button.textContent = "No Voice";
+      button.title = "This browser does not expose speech recognition and speech synthesis.";
+    }
     return;
   }
   const recognition = new Recognition();
@@ -956,7 +960,9 @@ elements.floatingChatForm?.addEventListener("submit", (event) => {
   event.preventDefault();
   sendChatMessage(elements.floatingChatInput?.value || "");
 });
-elements.floatingVoiceToggle?.addEventListener("click", toggleVoiceMode);
+for (const button of elements.voiceToggles) {
+  button.addEventListener("click", toggleVoiceMode);
+}
 elements.floatingChatInput?.addEventListener("keydown", (event) => {
   if (event.key === "Enter" && !event.shiftKey) {
     event.preventDefault();

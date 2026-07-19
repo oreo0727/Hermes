@@ -182,7 +182,10 @@
                   <p class="eyebrow">Talk To Sheldon</p>
                   <h3>Operator Chat</h3>
                 </div>
-                <span id="chat-status" class="chat-status">Ready</span>
+                <div class="chat-tools">
+                  <button id="chat-voice-toggle" class="voice-button compact" type="button" aria-pressed="false" data-voice-toggle>Voice</button>
+                  <span id="chat-status" class="chat-status">Ready</span>
+                </div>
               </div>
               <div id="chat-log" class="chat-log" aria-live="polite">
                 <article class="chat-message assistant">
@@ -202,6 +205,7 @@
                   placeholder="Ask Sheldon anything about Hermes..."
                   aria-label="Message Sheldon"
                 ></textarea>
+                <button id="chat-form-voice-toggle" class="voice-button" type="button" aria-pressed="false" data-voice-toggle>Voice</button>
                 <button id="chat-send" class="button primary" type="submit">Send</button>
               </form>
             </section>
@@ -287,6 +291,7 @@
             <strong>Sheldon</strong>
             <span id="floating-chat-status">Ready</span>
           </div>
+          <button id="floating-head-voice-toggle" class="voice-button compact" type="button" aria-pressed="false" data-voice-toggle>Voice</button>
           <button id="sheldon-chat-close" class="floating-close" type="button" aria-label="Close Sheldon chat">×</button>
         </header>
         <div id="floating-chat-log" class="chat-log floating-chat-log" aria-live="polite">
@@ -307,7 +312,7 @@
             placeholder="Message Sheldon..."
             aria-label="Message Sheldon from floating chat"
           ></textarea>
-          <button id="floating-voice-toggle" class="voice-button" type="button" aria-pressed="false">Voice</button>
+          <button id="floating-voice-toggle" class="voice-button" type="button" aria-pressed="false" data-voice-toggle>Voice</button>
           <button id="floating-chat-send" class="button primary" type="submit">Send</button>
         </form>
       </section>
@@ -325,6 +330,6 @@
       </article>
     </template>
 
-    <script src="/app.js?v=voice-executor-20260719"></script>
+    <script src="/app.js?v=voice-visible-20260719"></script>
   </body>
 </html>

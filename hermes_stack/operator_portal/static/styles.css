@@ -741,6 +741,13 @@ svg {
   background: rgba(255, 88, 110, 0.2);
 }
 
+.chat-tools {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
 .chat-log {
   display: flex;
   flex-direction: column;
@@ -820,7 +827,7 @@ svg {
 
 .chat-form {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr) auto auto;
   gap: 12px;
   align-items: end;
   padding-top: 14px;
@@ -935,7 +942,7 @@ svg {
 
 .sheldon-chat-head {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
   align-items: center;
   gap: 12px;
   padding: 16px;
@@ -1024,6 +1031,15 @@ svg {
   cursor: pointer;
   font-weight: 900;
   letter-spacing: 0.02em;
+}
+
+.voice-button.compact {
+  align-self: center;
+  min-height: 34px;
+  min-width: 72px;
+  padding: 0 12px;
+  border-radius: 999px;
+  font-size: 0.82rem;
 }
 
 .voice-button:hover,
@@ -1378,7 +1394,13 @@ svg {
     grid-template-columns: 1fr;
   }
 
-  .chat-form .button {
+  .chat-tools {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .chat-form .button,
+  .chat-form .voice-button {
     width: 100%;
   }
 
@@ -1418,6 +1440,15 @@ svg {
 
   .floating-chat-form .button,
   .floating-chat-form .voice-button {
+    width: 100%;
+  }
+
+  .sheldon-chat-head {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+  }
+
+  .sheldon-chat-head .voice-button {
+    grid-column: 1 / -1;
     width: 100%;
   }
 }
