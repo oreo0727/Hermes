@@ -989,7 +989,7 @@ svg {
 
 .floating-chat-form {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr) auto auto;
   gap: 10px;
   padding: 14px;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
@@ -1010,6 +1010,34 @@ svg {
 .floating-chat-form textarea:focus {
   border-color: rgba(255, 204, 140, 0.58);
   box-shadow: 0 0 0 4px rgba(255, 178, 93, 0.1);
+}
+
+.voice-button {
+  align-self: stretch;
+  min-width: 82px;
+  border: 1px solid rgba(255, 204, 140, 0.26);
+  border-radius: 16px;
+  color: #ffdeb8;
+  background:
+    radial-gradient(circle at 30% 20%, rgba(255, 204, 140, 0.22), transparent 38%),
+    rgba(240, 165, 84, 0.12);
+  cursor: pointer;
+  font-weight: 900;
+  letter-spacing: 0.02em;
+}
+
+.voice-button:hover,
+.voice-button[aria-pressed="true"] {
+  color: #15111a;
+  background: linear-gradient(145deg, #ffcf8e, #f0a554);
+  border-color: rgba(255, 222, 184, 0.8);
+  box-shadow: 0 0 0 5px rgba(240, 165, 84, 0.14);
+}
+
+.voice-button[disabled] {
+  cursor: not-allowed;
+  opacity: 0.5;
+  box-shadow: none;
 }
 
 @keyframes bubblePulse {
@@ -1381,10 +1409,15 @@ svg {
   }
 
   .floating-chat-form {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr;
   }
 
-  .floating-chat-form .button {
+  .floating-chat-form textarea {
+    grid-column: 1 / -1;
+  }
+
+  .floating-chat-form .button,
+  .floating-chat-form .voice-button {
     width: 100%;
   }
 }

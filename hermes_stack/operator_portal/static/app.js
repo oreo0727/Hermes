@@ -7,6 +7,9 @@ const state = {
   chatSessionId: "",
   loading: false,
   chatLoading: false,
+  voiceListening: false,
+  voiceRecognition: null,
+  voiceSupported: false,
 };
 
 const elements = {
@@ -44,6 +47,7 @@ const elements = {
   floatingChatLog: document.querySelector("#floating-chat-log"),
   floatingChatSend: document.querySelector("#floating-chat-send"),
   floatingChatStatus: document.querySelector("#floating-chat-status"),
+  floatingVoiceToggle: document.querySelector("#floating-voice-toggle"),
   queueTable: document.querySelector("#queue-table"),
   agentTeam: document.querySelector("#agent-team"),
   agentTheater: document.querySelector("#agent-theater"),
@@ -119,6 +123,103 @@ function setChatStatus(label, tone = "ready") {
   if (elements.floatingChatStatus) {
     elements.floatingChatStatus.textContent = label;
     elements.floatingChatStatus.dataset.tone = tone;
+  }
+}
+
+function setVoiceButtonState(listening) {
+  state.voiceListening = Boolean(listening);
+  if (!elements.floatingVoiceToggle) {
+    return;
+  }
+  elements.floatingVoiceToggle.setAttribute("aria-pressed", listening ? "true" : "false");
+  elements.floatingVoiceToggle.textContent = listening ? "Listening..." : "Voice";
+}
+
+function speakSheldonReply(content) {
+  if (!("speechSynthesis" in window)) {
+    return;
+  }
+  const clean = String(content || "").trim();
+  if (!clean) {
+    return;
+  }
+  window.speechSynthesis.cancel();
+  const utterance = new SpeechSynthesisUtterance(clean);
+  utterance.rate = 1.02;
+  utterance.pitch = 0.96;
+  utterance.volume = 1;
+  window.speechSynthesis.speak(utterance);
+}
+
+function initVoiceMode() {
+  const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  state.voiceSupported = Boolean(Recognition && "speechSynthesis" in window);
+  if (!elements.floatingVoiceToggle) {
+    return;
+  }
+  if (!state.voiceSupported) {
+    elements.floatingVoiceToggle.disabled = true;
+    elements.floatingVoiceToggle.textContent = "No Voice";
+    elements.floatingVoiceToggle.title = "This browser does not expose speech recognition and speech synthesis.";
+    return;
+  }
+  const recognition = new Recognition();
+  recognition.lang = "en-US";
+  recognition.interimResults = true;
+  recognition.continuous = false;
+  recognition.maxAlternatives = 1;
+  recognition.onstart = () => {
+    openFloatingChat();
+    setVoiceButtonState(true);
+    setChatStatus("Listening", "busy");
+  };
+  recognition.onerror = (event) => {
+    setVoiceButtonState(false);
+    setChatStatus(`Voice error: ${event.error || "unknown"}`, "error");
+  };
+  recognition.onend = () => {
+    setVoiceButtonState(false);
+    if (!state.chatLoading) {
+      setChatStatus("Ready", "ready");
+    }
+  };
+  recognition.onresult = (event) => {
+    let transcript = "";
+    let finalTranscript = "";
+    for (let index = event.resultIndex; index < event.results.length; index += 1) {
+      const result = event.results[index];
+      const textResult = result[0]?.transcript || "";
+      transcript += textResult;
+      if (result.isFinal) {
+        finalTranscript += textResult;
+      }
+    }
+    if (elements.floatingChatInput && transcript.trim()) {
+      elements.floatingChatInput.value = transcript.trim();
+    }
+    const outgoing = finalTranscript.trim();
+    if (outgoing) {
+      sendChatMessage(outgoing, { speak: true });
+    }
+  };
+  state.voiceRecognition = recognition;
+}
+
+function toggleVoiceMode() {
+  if (!state.voiceRecognition) {
+    setChatStatus("Voice unavailable", "error");
+    return;
+  }
+  if (state.voiceListening) {
+    state.voiceRecognition.stop();
+    return;
+  }
+  try {
+    window.speechSynthesis?.cancel();
+    state.voiceRecognition.start();
+  } catch (error) {
+    setVoiceButtonState(false);
+    setChatStatus(String(error.message || error), "error");
   }
 }
 
@@ -202,10 +303,10 @@ function toggleFloatingChat() {
   }
 }
 
-async function sendChatMessage(content) {
+async function sendChatMessage(content, options = {}) {
   const outgoing = String(content || "").trim();
   if (!outgoing || state.chatLoading) {
-    return;
+    return "";
   }
 
   appendChatMessage("user", outgoing);
@@ -234,12 +335,22 @@ async function sendChatMessage(content) {
     if (!response.fast_path && response.session_id) {
       state.chatSessionId = response.session_id;
     }
-    appendChatMessage("assistant", response.content || "I received the message, but no response text came back.");
+    const reply = response.content || "I received the message, but no response text came back.";
+    appendChatMessage("assistant", reply);
+    if (options.speak) {
+      speakSheldonReply(reply);
+    }
     setChatStatus(response.fast_path ? "Fast route" : (response.session_id ? "Session linked" : "Ready"), "ready");
+    return reply;
   } catch (error) {
     const message = String(error.message || error);
-    appendChatMessage("assistant", `I could not reach the operator gateway cleanly: ${message}`);
+    const reply = `I could not reach the operator gateway cleanly: ${message}`;
+    appendChatMessage("assistant", reply);
+    if (options.speak) {
+      speakSheldonReply(reply);
+    }
     setChatStatus("Gateway error", "error");
+    return reply;
   } finally {
     setChatLoading(false);
     if (elements.floatingChatWidget?.classList.contains("open")) {
@@ -845,6 +956,7 @@ elements.floatingChatForm?.addEventListener("submit", (event) => {
   event.preventDefault();
   sendChatMessage(elements.floatingChatInput?.value || "");
 });
+elements.floatingVoiceToggle?.addEventListener("click", toggleVoiceMode);
 elements.floatingChatInput?.addEventListener("keydown", (event) => {
   if (event.key === "Enter" && !event.shiftKey) {
     event.preventDefault();
@@ -858,3 +970,4 @@ document.addEventListener("keydown", (event) => {
 });
 
 loadDashboard();
+initVoiceMode();
