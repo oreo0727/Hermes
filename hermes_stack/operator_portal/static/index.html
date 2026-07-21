@@ -92,8 +92,8 @@
       <main class="main-shell" id="dashboard">
         <header class="topbar">
           <div class="topbar-copy">
-            <p class="eyebrow">Management UI</p>
-            <h2>Command Deck</h2>
+            <p id="topbar-eyebrow" class="eyebrow">Management UI</p>
+            <h2 id="topbar-title">Command Deck</h2>
           </div>
           <div class="topbar-actions">
             <button class="button primary" type="button">New Project</button>
@@ -113,6 +113,7 @@
           </div>
         </header>
 
+        <div id="dashboard-page" class="portal-page dashboard-page">
         <div class="workspace-grid">
           <div class="primary-column">
             <section class="hero-shell">
@@ -238,30 +239,6 @@
               <div id="queue-table" class="queue-table"></div>
             </section>
 
-            <section class="panel brain-panel" id="brain">
-              <div class="panel-head brain-head">
-                <div>
-                  <p class="eyebrow">Sheldon Brain DB</p>
-                  <h3>Memory & Synapse Graph</h3>
-                </div>
-                <div class="brain-actions">
-                  <input id="brain-search" class="brain-search" type="search" placeholder="Filter memories, agents, tables..." aria-label="Filter brain graph" />
-                  <button id="brain-refresh" class="row-action" type="button">Refresh Brain</button>
-                </div>
-              </div>
-              <div id="brain-stats" class="brain-stats"></div>
-              <div class="brain-workbench">
-                <div class="brain-map-shell">
-                  <div id="brain-legend" class="brain-legend"></div>
-                  <div id="brain-graph-canvas" class="brain-graph-canvas" role="img" aria-label="Hermes memory and synapse graph"></div>
-                </div>
-                <aside id="brain-inspector" class="brain-inspector">
-                  <p class="eyebrow">Inspector</p>
-                  <h4>Select a node</h4>
-                  <p class="meta">Click any memory, synapse endpoint, agent, project, or cognitive record to inspect its database source.</p>
-                </aside>
-              </div>
-            </section>
           </div>
 
           <div class="secondary-column">
@@ -309,6 +286,33 @@
             </section>
           </div>
         </div>
+        </div>
+
+        <section id="brain-page" class="portal-page brain-page" hidden>
+          <div class="brain-page-hero">
+            <div>
+              <p class="eyebrow">Sheldon Brain DB</p>
+              <h3>Memory, Synapses, Cognition</h3>
+              <p>Live read-only view into the Hermes database: agents, memory nodes, synapses, cognitive events, handoffs, and self-improvement proposals.</p>
+            </div>
+            <div class="brain-actions">
+              <input id="brain-search" class="brain-search" type="search" placeholder="Filter memories, agents, tables..." aria-label="Filter brain graph" />
+              <button id="brain-refresh" class="row-action" type="button">Refresh Brain</button>
+            </div>
+          </div>
+          <div id="brain-stats" class="brain-stats"></div>
+          <section class="brain-workbench" id="brain">
+            <div class="brain-map-shell">
+              <div id="brain-legend" class="brain-legend"></div>
+              <div id="brain-graph-canvas" class="brain-graph-canvas" role="img" aria-label="Hermes memory and synapse graph"></div>
+            </div>
+            <aside id="brain-inspector" class="brain-inspector">
+              <p class="eyebrow">Inspector</p>
+              <h4>Select a node</h4>
+              <p class="meta">Click any memory, synapse endpoint, agent, project, or cognitive record to inspect its database source.</p>
+            </aside>
+          </section>
+        </section>
       </main>
     </div>
 

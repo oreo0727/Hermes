@@ -16,6 +16,11 @@ const state = {
 
 const elements = {
   refreshButton: document.querySelector("#refresh-button"),
+  navLinks: Array.from(document.querySelectorAll(".nav-link")),
+  topbarEyebrow: document.querySelector("#topbar-eyebrow"),
+  topbarTitle: document.querySelector("#topbar-title"),
+  dashboardPage: document.querySelector("#dashboard-page"),
+  brainPage: document.querySelector("#brain-page"),
   portalLabel: document.querySelector("#portal-label"),
   sidebarQuote: document.querySelector("#sidebar-quote"),
   heroQuote: document.querySelector("#hero-quote"),
@@ -100,6 +105,44 @@ function escapeHtml(value) {
 
 function nl2br(value) {
   return escapeHtml(value).replaceAll("\n", "<br />");
+}
+
+function currentRoute() {
+  return window.location.hash === "#brain" ? "brain" : "dashboard";
+}
+
+function setActiveNav() {
+  const hash = window.location.hash || "#dashboard";
+  const activeHash = hash === "#brain" ? "#brain" : hash;
+  for (const link of elements.navLinks || []) {
+    link.classList.toggle("active", link.getAttribute("href") === activeHash);
+  }
+}
+
+function applyRoute() {
+  const route = currentRoute();
+  const isBrain = route === "brain";
+  if (elements.dashboardPage) {
+    elements.dashboardPage.hidden = isBrain;
+  }
+  if (elements.brainPage) {
+    elements.brainPage.hidden = !isBrain;
+  }
+  if (elements.topbarEyebrow) {
+    elements.topbarEyebrow.textContent = isBrain ? "Database Lens" : "Management UI";
+  }
+  if (elements.topbarTitle) {
+    elements.topbarTitle.textContent = isBrain ? "Brain DB" : "Command Deck";
+  }
+  setActiveNav();
+  if (isBrain) {
+    window.requestAnimationFrame(renderBrainGraph);
+    return;
+  }
+  const anchor = window.location.hash ? document.querySelector(window.location.hash) : null;
+  if (anchor && anchor !== elements.dashboardPage) {
+    window.requestAnimationFrame(() => anchor.scrollIntoView({ block: "start" }));
+  }
 }
 
 function relativeTime(value) {
@@ -1032,8 +1075,10 @@ function renderBrainGraph() {
     renderBrainInspector("");
     return;
   }
-  const width = Math.max(760, elements.brainGraphCanvas.clientWidth || 920);
-  const height = 560;
+  const canvasRect = elements.brainGraphCanvas.getBoundingClientRect();
+  const pageWidth = elements.brainPage?.hidden === false ? window.innerWidth - 340 : window.innerWidth - 520;
+  const width = Math.max(900, Math.round(canvasRect.width || pageWidth || 980));
+  const height = Math.max(620, Math.min(920, Math.round(window.innerHeight * (elements.brainPage?.hidden === false ? 0.72 : 0.62))));
   const positioned = positionedBrainNodes(graph.nodes, width, height);
   const selected = state.selectedBrainNodeId;
   const edgeMarkup = (graph.edges || []).slice(0, 420).map((edge) => {
@@ -1061,7 +1106,7 @@ function renderBrainGraph() {
     `;
   }).join("");
   elements.brainGraphCanvas.innerHTML = `
-    <svg class="brain-svg" viewBox="0 0 ${width} ${height}" aria-hidden="false">
+    <svg class="brain-svg" viewBox="0 0 ${width} ${height}" style="height:${height}px" aria-hidden="false">
       <defs>
         <radialGradient id="brainGlow" cx="50%" cy="50%" r="55%">
           <stop offset="0%" stop-color="rgba(255,255,255,0.16)" />
@@ -1154,6 +1199,7 @@ async function loadDashboard() {
     renderRadar();
     renderActivity();
     renderBrainGraph();
+    applyRoute();
   } catch (error) {
     console.error(error);
     elements.operatorPresence.textContent = "Command deck failed to load";
@@ -1196,6 +1242,12 @@ async function handleProjectAction(event) {
 
 elements.refreshButton.addEventListener("click", () => {
   loadDashboard();
+});
+window.addEventListener("hashchange", applyRoute);
+window.addEventListener("resize", () => {
+  if (currentRoute() === "brain") {
+    window.requestAnimationFrame(renderBrainGraph);
+  }
 });
 elements.activeProjects.addEventListener("click", handleProjectAction);
 elements.blockedPill?.addEventListener("click", () => {
@@ -1259,4 +1311,5 @@ document.addEventListener("keydown", (event) => {
 });
 
 loadDashboard();
+applyRoute();
 initVoiceMode();
