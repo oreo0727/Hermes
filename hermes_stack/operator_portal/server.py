@@ -28,10 +28,13 @@ from hermes_stack.fast_router import fast_route_chat
 from hermes_stack.mission_control import (
     build_briefing,
     create_reality_capture,
+    create_repair_from_capture,
     create_handoff,
     list_handoffs,
     mission_cards,
     reality_layer_snapshot,
+    repair_bay_snapshot,
+    run_repair_diagnostics,
     run_truth_loop,
     self_improvement_proposal,
     self_improvement_snapshot,
@@ -1657,6 +1660,17 @@ class PortalHandler(BaseHTTPRequestHandler):
                 head_only=head_only,
             )
             return
+        if parsed.path == "/api/repair-bay":
+            query = parse_qs(parsed.query)
+            try:
+                limit = int((query.get("limit") or [12])[0])
+            except (TypeError, ValueError):
+                limit = 12
+            self._send_json(
+                repair_bay_snapshot(self.server.repo_root, limit=max(1, min(limit, 50))),
+                head_only=head_only,
+            )
+            return
         if parsed.path == "/api/brain-graph":
             query = parse_qs(parsed.query)
             try:
@@ -1725,6 +1739,9 @@ class PortalHandler(BaseHTTPRequestHandler):
             return
         if parsed.path == "/api/reality-layer/capture":
             self._handle_reality_capture(payload)
+            return
+        if parsed.path == "/api/repair-bay/run":
+            self._handle_repair_run(payload)
             return
 
         self.send_error(HTTPStatus.NOT_FOUND, "Unknown route")
@@ -2018,7 +2035,28 @@ class PortalHandler(BaseHTTPRequestHandler):
             attachments=evidence,
             source=source,
         )
-        self._send_json({"ok": True, "capture": capture, "snapshot": reality_layer_snapshot(self.server.repo_root)})
+        repair = create_repair_from_capture(self.server.repo_root, capture)
+        self._send_json(
+            {
+                "ok": True,
+                "capture": capture,
+                "repair": repair,
+                "snapshot": reality_layer_snapshot(self.server.repo_root),
+                "repair_bay": repair_bay_snapshot(self.server.repo_root),
+            }
+        )
+
+    def _handle_repair_run(self, payload: dict[str, object]) -> None:
+        repair_id = str(payload.get("repair_id") or "").strip()
+        if not repair_id:
+            self.send_error(HTTPStatus.BAD_REQUEST, "repair_id is required")
+            return
+        try:
+            repair = run_repair_diagnostics(self.server.repo_root, repair_id=repair_id)
+        except FileNotFoundError:
+            self.send_error(HTTPStatus.NOT_FOUND, "Unknown repair")
+            return
+        self._send_json({"ok": True, "repair": repair, "snapshot": repair_bay_snapshot(self.server.repo_root)})
 
     def _handle_run_create(self, payload: dict[str, object]) -> None:
         profile_key = str(payload.get("profile") or "").strip()

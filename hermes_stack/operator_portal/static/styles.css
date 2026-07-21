@@ -2042,6 +2042,101 @@ svg {
   font-weight: 800;
 }
 
+.repair-panel {
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 100% 0%, rgba(255, 204, 140, 0.12), transparent 34%),
+    var(--panel-soft);
+}
+
+.repair-view {
+  display: grid;
+  gap: 10px;
+}
+
+.repair-empty,
+.repair-row {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.repair-empty {
+  padding: 14px;
+  border-radius: 18px;
+}
+
+.repair-empty strong,
+.repair-row strong {
+  color: var(--text);
+}
+
+.repair-empty p,
+.repair-row p {
+  margin: 5px 0 0;
+  color: var(--text-soft);
+  line-height: 1.4;
+}
+
+.repair-row {
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  border-radius: 17px;
+}
+
+.repair-row-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+}
+
+.repair-row-head span {
+  display: block;
+  margin-top: 5px;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+}
+
+.repair-row-head b {
+  align-self: start;
+  padding: 0.22rem 0.48rem;
+  border-radius: 999px;
+  color: #120f0b;
+  background: #ffcc8c;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+}
+
+.repair-checks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.repair-checks span {
+  padding: 0.24rem 0.48rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 900;
+}
+
+.repair-checks .ok {
+  color: #cdf8bd;
+  background: rgba(120, 204, 89, 0.12);
+}
+
+.repair-checks .warn {
+  color: #ffd3a7;
+  background: rgba(255, 204, 140, 0.12);
+}
+
+.repair-row .row-action {
+  justify-self: start;
+  padding: 0.48rem 0.68rem;
+  border-radius: 10px;
+}
+
 .empty-state {
   padding: 20px;
   background: rgba(255, 255, 255, 0.03);

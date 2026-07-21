@@ -69,6 +69,12 @@ def _reality_dir(root_dir: str | Path | None = None) -> Path:
     return path
 
 
+def _repair_dir(root_dir: str | Path | None = None) -> Path:
+    path = _mission_dir(root_dir) / "repair_bay"
+    path.mkdir(parents=True, exist_ok=True)
+    return path
+
+
 def _read_json_file(path: Path) -> dict[str, Any] | None:
     try:
         value = json.loads(path.read_text(encoding="utf-8"))
@@ -99,6 +105,10 @@ def _reality_capture_path(root_dir: str | Path | None, capture_id: str) -> Path:
     return _reality_dir(root_dir) / f"{str(capture_id or '').replace(':', '_')}.json"
 
 
+def _repair_path(root_dir: str | Path | None, repair_id: str) -> Path:
+    return _repair_dir(root_dir) / f"{str(repair_id or '').replace(':', '_')}.json"
+
+
 def _active_or_requested_card(root_dir: str | Path | None, project_id: str = "") -> dict[str, Any] | None:
     normalized = str(project_id or "").strip()
     cards = mission_cards(root_dir)
@@ -116,6 +126,19 @@ def _route_reality_capture(note: str, mode: str) -> dict[str, str]:
     if any(token in haystack for token in ("game", "runtime", "build", "apk", "testflight", "crash", "play", "export")):
         return {"target": "leonard", "reason": "runtime or build evidence"}
     return {"target": "sheldon", "reason": "operator triage evidence"}
+
+
+def _classify_repair(note: str, mode: str) -> dict[str, str]:
+    haystack = f"{note} {mode}".lower()
+    if any(token in haystack for token in ("timeout", "500", "404", "api", "server", "endpoint", "database", "postgres", "route")):
+        return {"kind": "backend", "risk": "low", "diagnostic": "endpoint_health"}
+    if any(token in haystack for token in ("ui", "layout", "screen", "button", "color", "looks", "mobile", "keyboard")):
+        return {"kind": "ui", "risk": "low", "diagnostic": "portal_asset_health"}
+    if any(token in haystack for token in ("crash", "testflight", "build", "ipa", "xcode", "app")):
+        return {"kind": "app-build", "risk": "medium", "diagnostic": "repo_status"}
+    if any(token in haystack for token in ("blocked", "stuck", "handoff", "agent", "listening")):
+        return {"kind": "workflow", "risk": "low", "diagnostic": "mission_state"}
+    return {"kind": "triage", "risk": "low", "diagnostic": "mission_state"}
 
 
 def mission_card(project: dict[str, Any]) -> dict[str, Any]:
@@ -705,3 +728,200 @@ def create_reality_capture(
         },
     )
     return capture
+
+
+def list_repairs(root_dir: str | Path | None = None, *, limit: int = 24) -> list[dict[str, Any]]:
+    repairs: list[dict[str, Any]] = []
+    for path in _repair_dir(root_dir).glob("repair_*.json"):
+        repair = _read_json_file(path)
+        if repair:
+            repairs.append(repair)
+    repairs.sort(key=lambda row: str(row.get("updated_at") or row.get("created_at") or ""), reverse=True)
+    return repairs[: max(1, limit)]
+
+
+def _load_repair(root_dir: str | Path | None, repair_id: str) -> dict[str, Any] | None:
+    return _read_json_file(_repair_path(root_dir, repair_id))
+
+
+def _repair_from_capture(root_dir: str | Path | None, capture_id: str) -> dict[str, Any] | None:
+    for repair in list_repairs(root_dir, limit=200):
+        if str(repair.get("capture_id") or "") == str(capture_id or ""):
+            return repair
+    return None
+
+
+def _diagnostics_for(root_dir: str | Path | None, repair: dict[str, Any]) -> list[dict[str, Any]]:
+    root = repo_root(root_dir)
+    diagnostic = str((repair.get("classification") or {}).get("diagnostic") or "mission_state")
+    project_id = str(repair.get("project_id") or "")
+    checks: list[dict[str, Any]] = []
+
+    if diagnostic in {"endpoint_health", "portal_asset_health"}:
+        portal_files = [
+            root / "hermes_stack" / "operator_portal" / "server.py",
+            root / "hermes_stack" / "operator_portal" / "static" / "app.js",
+            root / "hermes_stack" / "operator_portal" / "static" / "index.html",
+            root / "hermes_stack" / "operator_portal" / "static" / "styles.css",
+        ]
+        checks.append(
+            {
+                "name": "portal files present",
+                "ok": all(path.exists() for path in portal_files),
+                "detail": ", ".join(path.name for path in portal_files if path.exists()),
+            }
+        )
+    if diagnostic == "repo_status":
+        checks.append(
+            {
+                "name": "project linked",
+                "ok": bool(project_id),
+                "detail": project_id or "No project id attached to repair.",
+            }
+        )
+
+    card = find_mission_card(root, project_id) if project_id else _active_or_requested_card(root)
+    checks.append(
+        {
+            "name": "mission card available",
+            "ok": bool(card),
+            "detail": str((card or {}).get("title") or "No matching mission card."),
+        }
+    )
+    if card:
+        checks.append(
+            {
+                "name": "blocker visibility",
+                "ok": True,
+                "detail": str((card.get("blocked") or ["No blocker currently recorded."])[0]),
+            }
+        )
+    return checks
+
+
+def create_repair_from_capture(
+    root_dir: str | Path | None,
+    capture: dict[str, Any],
+    *,
+    auto_run: bool = True,
+) -> dict[str, Any]:
+    existing = _repair_from_capture(root_dir, str(capture.get("capture_id") or ""))
+    if existing:
+        return existing
+
+    classification = _classify_repair(str(capture.get("note") or ""), str(capture.get("mode") or "field"))
+    route = capture.get("route") if isinstance(capture.get("route"), dict) else {}
+    target = str(route.get("target") or "sheldon")
+    repair_id = f"repair:{_stable_id(capture.get('capture_id'), target, classification.get('kind'), _now())}"
+    repair = {
+        "repair_id": repair_id,
+        "capture_id": str(capture.get("capture_id") or ""),
+        "project_id": str(capture.get("project_id") or ""),
+        "project_title": str(capture.get("project_title") or "Hermes portfolio"),
+        "owner": target,
+        "status": "triaged",
+        "classification": classification,
+        "summary": f"{target.title()} triaged a {classification['kind']} repair from Sheldon Sight.",
+        "operator_note": str(capture.get("note") or ""),
+        "source": "reality-layer",
+        "created_at": _now(),
+        "updated_at": _now(),
+        "capture": capture,
+        "events": [
+            {
+                "at": _now(),
+                "status": "triaged",
+                "note": "Repair Bay created from Reality Layer field evidence.",
+            }
+        ],
+        "diagnostics": [],
+        "proof": [],
+        "guardrails": [
+            "Diagnostics are read-only.",
+            "Low-risk repairs may prepare a plan; code edits still need an explicit run or operator command.",
+            "Every repair must close with proof or a blocker.",
+        ],
+    }
+    if auto_run and classification.get("risk") == "low":
+        checks = _diagnostics_for(root_dir, repair)
+        repair["diagnostics"] = checks
+        repair["status"] = "diagnosed"
+        repair["summary"] = f"{target.title()} diagnosed {classification['kind']} repair; {sum(1 for row in checks if row.get('ok'))}/{len(checks)} checks passed."
+        repair["events"].append(
+            {
+                "at": _now(),
+                "status": "diagnosed",
+                "note": "Read-only diagnostics completed automatically.",
+            }
+        )
+        repair["proof"].append("Read-only diagnostic receipt stored in Repair Bay.")
+    _write_json_file(_repair_path(root_dir, repair_id), repair)
+    upsert_cognitive_record(
+        root_dir,
+        "events",
+        {
+            "event_id": f"event:repair-bay:{_stable_id(repair_id)}",
+            "agent_slug": target,
+            "project_id": str(repair.get("project_id") or ""),
+            "event_type": "repair_bay",
+            "title": "Repair Bay created a repair lane",
+            "content": str(repair.get("summary") or ""),
+            "source_ref": f"mission_control/repair_bay/{repair_id.replace(':', '_')}.json",
+            "salience": 0.88,
+            "occurred_at": _now(),
+            "payload": repair,
+        },
+    )
+    return repair
+
+
+def run_repair_diagnostics(root_dir: str | Path | None, *, repair_id: str) -> dict[str, Any]:
+    repair = _load_repair(root_dir, repair_id)
+    if not repair:
+        raise FileNotFoundError("Unknown repair")
+    checks = _diagnostics_for(root_dir, repair)
+    events = repair.get("events")
+    if not isinstance(events, list):
+        events = []
+    events.append(
+        {
+            "at": _now(),
+            "status": "diagnosed",
+            "note": "Read-only diagnostics refreshed.",
+        }
+    )
+    repair["diagnostics"] = checks
+    repair["status"] = "diagnosed"
+    repair["summary"] = f"{str(repair.get('owner') or 'sheldon').title()} refreshed diagnostics; {sum(1 for row in checks if row.get('ok'))}/{len(checks)} checks passed."
+    repair["updated_at"] = _now()
+    repair["events"] = events
+    proof = repair.get("proof")
+    if not isinstance(proof, list):
+        proof = []
+    proof.insert(0, "Read-only diagnostics refreshed from Repair Bay.")
+    repair["proof"] = proof[:8]
+    _write_json_file(_repair_path(root_dir, repair_id), repair)
+    return repair
+
+
+def repair_bay_snapshot(root_dir: str | Path | None = None, *, limit: int = 12) -> dict[str, Any]:
+    repairs = list_repairs(root_dir, limit=limit)
+    open_repairs = [row for row in repairs if str(row.get("status") or "") not in {"done", "cancelled"}]
+    latest = repairs[0] if repairs else {}
+    return {
+        "ok": True,
+        "generated_at": _now(),
+        "summary": (
+            str(latest.get("summary") or "")
+            if latest
+            else "Repair Bay is ready for the first field repair."
+        ),
+        "latest": latest,
+        "repairs": repairs,
+        "open_count": len(open_repairs),
+        "next_move": (
+            "Create a Sheldon Sight capture to open a repair lane."
+            if not repairs
+            else "Run diagnostics or start a focused background fix for the top repair."
+        ),
+    }

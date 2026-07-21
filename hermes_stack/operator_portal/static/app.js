@@ -7,6 +7,8 @@ const state = {
   truthLoopRunning: false,
   realityLayer: null,
   realityCaptureRunning: false,
+  repairBay: null,
+  repairRunning: false,
   brainGraph: null,
   selectedBrainNodeId: "",
   brainGroupFilter: "all",
@@ -74,6 +76,8 @@ const elements = {
   realitySubmit: document.querySelector("#reality-submit"),
   realityStatus: document.querySelector("#reality-status"),
   realityView: document.querySelector("#reality-view"),
+  repairCount: document.querySelector("#repair-count"),
+  repairView: document.querySelector("#repair-view"),
   activityFeed: document.querySelector("#activity-feed"),
   brainStats: document.querySelector("#brain-stats"),
   brainLegend: document.querySelector("#brain-legend"),
@@ -948,6 +952,48 @@ function renderRealityLayer() {
   elements.realityView.innerHTML = captures.slice(0, 3).map(realityCaptureMarkup).join("");
 }
 
+function repairMarkup(repair) {
+  const classification = repair.classification || {};
+  const checks = Array.isArray(repair.diagnostics) ? repair.diagnostics : [];
+  const passed = checks.filter((row) => row.ok).length;
+  return `
+    <article class="repair-row">
+      <div class="repair-row-head">
+        <div>
+          <strong>${escapeHtml(text(repair.summary, "Repair lane ready."))}</strong>
+          <p>${escapeHtml(text(repair.operator_note, "No operator note supplied."))}</p>
+          <span>${escapeHtml(text(repair.project_title, "Hermes portfolio"))} • ${escapeHtml(text(classification.kind, "triage"))} • ${escapeHtml(text(repair.status, "triaged"))}</span>
+        </div>
+        <b>${escapeHtml(text(repair.owner, "sheldon"))}</b>
+      </div>
+      <div class="repair-checks">
+        ${checks.slice(0, 3).map((check) => `<span class="${check.ok ? "ok" : "warn"}">${escapeHtml(check.name)}: ${escapeHtml(check.ok ? "ok" : "check")}</span>`).join("") || `<span class="warn">diagnostics pending</span>`}
+      </div>
+      <button class="row-action quiet" type="button" data-repair-run="${escapeHtml(repair.repair_id)}">${checks.length ? `Refresh diagnostics (${passed}/${checks.length})` : "Run diagnostics"}</button>
+    </article>
+  `;
+}
+
+function renderRepairBay() {
+  if (!elements.repairView) {
+    return;
+  }
+  const repairs = state.repairBay?.repairs || [];
+  if (elements.repairCount) {
+    elements.repairCount.textContent = `${state.repairBay?.open_count || 0} open`;
+  }
+  if (!repairs.length) {
+    elements.repairView.innerHTML = `
+      <article class="repair-empty">
+        <strong>Repair Bay is standing by.</strong>
+        <p>Every Sheldon Sight capture now opens a read-only repair lane with diagnostics, owner, proof, and guardrails.</p>
+      </article>
+    `;
+    return;
+  }
+  elements.repairView.innerHTML = repairs.slice(0, 4).map(repairMarkup).join("");
+}
+
 function readFileAsDataUrl(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -979,6 +1025,17 @@ function buildActivityFeed() {
       updated_at: latestReality.updated_at || latestReality.created_at,
       tone: "working",
       icon: "atom",
+    });
+  }
+  const latestRepair = state.repairBay?.latest || {};
+  if (latestRepair.repair_id) {
+    activities.push({
+      type: "repair-bay",
+      title: text(latestRepair.summary, "Repair Bay updated"),
+      detail: `${text(latestRepair.project_title, "Hermes portfolio")} • ${text(latestRepair.owner, "sheldon")} • ${text(latestRepair.status, "triaged")}`,
+      updated_at: latestRepair.updated_at || latestRepair.created_at,
+      tone: "working",
+      icon: "flask",
     });
   }
   for (const run of state.runs.slice(0, 6)) {
@@ -1608,7 +1665,7 @@ async function loadDashboard() {
   elements.refreshButton.disabled = true;
 
   try {
-    const [snapshotPayload, runsPayload, dispatchesPayload, alertsPayload, brainPayload, truthLoopPayload, realityPayload] = await Promise.all([
+    const [snapshotPayload, runsPayload, dispatchesPayload, alertsPayload, brainPayload, truthLoopPayload, realityPayload, repairPayload] = await Promise.all([
       fetchJson("/api/bootstrap"),
       fetchJson("/api/runs?limit=24"),
       fetchJson("/api/dispatches?limit=24"),
@@ -1616,6 +1673,7 @@ async function loadDashboard() {
       fetchJson("/api/brain-graph?cognitive_limit=28"),
       fetchJson("/api/truth-loop?limit=12"),
       fetchJson("/api/reality-layer?limit=12"),
+      fetchJson("/api/repair-bay?limit=12"),
     ]);
 
     state.snapshot = snapshotPayload;
@@ -1625,6 +1683,7 @@ async function loadDashboard() {
     state.brainGraph = brainPayload;
     state.truthLoop = truthLoopPayload;
     state.realityLayer = realityPayload;
+    state.repairBay = repairPayload;
     if (!state.selectedBrainNodeId && state.brainGraph.nodes?.length) {
       const sheldon = state.brainGraph.nodes.find((node) => node.id === "agent:sheldon");
       state.selectedBrainNodeId = sheldon?.id || state.brainGraph.nodes[0].id;
@@ -1639,6 +1698,7 @@ async function loadDashboard() {
     renderRadar();
     renderTruthLoop();
     renderRealityLayer();
+    renderRepairBay();
     renderActivity();
     renderBrainGraph();
     applyRoute();
@@ -1690,6 +1750,7 @@ async function submitRealityCapture(event) {
       }),
     });
     state.realityLayer = payload.snapshot || state.realityLayer;
+    state.repairBay = payload.repair_bay || state.repairBay;
     elements.realityForm?.reset();
     setRealityStatus("Routed", "ready");
     await loadDashboard();
@@ -1710,6 +1771,27 @@ async function submitRealityCapture(event) {
       elements.realitySubmit.disabled = false;
       elements.realitySubmit.textContent = "Capture";
     }
+  }
+}
+
+async function runRepairDiagnostics(repairId) {
+  if (!repairId || state.repairRunning) {
+    return;
+  }
+  state.repairRunning = true;
+  try {
+    const payload = await fetchJson("/api/repair-bay/run", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ repair_id: repairId }),
+    });
+    state.repairBay = payload.snapshot || state.repairBay;
+    renderRepairBay();
+    renderActivity();
+  } catch (error) {
+    console.error(error);
+  } finally {
+    state.repairRunning = false;
   }
 }
 
@@ -1785,6 +1867,13 @@ elements.refreshButton.addEventListener("click", () => {
 
 elements.truthLoopRun?.addEventListener("click", runTruthLoop);
 elements.realityForm?.addEventListener("submit", submitRealityCapture);
+elements.repairView?.addEventListener("click", (event) => {
+  const button = event.target.closest("[data-repair-run]");
+  if (!button) {
+    return;
+  }
+  runRepairDiagnostics(button.dataset.repairRun || "");
+});
 window.addEventListener("hashchange", applyRoute);
 window.addEventListener("resize", () => {
   if (currentRoute() === "brain") {
