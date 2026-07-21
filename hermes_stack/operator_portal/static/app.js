@@ -6,6 +6,7 @@ const state = {
   brainGraph: null,
   selectedBrainNodeId: "",
   brainGroupFilter: "all",
+  brainHitTargets: [],
   chatMessages: [],
   chatSessionId: "",
   loading: false,
@@ -913,6 +914,17 @@ function brainNodeColor(group) {
   return brainGroupMeta[group]?.color || "#d8ddff";
 }
 
+function hexToRgba(hex, alpha) {
+  const clean = String(hex || "").replace("#", "");
+  if (clean.length !== 6) {
+    return `rgba(168,139,250,${alpha})`;
+  }
+  const r = parseInt(clean.slice(0, 2), 16);
+  const g = parseInt(clean.slice(2, 4), 16);
+  const b = parseInt(clean.slice(4, 6), 16);
+  return `rgba(${r},${g},${b},${alpha})`;
+}
+
 function brainNodeRadius(node) {
   const weight = Math.max(0.3, Math.min(1.8, Number(node.weight || 1)));
   const base = node.group === "agent" ? 18 : node.group === "project" ? 14 : node.group === "memory" ? 10 : 8;
@@ -964,6 +976,44 @@ function seededUnit(id, salt = "") {
     hash = Math.imul(hash, 16777619);
   }
   return (hash >>> 0) / 4294967295;
+}
+
+function visibleBrainGraph(graph) {
+  const degree = new Map();
+  for (const edge of graph.edges || []) {
+    degree.set(edge.source, (degree.get(edge.source) || 0) + Number(edge.weight || 1));
+    degree.set(edge.target, (degree.get(edge.target) || 0) + Number(edge.weight || 1));
+  }
+  const selected = state.selectedBrainNodeId;
+  const selectedNeighbors = new Set();
+  if (selected) {
+    selectedNeighbors.add(selected);
+    for (const edge of graph.edges || []) {
+      if (edge.source === selected) selectedNeighbors.add(edge.target);
+      if (edge.target === selected) selectedNeighbors.add(edge.source);
+    }
+  }
+  const searched = Boolean(String(elements.brainSearch?.value || "").trim());
+  const limit = searched || state.brainGroupFilter !== "all" ? 140 : 92;
+  const nodes = [...(graph.nodes || [])]
+    .map((node) => ({
+      ...node,
+      visualScore:
+        (degree.get(node.id) || 0) +
+        Number(node.weight || 0) * 4 +
+        (node.group === "agent" ? 120 : 0) +
+        (node.group === "project" ? 62 : 0) +
+        (node.group === "improvement" ? 34 : 0) +
+        (selectedNeighbors.has(node.id) ? 95 : 0),
+    }))
+    .sort((left, right) => right.visualScore - left.visualScore)
+    .slice(0, limit);
+  const nodeIds = new Set(nodes.map((node) => node.id));
+  const edges = [...(graph.edges || [])]
+    .filter((edge) => nodeIds.has(edge.source) && nodeIds.has(edge.target))
+    .sort((left, right) => Number(right.weight || 0) - Number(left.weight || 0))
+    .slice(0, 220);
+  return { ...graph, nodes, edges, hiddenCount: Math.max(0, (graph.nodes || []).length - nodes.length) };
 }
 
 function positionedBrainNodes(nodes, edges, width, height) {
@@ -1186,6 +1236,138 @@ function renderBrainInspector(nodeId = state.selectedBrainNodeId) {
   `;
 }
 
+function drawBrainCanvas(canvas, graph, positioned, width, height) {
+  const ratio = window.devicePixelRatio || 1;
+  canvas.width = Math.round(width * ratio);
+  canvas.height = Math.round(height * ratio);
+  canvas.style.height = `${height}px`;
+  canvas.style.width = "100%";
+  const ctx = canvas.getContext("2d");
+  ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+  ctx.clearRect(0, 0, width, height);
+  const cx = width / 2;
+  const cy = height / 2;
+  const selected = state.selectedBrainNodeId;
+  state.brainHitTargets = [];
+
+  const bg = ctx.createRadialGradient(cx, cy, 24, cx, cy, Math.max(width, height) * 0.72);
+  bg.addColorStop(0, "rgba(88,70,140,0.34)");
+  bg.addColorStop(0.34, "rgba(18,22,34,0.72)");
+  bg.addColorStop(1, "rgba(8,8,10,1)");
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, width, height);
+
+  ctx.save();
+  ctx.translate(cx, cy);
+  for (let index = 0; index < 9; index += 1) {
+    const radiusX = 95 + index * 120;
+    const radiusY = 48 + index * 70;
+    ctx.beginPath();
+    ctx.ellipse(0, 0, radiusX, radiusY, 0, 0, Math.PI * 2);
+    ctx.strokeStyle = `rgba(168,139,250,${0.12 - index * 0.008})`;
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  }
+  for (let ray = 0; ray < 34; ray += 1) {
+    const angle = (ray / 34) * Math.PI * 2;
+    ctx.beginPath();
+    ctx.moveTo(Math.cos(angle) * 38, Math.sin(angle) * 18);
+    ctx.lineTo(Math.cos(angle) * width, Math.sin(angle) * height);
+    ctx.strokeStyle = "rgba(168,139,250,0.035)";
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  }
+  ctx.restore();
+
+  for (let index = 0; index < 130; index += 1) {
+    const x = seededUnit(index, "star-x") * width;
+    const y = seededUnit(index, "star-y") * height;
+    const alpha = 0.04 + seededUnit(index, "star-a") * 0.16;
+    const size = 0.5 + seededUnit(index, "star-s") * 1.5;
+    ctx.beginPath();
+    ctx.arc(x, y, size, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(226,232,255,${alpha})`;
+    ctx.fill();
+  }
+
+  const edges = [...(graph.edges || [])].sort((left, right) => {
+    const l = ((positioned.get(left.source)?.depthScale || 1) + (positioned.get(left.target)?.depthScale || 1)) / 2;
+    const r = ((positioned.get(right.source)?.depthScale || 1) + (positioned.get(right.target)?.depthScale || 1)) / 2;
+    return l - r;
+  });
+  for (const edge of edges) {
+    const source = positioned.get(edge.source);
+    const target = positioned.get(edge.target);
+    if (!source || !target) continue;
+    const active = selected && (edge.source === selected || edge.target === selected);
+    const depth = (source.depthScale + target.depthScale) / 2;
+    const alpha = active ? 0.84 : Math.max(0.04, Math.min(0.24, depth * Number(edge.weight || 0.6) * 0.14));
+    const gradient = ctx.createLinearGradient(source.x, source.y, target.x, target.y);
+    gradient.addColorStop(0, active ? "rgba(223,214,255,0.95)" : `rgba(132,165,255,${alpha})`);
+    gradient.addColorStop(0.5, active ? "rgba(168,139,250,0.98)" : `rgba(168,139,250,${alpha * 1.3})`);
+    gradient.addColorStop(1, active ? "rgba(223,214,255,0.95)" : `rgba(79,209,197,${alpha})`);
+    ctx.beginPath();
+    ctx.moveTo(source.x, source.y);
+    const mx = (source.x + target.x) / 2 + (target.y - source.y) * 0.035;
+    const my = (source.y + target.y) / 2 - (target.x - source.x) * 0.035;
+    ctx.quadraticCurveTo(mx, my, target.x, target.y);
+    ctx.strokeStyle = gradient;
+    ctx.lineWidth = active ? 2.8 : Math.max(0.45, depth * Number(edge.weight || 1) * 0.8);
+    ctx.shadowBlur = active ? 18 : 5;
+    ctx.shadowColor = active ? "rgba(168,139,250,0.85)" : "rgba(168,139,250,0.28)";
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+  }
+
+  const nodes = Array.from(positioned.values()).sort((left, right) => left.depthScale - right.depthScale);
+  for (const node of nodes) {
+    const active = node.id === selected;
+    const connected = selected && (graph.edges || []).some((edge) => (edge.source === selected && edge.target === node.id) || (edge.target === selected && edge.source === node.id));
+    const radius = brainNodeRadius(node) * node.depthScale * (active ? 1.16 : 1);
+    const color = brainNodeColor(node.group);
+    const alpha = active ? 1 : connected ? 0.92 : node.depthOpacity * 0.86;
+    const halo = ctx.createRadialGradient(node.x, node.y, radius * 0.2, node.x, node.y, radius * 3.3);
+    halo.addColorStop(0, hexToRgba(color, 0.35));
+    halo.addColorStop(1, "rgba(0,0,0,0)");
+    ctx.beginPath();
+    ctx.fillStyle = halo;
+    ctx.arc(node.x, node.y, radius * 3.3, 0, Math.PI * 2);
+    ctx.fill();
+
+    const orb = ctx.createRadialGradient(node.x - radius * 0.35, node.y - radius * 0.42, radius * 0.1, node.x, node.y, radius);
+    orb.addColorStop(0, "rgba(255,255,255,0.9)");
+    orb.addColorStop(0.22, color);
+    orb.addColorStop(1, "rgba(28,23,42,0.92)");
+    ctx.beginPath();
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle = orb;
+    ctx.shadowBlur = active ? 26 : 10 * node.depthScale;
+    ctx.shadowColor = color;
+    ctx.arc(node.x, node.y, radius, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.shadowBlur = 0;
+    ctx.strokeStyle = active ? "rgba(255,255,255,0.92)" : "rgba(255,255,255,0.22)";
+    ctx.lineWidth = active ? 2 : 0.8;
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+
+    state.brainHitTargets.push({ id: node.id, x: node.x, y: node.y, r: Math.max(radius + 8, 18) });
+
+    const showLabel = active || connected || node.group === "agent" || (node.group === "project" && node.depthScale > 0.82);
+    if (showLabel) {
+      ctx.font = `${active ? 700 : 650} ${Math.max(10, Math.min(13, 10 * node.depthScale))}px "Avenir Next", "Segoe UI", sans-serif`;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "top";
+      ctx.lineWidth = 4;
+      ctx.strokeStyle = "rgba(8,8,10,0.82)";
+      ctx.fillStyle = active ? "rgba(255,255,255,0.98)" : "rgba(226,232,255,0.82)";
+      const label = node.label.length > 26 ? `${node.label.slice(0, 25)}…` : node.label;
+      ctx.strokeText(label, node.x, node.y + radius + 7);
+      ctx.fillText(label, node.x, node.y + radius + 7);
+    }
+  }
+}
+
 function renderBrainGraph() {
   const graph = filteredBrainGraph();
   if (!elements.brainGraphCanvas) {
@@ -1194,7 +1376,8 @@ function renderBrainGraph() {
   renderBrainStats(state.brainGraph);
   renderBrainLegend(state.brainGraph);
   renderBrainVault(state.brainGraph);
-  if (!graph.nodes?.length) {
+  const visibleGraph = visibleBrainGraph(graph);
+  if (!visibleGraph.nodes?.length) {
     elements.brainGraphCanvas.innerHTML = `
       <article class="empty-state">
         <strong>No brain records match.</strong>
@@ -1207,62 +1390,20 @@ function renderBrainGraph() {
   const canvasRect = elements.brainGraphCanvas.getBoundingClientRect();
   const pageWidth = elements.brainPage?.hidden === false ? window.innerWidth - 340 : window.innerWidth - 520;
   const width = Math.max(900, Math.round(canvasRect.width || pageWidth || 980));
-  const height = Math.max(620, Math.min(920, Math.round(window.innerHeight * (elements.brainPage?.hidden === false ? 0.72 : 0.62))));
-  const positioned = positionedBrainNodes(graph.nodes, graph.edges, width, height);
-  const selected = state.selectedBrainNodeId;
-  const edgeMarkup = (graph.edges || []).slice(0, 420).map((edge) => {
-    const source = positioned.get(edge.source);
-    const target = positioned.get(edge.target);
-    if (!source || !target) {
-      return "";
-    }
-    const active = selected && (edge.source === selected || edge.target === selected);
-    const depth = (source.depthScale + target.depthScale) / 2;
-    const opacity = active ? 0.92 : Math.max(0.08, Math.min(0.52, Number(edge.weight || 0.4) * 0.28 * depth));
-    const lineWidth = active ? 3.4 : Math.max(0.55, Math.min(2.3, Number(edge.weight || 1) * depth));
-    return `<line class="brain-edge ${active ? "active" : ""}" x1="${source.x}" y1="${source.y}" x2="${target.x}" y2="${target.y}" stroke-opacity="${opacity}" stroke-width="${lineWidth}"><title>${escapeHtml(edge.relation)}</title></line>`;
-  }).join("");
-  const nodeMarkup = Array.from(positioned.values()).sort((left, right) => left.depthScale - right.depthScale).map((node) => {
-    const radius = brainNodeRadius(node) * node.depthScale;
-    const active = node.id === selected;
-    const label = node.group === "agent" || node.group === "project" || active;
-    const glow = active ? 0.33 : Math.max(0.05, Math.min(0.2, node.depthScale * 0.08));
-    return `
-      <g class="brain-node ${active ? "active" : ""}" data-node-id="${escapeHtml(node.id)}" transform="translate(${node.x} ${node.y})" opacity="${node.depthOpacity}" tabindex="0" role="button" aria-label="${escapeHtml(node.label)}">
-        <circle r="${radius + 12}" fill="${escapeHtml(brainNodeColor(node.group))}" opacity="${glow}"></circle>
-        <circle r="${radius}" fill="${escapeHtml(brainNodeColor(node.group))}"></circle>
-        <text y="4" text-anchor="middle">${escapeHtml(node.label.slice(0, 1).toUpperCase())}</text>
-        ${label ? `<text class="brain-node-label" y="${radius + 18}" text-anchor="middle">${escapeHtml(node.label.slice(0, 28))}</text>` : ""}
-      </g>
-    `;
-  }).join("");
+  const height = Math.max(680, Math.min(980, Math.round(window.innerHeight * (elements.brainPage?.hidden === false ? 0.78 : 0.66))));
+  const positioned = positionedBrainNodes(visibleGraph.nodes, visibleGraph.edges, width, height);
   elements.brainGraphCanvas.innerHTML = `
-    <svg class="brain-svg" viewBox="0 0 ${width} ${height}" style="height:${height}px" aria-hidden="false">
-      <defs>
-        <radialGradient id="brainGlow" cx="50%" cy="50%" r="55%">
-          <stop offset="0%" stop-color="rgba(168,139,250,0.18)" />
-          <stop offset="100%" stop-color="rgba(255,255,255,0)" />
-        </radialGradient>
-        <linearGradient id="brainTunnel" x1="0" x2="1" y1="0" y2="1">
-          <stop offset="0%" stop-color="rgba(168,139,250,0.18)" />
-          <stop offset="48%" stop-color="rgba(56,189,248,0.08)" />
-          <stop offset="100%" stop-color="rgba(15,23,42,0)" />
-        </linearGradient>
-      </defs>
-      <rect width="${width}" height="${height}" fill="url(#brainGlow)" opacity="0.7"></rect>
-      <g class="brain-depth-grid" opacity="0.34">
-        ${Array.from({ length: 9 }).map((_, index) => {
-          const rx = 80 + index * 90;
-          const ry = 50 + index * 58;
-          return `<ellipse cx="${width / 2}" cy="${height / 2}" rx="${rx}" ry="${ry}" fill="none"></ellipse>`;
-        }).join("")}
-      </g>
-      <rect width="${width}" height="${height}" fill="url(#brainTunnel)" opacity="0.45"></rect>
-      ${edgeMarkup}
-      ${nodeMarkup}
-    </svg>
+    <canvas id="brain-canvas" class="brain-canvas" width="${width}" height="${height}" aria-label="3D Hermes memory and synapse field"></canvas>
+    <div class="brain-field-hud">
+      <strong>${visibleGraph.nodes.length}</strong> rendered
+      ${visibleGraph.hiddenCount ? `<span>${visibleGraph.hiddenCount} dimmed</span>` : ""}
+    </div>
   `;
-  renderBrainInspector(selected);
+  const canvas = elements.brainGraphCanvas.querySelector("#brain-canvas");
+  if (canvas) {
+    drawBrainCanvas(canvas, visibleGraph, positioned, width, height);
+  }
+  renderBrainInspector(state.selectedBrainNodeId);
 }
 
 async function loadBrainGraph() {
@@ -1421,23 +1562,26 @@ elements.brainTableList?.addEventListener("click", (event) => {
   renderBrainGraph();
 });
 elements.brainGraphCanvas?.addEventListener("click", (event) => {
-  const node = event.target.closest("[data-node-id]");
-  if (!node) {
+  const canvas = event.target.closest("#brain-canvas");
+  if (!canvas) {
     return;
   }
-  state.selectedBrainNodeId = node.dataset.nodeId || "";
-  renderBrainGraph();
-});
-elements.brainGraphCanvas?.addEventListener("keydown", (event) => {
-  if (event.key !== "Enter" && event.key !== " ") {
+  const rect = canvas.getBoundingClientRect();
+  const scaleX = Number(canvas.getAttribute("width") || rect.width) / rect.width;
+  const scaleY = Number(canvas.getAttribute("height") || rect.height) / rect.height;
+  const x = (event.clientX - rect.left) * scaleX;
+  const y = (event.clientY - rect.top) * scaleY;
+  const hit = [...state.brainHitTargets]
+    .reverse()
+    .find((target) => {
+      const dx = target.x - x;
+      const dy = target.y - y;
+      return Math.sqrt(dx * dx + dy * dy) <= target.r;
+    });
+  if (!hit) {
     return;
   }
-  const node = event.target.closest("[data-node-id]");
-  if (!node) {
-    return;
-  }
-  event.preventDefault();
-  state.selectedBrainNodeId = node.dataset.nodeId || "";
+  state.selectedBrainNodeId = hit.id;
   renderBrainGraph();
 });
 elements.chatForm?.addEventListener("submit", (event) => {

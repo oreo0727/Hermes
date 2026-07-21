@@ -823,10 +823,10 @@ svg {
   inset: 0;
   pointer-events: none;
   background:
-    radial-gradient(circle at center, transparent 0 18%, rgba(255, 255, 255, 0.025) 19%, transparent 20%),
-    repeating-radial-gradient(circle at center, rgba(168, 139, 250, 0.075) 0 1px, transparent 1px 74px);
-  opacity: 0.7;
-  transform: perspective(700px) rotateX(58deg) scale(1.34);
+    radial-gradient(circle at center, transparent 0 14%, rgba(255, 255, 255, 0.03) 15%, transparent 16%),
+    repeating-radial-gradient(circle at center, rgba(168, 139, 250, 0.08) 0 1px, transparent 1px 96px);
+  opacity: 0.42;
+  transform: perspective(760px) rotateX(62deg) scale(1.42);
   transform-origin: center;
 }
 
@@ -836,33 +836,37 @@ svg {
   position: relative;
 }
 
-.brain-svg {
+.brain-canvas {
   width: 100%;
   min-width: 900px;
   min-height: calc(100vh - 210px);
   display: block;
-  background:
-    radial-gradient(circle at center, rgba(255, 255, 255, 0.08), transparent 5%),
-    linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
-  background-size: auto, 42px 42px, 42px 42px;
+  cursor: crosshair;
 }
 
-.brain-depth-grid ellipse {
-  stroke: rgba(168, 139, 250, 0.18);
-  stroke-width: 1;
-  vector-effect: non-scaling-stroke;
+.brain-field-hud {
+  position: absolute;
+  left: 14px;
+  bottom: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 30px;
+  padding: 0.35rem 0.65rem;
+  border-radius: 999px;
+  color: rgba(226, 232, 255, 0.8);
+  background: rgba(12, 12, 16, 0.72);
+  border: 1px solid rgba(168, 139, 250, 0.18);
+  backdrop-filter: blur(10px);
+  font-size: 0.78rem;
 }
 
-.brain-edge {
-  stroke: rgba(168, 139, 250, 0.72);
-  filter: drop-shadow(0 0 5px rgba(168, 139, 250, 0.25));
-  transition: stroke 0.16s ease, stroke-opacity 0.16s ease;
+.brain-field-hud strong {
+  color: #fff;
 }
 
-.brain-edge.active {
-  stroke: #d7c9ff;
-  filter: drop-shadow(0 0 12px rgba(168, 139, 250, 0.76));
+.brain-field-hud span {
+  color: var(--obs-muted);
 }
 
 .brain-node {
@@ -1897,7 +1901,7 @@ svg {
   }
 
   .brain-graph-canvas,
-  .brain-svg {
+  .brain-canvas {
     min-width: 680px;
   }
 
