@@ -8,8 +8,10 @@ import json
 from pathlib import Path
 from typing import Any
 
+from hermes_stack.always_on import run_always_on_cycle
 from hermes_stack.projects import discover_projects
 from hermes_stack.scaffold import hermes_state_dir
+from hermes_stack.state_store import repo_root, upsert_cognitive_record
 
 
 def _now() -> str:
@@ -55,6 +57,12 @@ def _improvement_dir(root_dir: str | Path | None = None) -> Path:
     return path
 
 
+def _truth_loop_dir(root_dir: str | Path | None = None) -> Path:
+    path = _mission_dir(root_dir) / "truth_loop"
+    path.mkdir(parents=True, exist_ok=True)
+    return path
+
+
 def _read_json_file(path: Path) -> dict[str, Any] | None:
     try:
         value = json.loads(path.read_text(encoding="utf-8"))
@@ -75,6 +83,10 @@ def _handoff_path(root_dir: str | Path | None, handoff_id: str) -> Path:
 
 def _improvement_path(root_dir: str | Path | None, proposal_id: str) -> Path:
     return _improvement_dir(root_dir) / f"{str(proposal_id or '').replace(':', '_')}.json"
+
+
+def _truth_receipt_path(root_dir: str | Path | None, receipt_id: str) -> Path:
+    return _truth_loop_dir(root_dir) / f"{str(receipt_id or '').replace(':', '_')}.json"
 
 
 def mission_card(project: dict[str, Any]) -> dict[str, Any]:
@@ -445,3 +457,112 @@ def update_self_improvement_status(
         proposal["last_note"] = event["note"]
     _write_json_file(path, proposal)
     return proposal
+
+
+def list_truth_loop_receipts(root_dir: str | Path | None = None, *, limit: int = 12) -> list[dict[str, Any]]:
+    receipts: list[dict[str, Any]] = []
+    for path in _truth_loop_dir(root_dir).glob("truth_*.json"):
+        receipt = _read_json_file(path)
+        if receipt:
+            receipts.append(receipt)
+    receipts.sort(key=lambda row: str(row.get("updated_at") or row.get("created_at") or ""), reverse=True)
+    return receipts[: max(1, limit)]
+
+
+def truth_loop_snapshot(root_dir: str | Path | None = None, *, limit: int = 12) -> dict[str, Any]:
+    improvement = self_improvement_snapshot(root_dir, limit=limit)
+    receipts = list_truth_loop_receipts(root_dir, limit=limit)
+    latest = receipts[0] if receipts else {}
+    return {
+        "ok": True,
+        "generated_at": _now(),
+        "summary": (
+            str(latest.get("summary") or "")
+            if latest
+            else "Truth Loop is wired and waiting for its first run."
+        ),
+        "latest": latest,
+        "receipts": receipts,
+        "self_improvement": improvement,
+        "next_move": (
+            "Run Truth Loop to refresh agent intentions and write a receipt."
+            if not latest
+            else "Run Truth Loop again after project state changes or before closure."
+        ),
+    }
+
+
+def run_truth_loop(root_dir: str | Path | None = None, *, focus: str = "operator truth loop") -> dict[str, Any]:
+    root = repo_root(root_dir)
+    cycle = run_always_on_cycle(root)
+    improvement_before = self_improvement_snapshot(root, limit=6)
+    proposal = self_improvement_proposal(root, focus=focus or "operator truth loop")
+    proposal = update_self_improvement_status(
+        root,
+        proposal_id=str(proposal.get("proposal_id") or ""),
+        status="applied",
+        note="Truth Loop applied as a non-destructive observation, routing, and receipt pass.",
+    )
+    improvement_after = self_improvement_snapshot(root, limit=6)
+
+    active_project_id = str(cycle.get("active_project_id") or "")
+    executions = cycle.get("executions") if isinstance(cycle.get("executions"), list) else []
+    intentions = cycle.get("intentions") if isinstance(cycle.get("intentions"), list) else []
+    completed_intentions = [row for row in intentions if str(row.get("status") or "") == "completed"]
+    receipt_id = f"truth:{_stable_id(active_project_id, focus, _now())}"
+    summary = (
+        f"Truth Loop ran {len(intentions)} agent intention(s), "
+        f"{len(completed_intentions)} completed decision(s), and {len(executions)} safe execution(s)."
+    )
+    receipt = {
+        "receipt_id": receipt_id,
+        "created_at": _now(),
+        "updated_at": _now(),
+        "status": "applied",
+        "focus": focus or "operator truth loop",
+        "summary": summary,
+        "active_project_id": active_project_id,
+        "agent_movement": [
+            {
+                "agent_slug": str(row.get("agent_slug") or ""),
+                "title": str(row.get("title") or ""),
+                "status": str(row.get("status") or ""),
+                "decision": str(row.get("autonomy_decision") or ""),
+                "work_result": (row.get("payload") or {}).get("work_result") if isinstance(row.get("payload"), dict) else {},
+            }
+            for row in intentions[:8]
+        ],
+        "executions": executions,
+        "proposal": proposal,
+        "score_before": improvement_before.get("average_score"),
+        "score_after": improvement_after.get("average_score"),
+        "guardrails": [
+            "No paid provider calls.",
+            "No destructive edits.",
+            "Every run writes a durable receipt and cognitive event.",
+        ],
+    }
+    _write_json_file(_truth_receipt_path(root, receipt_id), receipt)
+    upsert_cognitive_record(
+        root,
+        "events",
+        {
+            "event_id": f"event:truth-loop:{_stable_id(receipt_id)}",
+            "agent_slug": "sheldon",
+            "project_id": active_project_id,
+            "event_type": "truth_loop",
+            "title": "Truth Loop wrote an operator receipt",
+            "content": summary,
+            "source_ref": f"mission_control/truth_loop/{receipt_id.replace(':', '_')}.json",
+            "salience": 0.86,
+            "occurred_at": _now(),
+            "payload": receipt,
+        },
+    )
+    return {
+        "ok": True,
+        "receipt": receipt,
+        "cycle": cycle,
+        "self_improvement": improvement_after,
+        "snapshot": truth_loop_snapshot(root, limit=12),
+    }

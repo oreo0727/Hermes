@@ -272,6 +272,18 @@ svg {
   border-color: rgba(255, 255, 255, 0.1);
 }
 
+.button.compact {
+  padding: 0.56rem 0.78rem;
+  border-radius: 10px;
+  font-size: 0.82rem;
+}
+
+.button[disabled],
+.icon-button[disabled] {
+  opacity: 0.58;
+  cursor: wait;
+}
+
 .icon-button {
   width: 42px;
   height: 42px;
@@ -1790,6 +1802,110 @@ svg {
   font-size: 0.72rem;
   text-align: right;
   text-transform: uppercase;
+}
+
+.truth-loop-panel {
+  position: relative;
+  overflow: hidden;
+}
+
+.truth-loop-panel::before {
+  content: "";
+  position: absolute;
+  inset: -35% -20% auto auto;
+  width: 220px;
+  height: 220px;
+  pointer-events: none;
+  background: radial-gradient(circle, rgba(79, 209, 197, 0.18), transparent 68%);
+}
+
+.truth-loop-view {
+  position: relative;
+  display: grid;
+  gap: 12px;
+}
+
+.truth-loop-empty,
+.truth-loop-card,
+.truth-agent-row {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.truth-loop-empty {
+  padding: 14px;
+  border-radius: 18px;
+}
+
+.truth-loop-empty.error {
+  border-color: rgba(255, 119, 130, 0.38);
+  background: rgba(255, 119, 130, 0.08);
+}
+
+.truth-loop-empty strong,
+.truth-loop-card strong,
+.truth-agent-row strong {
+  color: var(--text);
+}
+
+.truth-loop-empty p,
+.truth-loop-card p,
+.truth-agent-row p {
+  margin: 5px 0 0;
+  color: var(--text-soft);
+  line-height: 1.4;
+}
+
+.truth-loop-card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
+  padding: 13px;
+  border-radius: 20px;
+  background:
+    radial-gradient(circle at 10% 20%, rgba(79, 209, 197, 0.14), transparent 42%),
+    rgba(255, 255, 255, 0.045);
+}
+
+.truth-loop-orb {
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  background:
+    radial-gradient(circle at 35% 28%, rgba(255, 255, 255, 0.9), transparent 18%),
+    radial-gradient(circle, #4fd1c5, #4169e1 74%);
+  box-shadow:
+    0 0 26px rgba(79, 209, 197, 0.52),
+    0 0 0 8px rgba(79, 209, 197, 0.08);
+  animation: bubblePulse 2.4s infinite;
+}
+
+.truth-agent-list {
+  display: grid;
+  gap: 8px;
+}
+
+.truth-agent-row {
+  display: grid;
+  grid-template-columns: auto auto;
+  gap: 5px 8px;
+  padding: 10px 11px;
+  border-radius: 14px;
+}
+
+.truth-agent-row span {
+  justify-self: end;
+  color: #cdf8bd;
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.truth-agent-row p {
+  grid-column: 1 / -1;
+  font-size: 0.86rem;
 }
 
 .empty-state {

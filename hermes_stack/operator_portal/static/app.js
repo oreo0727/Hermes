@@ -3,6 +3,8 @@ const state = {
   runs: [],
   dispatches: [],
   alerts: [],
+  truthLoop: null,
+  truthLoopRunning: false,
   brainGraph: null,
   selectedBrainNodeId: "",
   brainGroupFilter: "all",
@@ -61,6 +63,8 @@ const elements = {
   agentTeam: document.querySelector("#agent-team"),
   agentTheater: document.querySelector("#agent-theater"),
   agentRadar: document.querySelector("#agent-radar"),
+  truthLoopRun: document.querySelector("#truth-loop-run"),
+  truthLoopView: document.querySelector("#truth-loop-view"),
   activityFeed: document.querySelector("#activity-feed"),
   brainStats: document.querySelector("#brain-stats"),
   brainLegend: document.querySelector("#brain-legend"),
@@ -837,8 +841,62 @@ function renderRadar() {
   elements.agentRadar.innerHTML = agents.map(radarRowMarkup).join("");
 }
 
+function truthLoopAgentMarkup(row) {
+  const work = row.work_result || {};
+  return `
+    <article class="truth-agent-row">
+      <strong>${escapeHtml(text(row.agent_slug, "agent"))}</strong>
+      <span>${escapeHtml(text(row.status, "waiting"))}</span>
+      <p>${escapeHtml(text(work.summary || row.title, "No movement recorded yet."))}</p>
+    </article>
+  `;
+}
+
+function renderTruthLoop() {
+  if (!elements.truthLoopView) {
+    return;
+  }
+  const payload = state.truthLoop || {};
+  const latest = payload.latest || {};
+  const movement = Array.isArray(latest.agent_movement) ? latest.agent_movement : [];
+  const executions = Array.isArray(latest.executions) ? latest.executions : [];
+  const score = payload.self_improvement?.average_score ?? latest.score_after ?? "n/a";
+  if (!latest.receipt_id) {
+    elements.truthLoopView.innerHTML = `
+      <article class="truth-loop-empty">
+        <strong>Truth Loop is armed.</strong>
+        <p>Run it to refresh agent intentions, apply a safe self-improvement pass, and write a receipt into the brain.</p>
+      </article>
+    `;
+    return;
+  }
+  elements.truthLoopView.innerHTML = `
+    <article class="truth-loop-card">
+      <div class="truth-loop-orb" aria-hidden="true"></div>
+      <div class="truth-loop-copy">
+        <strong>${escapeHtml(text(latest.summary, "Truth Loop ran."))}</strong>
+        <p>Brain score: ${escapeHtml(String(score))} • Safe executions: ${escapeHtml(String(executions.length))} • ${escapeHtml(relativeTime(latest.updated_at || latest.created_at))}</p>
+      </div>
+    </article>
+    <div class="truth-agent-list">
+      ${movement.slice(0, 4).map(truthLoopAgentMarkup).join("") || "<p class=\"meta\">No agent movement in the latest receipt.</p>"}
+    </div>
+  `;
+}
+
 function buildActivityFeed() {
   const activities = [];
+  const latestTruth = state.truthLoop?.latest || {};
+  if (latestTruth.receipt_id) {
+    activities.push({
+      type: "truth-loop",
+      title: text(latestTruth.summary, "Truth Loop receipt"),
+      detail: `${text(latestTruth.focus, "operator truth loop")} • ${text(latestTruth.status, "applied")}`,
+      updated_at: latestTruth.updated_at || latestTruth.created_at,
+      tone: "done",
+      icon: "flask",
+    });
+  }
   for (const run of state.runs.slice(0, 6)) {
     const contractReady = run.contract_review ? Boolean(run.contract_review.ready) : true;
     const closureReady = run.closure_review ? Boolean(run.closure_review.ready) : false;
@@ -1466,12 +1524,13 @@ async function loadDashboard() {
   elements.refreshButton.disabled = true;
 
   try {
-    const [snapshotPayload, runsPayload, dispatchesPayload, alertsPayload, brainPayload] = await Promise.all([
+    const [snapshotPayload, runsPayload, dispatchesPayload, alertsPayload, brainPayload, truthLoopPayload] = await Promise.all([
       fetchJson("/api/bootstrap"),
       fetchJson("/api/runs?limit=24"),
       fetchJson("/api/dispatches?limit=24"),
       fetchJson("/api/monitor?limit=24"),
       fetchJson("/api/brain-graph?cognitive_limit=28"),
+      fetchJson("/api/truth-loop?limit=12"),
     ]);
 
     state.snapshot = snapshotPayload;
@@ -1479,6 +1538,7 @@ async function loadDashboard() {
     state.dispatches = dispatchesPayload.dispatches || [];
     state.alerts = alertsPayload.alerts || [];
     state.brainGraph = brainPayload;
+    state.truthLoop = truthLoopPayload;
     if (!state.selectedBrainNodeId && state.brainGraph.nodes?.length) {
       const sheldon = state.brainGraph.nodes.find((node) => node.id === "agent:sheldon");
       state.selectedBrainNodeId = sheldon?.id || state.brainGraph.nodes[0].id;
@@ -1491,6 +1551,7 @@ async function loadDashboard() {
     renderAgents();
     renderTheater();
     renderRadar();
+    renderTruthLoop();
     renderActivity();
     renderBrainGraph();
     applyRoute();
@@ -1501,6 +1562,42 @@ async function loadDashboard() {
   } finally {
     state.loading = false;
     elements.refreshButton.disabled = false;
+  }
+}
+
+async function runTruthLoop() {
+  if (state.truthLoopRunning) {
+    return;
+  }
+  state.truthLoopRunning = true;
+  if (elements.truthLoopRun) {
+    elements.truthLoopRun.disabled = true;
+    elements.truthLoopRun.textContent = "Running...";
+  }
+  try {
+    const payload = await fetchJson("/api/truth-loop/run", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ focus: "operator truth loop" }),
+    });
+    state.truthLoop = payload.snapshot || state.truthLoop;
+    await loadDashboard();
+  } catch (error) {
+    console.error(error);
+    if (elements.truthLoopView) {
+      elements.truthLoopView.innerHTML = `
+        <article class="truth-loop-empty error">
+          <strong>Truth Loop failed.</strong>
+          <p>${escapeHtml(String(error.message || error))}</p>
+        </article>
+      `;
+    }
+  } finally {
+    state.truthLoopRunning = false;
+    if (elements.truthLoopRun) {
+      elements.truthLoopRun.disabled = false;
+      elements.truthLoopRun.textContent = "Run Loop";
+    }
   }
 }
 
@@ -1537,6 +1634,8 @@ async function handleProjectAction(event) {
 elements.refreshButton.addEventListener("click", () => {
   loadDashboard();
 });
+
+elements.truthLoopRun?.addEventListener("click", runTruthLoop);
 window.addEventListener("hashchange", applyRoute);
 window.addEventListener("resize", () => {
   if (currentRoute() === "brain") {

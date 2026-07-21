@@ -30,8 +30,10 @@ from hermes_stack.mission_control import (
     create_handoff,
     list_handoffs,
     mission_cards,
+    run_truth_loop,
     self_improvement_proposal,
     self_improvement_snapshot,
+    truth_loop_snapshot,
     update_self_improvement_status,
     update_handoff_status,
     watch_digest,
@@ -1631,6 +1633,17 @@ class PortalHandler(BaseHTTPRequestHandler):
                 head_only=head_only,
             )
             return
+        if parsed.path == "/api/truth-loop":
+            query = parse_qs(parsed.query)
+            try:
+                limit = int((query.get("limit") or [12])[0])
+            except (TypeError, ValueError):
+                limit = 12
+            self._send_json(
+                truth_loop_snapshot(self.server.repo_root, limit=max(1, min(limit, 50))),
+                head_only=head_only,
+            )
+            return
         if parsed.path == "/api/brain-graph":
             query = parse_qs(parsed.query)
             try:
@@ -1693,6 +1706,9 @@ class PortalHandler(BaseHTTPRequestHandler):
             return
         if parsed.path == "/api/self-improvement/status":
             self._handle_self_improvement_status(payload)
+            return
+        if parsed.path == "/api/truth-loop/run":
+            self._handle_truth_loop(payload)
             return
 
         self.send_error(HTTPStatus.NOT_FOUND, "Unknown route")
@@ -1953,6 +1969,10 @@ class PortalHandler(BaseHTTPRequestHandler):
             self.send_error(HTTPStatus.BAD_REQUEST, str(exc))
             return
         self._send_json({"ok": True, "proposal": proposal})
+
+    def _handle_truth_loop(self, payload: dict[str, object]) -> None:
+        focus = str(payload.get("focus") or "").strip() or "operator truth loop"
+        self._send_json(run_truth_loop(self.server.repo_root, focus=focus))
 
     def _handle_run_create(self, payload: dict[str, object]) -> None:
         profile_key = str(payload.get("profile") or "").strip()
