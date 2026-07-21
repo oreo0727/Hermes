@@ -24,6 +24,13 @@ from urllib.parse import parse_qs, urlparse
 from urllib.request import Request, urlopen
 
 from hermes_stack.fast_router import fast_route_chat
+from hermes_stack.mission_control import (
+    build_briefing,
+    create_handoff,
+    mission_cards,
+    self_improvement_proposal,
+    watch_digest,
+)
 from hermes_stack.orchestration import (
     clip_text,
     closure_gate_review,
@@ -1570,6 +1577,23 @@ class PortalHandler(BaseHTTPRequestHandler):
                 head_only=head_only,
             )
             return
+        if parsed.path == "/api/mission-cards":
+            self._send_json(
+                {
+                    "ok": True,
+                    "mission_cards": mission_cards(self.server.repo_root),
+                },
+                head_only=head_only,
+            )
+            return
+        if parsed.path == "/api/watch":
+            query = parse_qs(parsed.query)
+            try:
+                limit = int((query.get("limit") or [6])[0])
+            except (TypeError, ValueError):
+                limit = 6
+            self._send_json(watch_digest(self.server.repo_root, limit=max(1, min(limit, 24))), head_only=head_only)
+            return
         if parsed.path.startswith("/api/runs/"):
             run_id = parsed.path.removeprefix("/api/runs/").strip()
             if not run_id:
@@ -1606,6 +1630,15 @@ class PortalHandler(BaseHTTPRequestHandler):
             return
         if parsed.path == "/api/projects/archive":
             self._handle_project_archive(payload)
+            return
+        if parsed.path == "/api/briefing":
+            self._handle_briefing(payload)
+            return
+        if parsed.path == "/api/handoff":
+            self._handle_handoff(payload)
+            return
+        if parsed.path == "/api/self-improvement/propose":
+            self._handle_self_improvement(payload)
             return
 
         self.send_error(HTTPStatus.NOT_FOUND, "Unknown route")
@@ -1788,6 +1821,40 @@ class PortalHandler(BaseHTTPRequestHandler):
                 "portfolio": build_snapshot(self.server.repo_root).get("portfolio"),
             }
         )
+
+    def _handle_briefing(self, payload: dict[str, object]) -> None:
+        project_id = str(payload.get("project_id") or "").strip()
+        depth = str(payload.get("depth") or "short").strip().lower()
+        mode = str(payload.get("mode") or "normal").strip().lower()
+        if depth not in {"short", "medium", "deep"}:
+            depth = "short"
+        if mode not in {"normal", "car"}:
+            mode = "normal"
+        self._send_json(build_briefing(self.server.repo_root, project_id, depth=depth, mode=mode))
+
+    def _handle_handoff(self, payload: dict[str, object]) -> None:
+        project_id = str(payload.get("project_id") or "").strip()
+        target = str(payload.get("target") or payload.get("agent") or "").strip()
+        instruction = str(payload.get("instruction") or "").strip()
+        if not project_id:
+            self.send_error(HTTPStatus.BAD_REQUEST, "project_id is required")
+            return
+        try:
+            handoff = create_handoff(
+                self.server.repo_root,
+                project_id=project_id,
+                target=target,
+                instruction=instruction,
+                source="operator",
+            )
+        except FileNotFoundError:
+            self.send_error(HTTPStatus.NOT_FOUND, "Unknown project")
+            return
+        self._send_json({"ok": True, "handoff": handoff})
+
+    def _handle_self_improvement(self, payload: dict[str, object]) -> None:
+        focus = str(payload.get("focus") or "").strip()
+        self._send_json({"ok": True, "proposal": self_improvement_proposal(self.server.repo_root, focus=focus)})
 
     def _handle_run_create(self, payload: dict[str, object]) -> None:
         profile_key = str(payload.get("profile") or "").strip()
