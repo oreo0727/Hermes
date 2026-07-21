@@ -63,6 +63,12 @@ def _truth_loop_dir(root_dir: str | Path | None = None) -> Path:
     return path
 
 
+def _reality_dir(root_dir: str | Path | None = None) -> Path:
+    path = _mission_dir(root_dir) / "reality_layer"
+    path.mkdir(parents=True, exist_ok=True)
+    return path
+
+
 def _read_json_file(path: Path) -> dict[str, Any] | None:
     try:
         value = json.loads(path.read_text(encoding="utf-8"))
@@ -87,6 +93,29 @@ def _improvement_path(root_dir: str | Path | None, proposal_id: str) -> Path:
 
 def _truth_receipt_path(root_dir: str | Path | None, receipt_id: str) -> Path:
     return _truth_loop_dir(root_dir) / f"{str(receipt_id or '').replace(':', '_')}.json"
+
+
+def _reality_capture_path(root_dir: str | Path | None, capture_id: str) -> Path:
+    return _reality_dir(root_dir) / f"{str(capture_id or '').replace(':', '_')}.json"
+
+
+def _active_or_requested_card(root_dir: str | Path | None, project_id: str = "") -> dict[str, Any] | None:
+    normalized = str(project_id or "").strip()
+    cards = mission_cards(root_dir)
+    if normalized:
+        return next((card for card in cards if card.get("project_id") == normalized), None)
+    return next((card for card in cards if card.get("active")), cards[0] if cards else None)
+
+
+def _route_reality_capture(note: str, mode: str) -> dict[str, str]:
+    haystack = f"{note} {mode}".lower()
+    if any(token in haystack for token in ("ui", "screen", "color", "layout", "design", "looks", "image", "photo", "screenshot")):
+        return {"target": "penny", "reason": "visual or experience evidence"}
+    if any(token in haystack for token in ("api", "server", "portal", "app", "route", "timeout", "button", "database")):
+        return {"target": "raj", "reason": "app, portal, or backend evidence"}
+    if any(token in haystack for token in ("game", "runtime", "build", "apk", "testflight", "crash", "play", "export")):
+        return {"target": "leonard", "reason": "runtime or build evidence"}
+    return {"target": "sheldon", "reason": "operator triage evidence"}
 
 
 def mission_card(project: dict[str, Any]) -> dict[str, Any]:
@@ -566,3 +595,113 @@ def run_truth_loop(root_dir: str | Path | None = None, *, focus: str = "operator
         "self_improvement": improvement_after,
         "snapshot": truth_loop_snapshot(root, limit=12),
     }
+
+
+def list_reality_captures(root_dir: str | Path | None = None, *, limit: int = 12) -> list[dict[str, Any]]:
+    captures: list[dict[str, Any]] = []
+    for path in _reality_dir(root_dir).glob("field_*.json"):
+        capture = _read_json_file(path)
+        if capture:
+            captures.append(capture)
+    captures.sort(key=lambda row: str(row.get("updated_at") or row.get("created_at") or ""), reverse=True)
+    return captures[: max(1, limit)]
+
+
+def reality_layer_snapshot(root_dir: str | Path | None = None, *, limit: int = 12) -> dict[str, Any]:
+    captures = list_reality_captures(root_dir, limit=limit)
+    latest = captures[0] if captures else {}
+    return {
+        "ok": True,
+        "generated_at": _now(),
+        "summary": (
+            str(latest.get("summary") or "")
+            if latest
+            else "Reality Layer is ready for the first field capture."
+        ),
+        "latest": latest,
+        "captures": captures,
+        "next_move": (
+            "Capture a screenshot, photo, or field note and route it to the right agent."
+            if not latest
+            else "Capture the next real-world signal when something looks wrong, blocked, or worth saving."
+        ),
+    }
+
+
+def create_reality_capture(
+    root_dir: str | Path | None = None,
+    *,
+    project_id: str = "",
+    mode: str = "field",
+    note: str = "",
+    attachments: list[dict[str, Any]] | None = None,
+    source: str = "portal",
+) -> dict[str, Any]:
+    root = repo_root(root_dir)
+    card = _active_or_requested_card(root, project_id)
+    clean_note = str(note or "").strip()
+    clean_mode = str(mode or "field").strip().lower() or "field"
+    evidence = attachments if isinstance(attachments, list) else []
+    route = _route_reality_capture(clean_note, clean_mode)
+    capture_id = f"field:{_stable_id((card or {}).get('project_id'), clean_mode, clean_note, len(evidence), _now())}"
+    project_title = str((card or {}).get("title") or "Hermes portfolio")
+    summary = f"{route['target'].title()} received {clean_mode} evidence for {project_title}."
+    instruction = (
+        f"Reality Layer field capture from {source}. "
+        f"Project: {project_title}. "
+        f"Mode: {clean_mode}. "
+        f"Operator note: {clean_note or 'No note supplied.'} "
+        f"Evidence: {len(evidence)} attachment(s). "
+        "Inspect this signal, decide whether it is a bug, design issue, blocker, or memory, and report the next safe action with proof."
+    )
+    handoff: dict[str, Any] = {}
+    if card and card.get("project_id"):
+        try:
+            handoff = create_handoff(
+                root,
+                project_id=str(card.get("project_id") or ""),
+                target=route["target"],
+                instruction=instruction,
+                source="reality-layer",
+            )
+        except FileNotFoundError:
+            handoff = {}
+
+    capture = {
+        "capture_id": capture_id,
+        "created_at": _now(),
+        "updated_at": _now(),
+        "status": "routed" if handoff else "captured",
+        "source": source,
+        "mode": clean_mode,
+        "project_id": str((card or {}).get("project_id") or ""),
+        "project_title": project_title,
+        "note": clean_note,
+        "summary": summary if handoff else f"Captured {clean_mode} evidence for {project_title}.",
+        "route": route,
+        "attachments": evidence,
+        "handoff": handoff,
+        "guardrails": [
+            "Capture first, mutate later.",
+            "No destructive action from field evidence without an explicit follow-up command.",
+            "Phone and portal clients use the same API shape.",
+        ],
+    }
+    _write_json_file(_reality_capture_path(root, capture_id), capture)
+    upsert_cognitive_record(
+        root,
+        "events",
+        {
+            "event_id": f"event:reality-layer:{_stable_id(capture_id)}",
+            "agent_slug": route["target"],
+            "project_id": str(capture.get("project_id") or ""),
+            "event_type": "reality_capture",
+            "title": "Reality Layer captured field evidence",
+            "content": str(capture.get("summary") or ""),
+            "source_ref": f"mission_control/reality_layer/{capture_id.replace(':', '_')}.json",
+            "salience": 0.9,
+            "occurred_at": _now(),
+            "payload": capture,
+        },
+    )
+    return capture

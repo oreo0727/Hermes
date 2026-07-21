@@ -1908,6 +1908,140 @@ svg {
   font-size: 0.86rem;
 }
 
+.reality-panel {
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 0% 0%, rgba(132, 165, 255, 0.12), transparent 34%),
+    var(--panel-soft);
+}
+
+.reality-form {
+  display: grid;
+  gap: 11px;
+}
+
+.reality-field {
+  display: grid;
+  gap: 7px;
+  color: var(--text-muted);
+  font-size: 0.76rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.reality-field textarea {
+  width: 100%;
+  resize: vertical;
+  min-height: 82px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  background: rgba(5, 8, 20, 0.52);
+  color: var(--text);
+  padding: 0.82rem;
+  outline: none;
+  text-transform: none;
+  letter-spacing: normal;
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
+.reality-field textarea:focus,
+.reality-controls select:focus,
+.reality-controls input:focus {
+  border-color: rgba(132, 165, 255, 0.62);
+  box-shadow: 0 0 0 2px rgba(132, 165, 255, 0.14);
+}
+
+.reality-controls {
+  display: grid;
+  grid-template-columns: minmax(96px, 0.9fr) minmax(0, 1.4fr) auto;
+  gap: 8px;
+  align-items: center;
+}
+
+.reality-controls select,
+.reality-controls input {
+  min-width: 0;
+  min-height: 38px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  background: rgba(5, 8, 20, 0.48);
+  color: var(--text-soft);
+  padding: 0.48rem 0.58rem;
+}
+
+.reality-controls input {
+  font-size: 0.78rem;
+}
+
+.reality-view {
+  display: grid;
+  gap: 9px;
+  margin-top: 13px;
+}
+
+.reality-empty,
+.reality-capture-row {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.reality-empty {
+  padding: 14px;
+  border-radius: 18px;
+}
+
+.reality-empty.error {
+  border-color: rgba(255, 119, 130, 0.38);
+  background: rgba(255, 119, 130, 0.08);
+}
+
+.reality-empty strong,
+.reality-capture-row strong {
+  color: var(--text);
+}
+
+.reality-empty p,
+.reality-capture-row p {
+  margin: 5px 0 0;
+  color: var(--text-soft);
+  line-height: 1.4;
+}
+
+.reality-capture-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+  padding: 11px;
+  border-radius: 16px;
+}
+
+.reality-capture-row span,
+.reality-capture-row small {
+  display: block;
+  margin-top: 5px;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+}
+
+.reality-capture-row b {
+  align-self: start;
+  padding: 0.22rem 0.48rem;
+  border-radius: 999px;
+  color: #dbe8ff;
+  background: rgba(132, 165, 255, 0.16);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+}
+
+.reality-capture-row small {
+  grid-column: 1 / -1;
+  color: #cdf8bd;
+  font-weight: 800;
+}
+
 .empty-state {
   padding: 20px;
   background: rgba(255, 255, 255, 0.03);
@@ -2023,6 +2157,16 @@ svg {
 
   .chat-form .button,
   .chat-form .voice-button {
+    width: 100%;
+  }
+
+  .reality-controls {
+    grid-template-columns: 1fr;
+  }
+
+  .reality-controls .button,
+  .reality-controls input,
+  .reality-controls select {
     width: 100%;
   }
 

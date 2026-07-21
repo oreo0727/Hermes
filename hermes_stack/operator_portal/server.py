@@ -27,9 +27,11 @@ from hermes_stack.brain_graph import brain_graph
 from hermes_stack.fast_router import fast_route_chat
 from hermes_stack.mission_control import (
     build_briefing,
+    create_reality_capture,
     create_handoff,
     list_handoffs,
     mission_cards,
+    reality_layer_snapshot,
     run_truth_loop,
     self_improvement_proposal,
     self_improvement_snapshot,
@@ -1644,6 +1646,17 @@ class PortalHandler(BaseHTTPRequestHandler):
                 head_only=head_only,
             )
             return
+        if parsed.path == "/api/reality-layer":
+            query = parse_qs(parsed.query)
+            try:
+                limit = int((query.get("limit") or [12])[0])
+            except (TypeError, ValueError):
+                limit = 12
+            self._send_json(
+                reality_layer_snapshot(self.server.repo_root, limit=max(1, min(limit, 50))),
+                head_only=head_only,
+            )
+            return
         if parsed.path == "/api/brain-graph":
             query = parse_qs(parsed.query)
             try:
@@ -1709,6 +1722,9 @@ class PortalHandler(BaseHTTPRequestHandler):
             return
         if parsed.path == "/api/truth-loop/run":
             self._handle_truth_loop(payload)
+            return
+        if parsed.path == "/api/reality-layer/capture":
+            self._handle_reality_capture(payload)
             return
 
         self.send_error(HTTPStatus.NOT_FOUND, "Unknown route")
@@ -1973,6 +1989,36 @@ class PortalHandler(BaseHTTPRequestHandler):
     def _handle_truth_loop(self, payload: dict[str, object]) -> None:
         focus = str(payload.get("focus") or "").strip() or "operator truth loop"
         self._send_json(run_truth_loop(self.server.repo_root, focus=focus))
+
+    def _handle_reality_capture(self, payload: dict[str, object]) -> None:
+        project_id = str(payload.get("project_id") or "").strip()
+        mode = str(payload.get("mode") or "field").strip() or "field"
+        note = str(payload.get("note") or "").strip()
+        source = str(payload.get("source") or "portal").strip() or "portal"
+        try:
+            attachments = _normalize_attachment_payload(payload.get("attachments"))
+            stored = [_store_attachment(self.server.repo_root, attachment) for attachment in attachments]
+        except ValueError as exc:
+            self.send_error(HTTPStatus.BAD_REQUEST, str(exc))
+            return
+
+        evidence: list[dict[str, object]] = []
+        for attachment in stored:
+            analysis = _run_vision_analysis(self.server.repo_root, str(attachment.get("stored_path") or ""))
+            row = dict(attachment)
+            if analysis:
+                row["analysis"] = analysis
+            evidence.append(row)
+
+        capture = create_reality_capture(
+            self.server.repo_root,
+            project_id=project_id,
+            mode=mode,
+            note=note,
+            attachments=evidence,
+            source=source,
+        )
+        self._send_json({"ok": True, "capture": capture, "snapshot": reality_layer_snapshot(self.server.repo_root)})
 
     def _handle_run_create(self, payload: dict[str, object]) -> None:
         profile_key = str(payload.get("profile") or "").strip()

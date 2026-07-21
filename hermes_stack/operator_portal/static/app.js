@@ -5,6 +5,8 @@ const state = {
   alerts: [],
   truthLoop: null,
   truthLoopRunning: false,
+  realityLayer: null,
+  realityCaptureRunning: false,
   brainGraph: null,
   selectedBrainNodeId: "",
   brainGroupFilter: "all",
@@ -65,6 +67,13 @@ const elements = {
   agentRadar: document.querySelector("#agent-radar"),
   truthLoopRun: document.querySelector("#truth-loop-run"),
   truthLoopView: document.querySelector("#truth-loop-view"),
+  realityForm: document.querySelector("#reality-form"),
+  realityNote: document.querySelector("#reality-note"),
+  realityMode: document.querySelector("#reality-mode"),
+  realityFile: document.querySelector("#reality-file"),
+  realitySubmit: document.querySelector("#reality-submit"),
+  realityStatus: document.querySelector("#reality-status"),
+  realityView: document.querySelector("#reality-view"),
   activityFeed: document.querySelector("#activity-feed"),
   brainStats: document.querySelector("#brain-stats"),
   brainLegend: document.querySelector("#brain-legend"),
@@ -884,6 +893,70 @@ function renderTruthLoop() {
   `;
 }
 
+function activeProjectId() {
+  const portfolioId = String(state.snapshot?.portfolio?.active_project_id || "").trim();
+  if (portfolioId) {
+    return portfolioId;
+  }
+  const active = (state.snapshot?.projects || []).find((project) => Boolean(project.portfolio?.active));
+  return String(active?.project_id || "");
+}
+
+function setRealityStatus(label, tone = "ready") {
+  if (!elements.realityStatus) {
+    return;
+  }
+  elements.realityStatus.textContent = label;
+  elements.realityStatus.dataset.tone = tone;
+}
+
+function realityCaptureMarkup(capture) {
+  const route = capture.route || {};
+  const attachments = Array.isArray(capture.attachments) ? capture.attachments : [];
+  const handoff = capture.handoff || {};
+  return `
+    <article class="reality-capture-row">
+      <div>
+        <strong>${escapeHtml(text(capture.summary, "Field evidence captured."))}</strong>
+        <p>${escapeHtml(text(capture.note, "No operator note supplied."))}</p>
+        <span>${escapeHtml(text(capture.project_title, "Hermes portfolio"))} • ${escapeHtml(text(capture.mode, "field"))} • ${escapeHtml(relativeTime(capture.updated_at || capture.created_at))}</span>
+      </div>
+      <b>${escapeHtml(text(route.target, "sheldon"))}</b>
+      ${
+        attachments.length
+          ? `<small>${escapeHtml(String(attachments.length))} image${attachments.length === 1 ? "" : "s"}${handoff.handoff_id ? " • handoff queued" : ""}</small>`
+          : `<small>${handoff.handoff_id ? "handoff queued" : "receipt written"}</small>`
+      }
+    </article>
+  `;
+}
+
+function renderRealityLayer() {
+  if (!elements.realityView) {
+    return;
+  }
+  const captures = state.realityLayer?.captures || [];
+  if (!captures.length) {
+    elements.realityView.innerHTML = `
+      <article class="reality-empty">
+        <strong>Sheldon Sight is ready.</strong>
+        <p>Attach a screenshot/photo or write a field note. Hermes will route it to the right agent and write a receipt.</p>
+      </article>
+    `;
+    return;
+  }
+  elements.realityView.innerHTML = captures.slice(0, 3).map(realityCaptureMarkup).join("");
+}
+
+function readFileAsDataUrl(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result || ""));
+    reader.onerror = () => reject(reader.error || new Error("Could not read file."));
+    reader.readAsDataURL(file);
+  });
+}
+
 function buildActivityFeed() {
   const activities = [];
   const latestTruth = state.truthLoop?.latest || {};
@@ -895,6 +968,17 @@ function buildActivityFeed() {
       updated_at: latestTruth.updated_at || latestTruth.created_at,
       tone: "done",
       icon: "flask",
+    });
+  }
+  const latestReality = state.realityLayer?.latest || {};
+  if (latestReality.capture_id) {
+    activities.push({
+      type: "reality-layer",
+      title: text(latestReality.summary, "Reality Layer capture"),
+      detail: `${text(latestReality.project_title, "Hermes portfolio")} • ${text(latestReality.mode, "field")} • ${text(latestReality.route?.target, "sheldon")}`,
+      updated_at: latestReality.updated_at || latestReality.created_at,
+      tone: "working",
+      icon: "atom",
     });
   }
   for (const run of state.runs.slice(0, 6)) {
@@ -1524,13 +1608,14 @@ async function loadDashboard() {
   elements.refreshButton.disabled = true;
 
   try {
-    const [snapshotPayload, runsPayload, dispatchesPayload, alertsPayload, brainPayload, truthLoopPayload] = await Promise.all([
+    const [snapshotPayload, runsPayload, dispatchesPayload, alertsPayload, brainPayload, truthLoopPayload, realityPayload] = await Promise.all([
       fetchJson("/api/bootstrap"),
       fetchJson("/api/runs?limit=24"),
       fetchJson("/api/dispatches?limit=24"),
       fetchJson("/api/monitor?limit=24"),
       fetchJson("/api/brain-graph?cognitive_limit=28"),
       fetchJson("/api/truth-loop?limit=12"),
+      fetchJson("/api/reality-layer?limit=12"),
     ]);
 
     state.snapshot = snapshotPayload;
@@ -1539,6 +1624,7 @@ async function loadDashboard() {
     state.alerts = alertsPayload.alerts || [];
     state.brainGraph = brainPayload;
     state.truthLoop = truthLoopPayload;
+    state.realityLayer = realityPayload;
     if (!state.selectedBrainNodeId && state.brainGraph.nodes?.length) {
       const sheldon = state.brainGraph.nodes.find((node) => node.id === "agent:sheldon");
       state.selectedBrainNodeId = sheldon?.id || state.brainGraph.nodes[0].id;
@@ -1552,6 +1638,7 @@ async function loadDashboard() {
     renderTheater();
     renderRadar();
     renderTruthLoop();
+    renderRealityLayer();
     renderActivity();
     renderBrainGraph();
     applyRoute();
@@ -1562,6 +1649,67 @@ async function loadDashboard() {
   } finally {
     state.loading = false;
     elements.refreshButton.disabled = false;
+  }
+}
+
+async function submitRealityCapture(event) {
+  event.preventDefault();
+  if (state.realityCaptureRunning) {
+    return;
+  }
+  const note = String(elements.realityNote?.value || "").trim();
+  const file = elements.realityFile?.files?.[0];
+  if (!note && !file) {
+    setRealityStatus("Add note or image", "error");
+    elements.realityNote?.focus();
+    return;
+  }
+  state.realityCaptureRunning = true;
+  setRealityStatus("Capturing", "busy");
+  if (elements.realitySubmit) {
+    elements.realitySubmit.disabled = true;
+    elements.realitySubmit.textContent = "Capturing...";
+  }
+  try {
+    const attachments = [];
+    if (file) {
+      attachments.push({
+        name: file.name || "field-image",
+        data_url: await readFileAsDataUrl(file),
+      });
+    }
+    const payload = await fetchJson("/api/reality-layer/capture", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        project_id: activeProjectId(),
+        mode: elements.realityMode?.value || "field",
+        note,
+        source: "operator-portal",
+        attachments,
+      }),
+    });
+    state.realityLayer = payload.snapshot || state.realityLayer;
+    elements.realityForm?.reset();
+    setRealityStatus("Routed", "ready");
+    await loadDashboard();
+  } catch (error) {
+    console.error(error);
+    setRealityStatus("Capture failed", "error");
+    if (elements.realityView) {
+      elements.realityView.innerHTML = `
+        <article class="reality-empty error">
+          <strong>Capture failed.</strong>
+          <p>${escapeHtml(String(error.message || error))}</p>
+        </article>
+      `;
+    }
+  } finally {
+    state.realityCaptureRunning = false;
+    if (elements.realitySubmit) {
+      elements.realitySubmit.disabled = false;
+      elements.realitySubmit.textContent = "Capture";
+    }
   }
 }
 
@@ -1636,6 +1784,7 @@ elements.refreshButton.addEventListener("click", () => {
 });
 
 elements.truthLoopRun?.addEventListener("click", runTruthLoop);
+elements.realityForm?.addEventListener("submit", submitRealityCapture);
 window.addEventListener("hashchange", applyRoute);
 window.addEventListener("resize", () => {
   if (currentRoute() === "brain") {
