@@ -73,6 +73,10 @@ def _handoff_path(root_dir: str | Path | None, handoff_id: str) -> Path:
     return _handoff_dir(root_dir) / f"{str(handoff_id or '').replace(':', '_')}.json"
 
 
+def _improvement_path(root_dir: str | Path | None, proposal_id: str) -> Path:
+    return _improvement_dir(root_dir) / f"{str(proposal_id or '').replace(':', '_')}.json"
+
+
 def mission_card(project: dict[str, Any]) -> dict[str, Any]:
     tracking = _tracking(project)
     delivery = _delivery(project)
@@ -137,6 +141,34 @@ def _receipt_chips(project: dict[str, Any], fallback: list[str]) -> list[dict[st
 def mission_cards(root_dir: str | Path | None = None) -> list[dict[str, Any]]:
     cards = [mission_card(project) for project in discover_projects(root_dir)]
     return sorted(cards, key=lambda row: (not bool(row.get("active")), -int(row.get("priority_score") or 0), str(row.get("title") or "")))
+
+
+def score_mission_card(card: dict[str, Any]) -> dict[str, Any]:
+    checks = {
+        "objective": bool(str(card.get("objective") or "").strip()),
+        "now": bool(str(card.get("now") or "").strip()) and str(card.get("now") or "").strip() != "No current milestone recorded.",
+        "next": bool(str(card.get("next") or "").strip()) and str(card.get("next") or "").strip() != "Choose the next concrete proof step.",
+        "proof": bool(card.get("proof") or card.get("receipts")),
+        "unblocked": not bool(card.get("blocked")),
+    }
+    score = round(sum(1 for value in checks.values() if value) / len(checks), 2)
+    missing = [name for name, ok in checks.items() if not ok]
+    if "unblocked" in missing:
+        recommendation = "Resolve or route the current blocker before adding more work."
+    elif "proof" in missing:
+        recommendation = "Capture one receipt so the next move has memory."
+    elif missing:
+        recommendation = f"Clarify {missing[0]} so the mission card can drive action."
+    else:
+        recommendation = "Healthy card. Look for automation or packaging gains."
+    return {
+        "project_id": card.get("project_id") or "",
+        "title": card.get("title") or "",
+        "score": score,
+        "checks": checks,
+        "missing": missing,
+        "recommendation": recommendation,
+    }
 
 
 def find_mission_card(root_dir: str | Path | None, project_id: str) -> dict[str, Any] | None:
@@ -312,11 +344,15 @@ def update_handoff_status(
 
 def self_improvement_proposal(root_dir: str | Path | None, *, focus: str = "") -> dict[str, Any]:
     cards = mission_cards(root_dir)
+    scores = [score_mission_card(card) for card in cards]
     blocked_count = sum(1 for card in cards if card.get("blocked"))
     low_proof = [card for card in cards if not card.get("proof")]
+    weakest = sorted(scores, key=lambda row: float(row.get("score") or 0))[:3]
     proposal = {
         "proposal_id": f"improve:{_stable_id(focus, len(cards), blocked_count, _now())}",
         "created_at": _now(),
+        "updated_at": _now(),
+        "status": "proposed",
         "focus": focus or "mission reliability",
         "hypothesis": "Sheldon improves fastest by comparing promised next moves against proof receipts and reducing repeat blockers.",
         "experiments": [
@@ -328,6 +364,14 @@ def self_improvement_proposal(root_dir: str | Path | None, *, focus: str = "") -
             "project_count": len(cards),
             "blocked_count": blocked_count,
             "missing_proof_count": len(low_proof),
+            "average_card_score": round(sum(float(row.get("score") or 0) for row in scores) / max(1, len(scores)), 2),
+        },
+        "weakest_cards": weakest,
+        "next_experiment": {
+            "name": "receipt pressure test",
+            "operator_prompt": "Ask each active agent for the next receipt they can produce in under 30 minutes.",
+            "success_signal": "Every active project has a concrete proof receipt or an explicit blocker.",
+            "rollback": "Mark the proposal rejected and keep the existing mission state unchanged.",
         },
         "guardrails": [
             "Do not change project state without an explicit handoff or operator approval.",
@@ -335,6 +379,69 @@ def self_improvement_proposal(root_dir: str | Path | None, *, focus: str = "") -
             "Every improvement needs a receipt or a rollback path.",
         ],
     }
-    path = _improvement_dir(root_dir) / f"{proposal['proposal_id'].replace(':', '_')}.json"
-    path.write_text(json.dumps(proposal, indent=2), encoding="utf-8")
+    _write_json_file(_improvement_path(root_dir, proposal["proposal_id"]), proposal)
+    return proposal
+
+
+def list_self_improvement_proposals(root_dir: str | Path | None = None, *, limit: int = 12) -> list[dict[str, Any]]:
+    proposals: list[dict[str, Any]] = []
+    for path in _improvement_dir(root_dir).glob("improve_*.json"):
+        proposal = _read_json_file(path)
+        if proposal:
+            proposals.append(proposal)
+    proposals.sort(key=lambda row: str(row.get("updated_at") or row.get("created_at") or ""), reverse=True)
+    return proposals[: max(1, limit)]
+
+
+def self_improvement_snapshot(root_dir: str | Path | None = None, *, limit: int = 12) -> dict[str, Any]:
+    cards = mission_cards(root_dir)
+    scores = [score_mission_card(card) for card in cards]
+    proposals = list_self_improvement_proposals(root_dir, limit=limit)
+    average_score = round(sum(float(row.get("score") or 0) for row in scores) / max(1, len(scores)), 2)
+    weak_cards = sorted(scores, key=lambda row: float(row.get("score") or 0))[:5]
+    return {
+        "ok": True,
+        "generated_at": _now(),
+        "summary": f"Mission brain score is {int(average_score * 100)}%.",
+        "average_score": average_score,
+        "weak_cards": weak_cards,
+        "proposals": proposals,
+        "latest": proposals[0] if proposals else {},
+        "next_move": (
+            "Generate a proposal for the weakest mission card."
+            if not proposals
+            else "Accept, reject, or apply the latest proposal so the loop has feedback."
+        ),
+    }
+
+
+def update_self_improvement_status(
+    root_dir: str | Path | None,
+    *,
+    proposal_id: str,
+    status: str,
+    note: str = "",
+) -> dict[str, Any]:
+    clean_status = str(status or "").strip().lower()
+    if clean_status not in {"proposed", "accepted", "applied", "rejected"}:
+        raise ValueError("status must be proposed, accepted, applied, or rejected")
+    path = _improvement_path(root_dir, proposal_id)
+    proposal = _read_json_file(path)
+    if not proposal:
+        raise FileNotFoundError("Unknown proposal")
+    event = {
+        "at": _now(),
+        "status": clean_status,
+        "note": str(note or "").strip(),
+    }
+    events = proposal.get("events")
+    if not isinstance(events, list):
+        events = []
+    events.append(event)
+    proposal["status"] = clean_status
+    proposal["updated_at"] = event["at"]
+    proposal["events"] = events
+    if event["note"]:
+        proposal["last_note"] = event["note"]
+    _write_json_file(path, proposal)
     return proposal

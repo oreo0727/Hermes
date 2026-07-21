@@ -30,6 +30,8 @@ from hermes_stack.mission_control import (
     list_handoffs,
     mission_cards,
     self_improvement_proposal,
+    self_improvement_snapshot,
+    update_self_improvement_status,
     update_handoff_status,
     watch_digest,
 )
@@ -1617,6 +1619,17 @@ class PortalHandler(BaseHTTPRequestHandler):
                 head_only=head_only,
             )
             return
+        if parsed.path == "/api/self-improvement":
+            query = parse_qs(parsed.query)
+            try:
+                limit = int((query.get("limit") or [12])[0])
+            except (TypeError, ValueError):
+                limit = 12
+            self._send_json(
+                self_improvement_snapshot(self.server.repo_root, limit=max(1, min(limit, 50))),
+                head_only=head_only,
+            )
+            return
         if parsed.path.startswith("/api/runs/"):
             run_id = parsed.path.removeprefix("/api/runs/").strip()
             if not run_id:
@@ -1665,6 +1678,9 @@ class PortalHandler(BaseHTTPRequestHandler):
             return
         if parsed.path == "/api/self-improvement/propose":
             self._handle_self_improvement(payload)
+            return
+        if parsed.path == "/api/self-improvement/status":
+            self._handle_self_improvement_status(payload)
             return
 
         self.send_error(HTTPStatus.NOT_FOUND, "Unknown route")
@@ -1903,6 +1919,28 @@ class PortalHandler(BaseHTTPRequestHandler):
     def _handle_self_improvement(self, payload: dict[str, object]) -> None:
         focus = str(payload.get("focus") or "").strip()
         self._send_json({"ok": True, "proposal": self_improvement_proposal(self.server.repo_root, focus=focus)})
+
+    def _handle_self_improvement_status(self, payload: dict[str, object]) -> None:
+        proposal_id = str(payload.get("proposal_id") or "").strip()
+        status = str(payload.get("status") or "").strip()
+        note = str(payload.get("note") or "").strip()
+        if not proposal_id:
+            self.send_error(HTTPStatus.BAD_REQUEST, "proposal_id is required")
+            return
+        try:
+            proposal = update_self_improvement_status(
+                self.server.repo_root,
+                proposal_id=proposal_id,
+                status=status,
+                note=note,
+            )
+        except FileNotFoundError:
+            self.send_error(HTTPStatus.NOT_FOUND, "Unknown proposal")
+            return
+        except ValueError as exc:
+            self.send_error(HTTPStatus.BAD_REQUEST, str(exc))
+            return
+        self._send_json({"ok": True, "proposal": proposal})
 
     def _handle_run_create(self, payload: dict[str, object]) -> None:
         profile_key = str(payload.get("profile") or "").strip()
