@@ -27,8 +27,10 @@ from hermes_stack.fast_router import fast_route_chat
 from hermes_stack.mission_control import (
     build_briefing,
     create_handoff,
+    list_handoffs,
     mission_cards,
     self_improvement_proposal,
+    update_handoff_status,
     watch_digest,
 )
 from hermes_stack.orchestration import (
@@ -1594,6 +1596,27 @@ class PortalHandler(BaseHTTPRequestHandler):
                 limit = 6
             self._send_json(watch_digest(self.server.repo_root, limit=max(1, min(limit, 24))), head_only=head_only)
             return
+        if parsed.path == "/api/handoffs":
+            query = parse_qs(parsed.query)
+            project_id = str((query.get("project_id") or [""])[0]).strip()
+            status = str((query.get("status") or [""])[0]).strip()
+            try:
+                limit = int((query.get("limit") or [24])[0])
+            except (TypeError, ValueError):
+                limit = 24
+            self._send_json(
+                {
+                    "ok": True,
+                    "handoffs": list_handoffs(
+                        self.server.repo_root,
+                        project_id=project_id,
+                        status=status,
+                        limit=max(1, min(limit, 100)),
+                    ),
+                },
+                head_only=head_only,
+            )
+            return
         if parsed.path.startswith("/api/runs/"):
             run_id = parsed.path.removeprefix("/api/runs/").strip()
             if not run_id:
@@ -1636,6 +1659,9 @@ class PortalHandler(BaseHTTPRequestHandler):
             return
         if parsed.path == "/api/handoff":
             self._handle_handoff(payload)
+            return
+        if parsed.path == "/api/handoff/status":
+            self._handle_handoff_status(payload)
             return
         if parsed.path == "/api/self-improvement/propose":
             self._handle_self_improvement(payload)
@@ -1849,6 +1875,28 @@ class PortalHandler(BaseHTTPRequestHandler):
             )
         except FileNotFoundError:
             self.send_error(HTTPStatus.NOT_FOUND, "Unknown project")
+            return
+        self._send_json({"ok": True, "handoff": handoff})
+
+    def _handle_handoff_status(self, payload: dict[str, object]) -> None:
+        handoff_id = str(payload.get("handoff_id") or "").strip()
+        status = str(payload.get("status") or "").strip()
+        note = str(payload.get("note") or "").strip()
+        if not handoff_id:
+            self.send_error(HTTPStatus.BAD_REQUEST, "handoff_id is required")
+            return
+        try:
+            handoff = update_handoff_status(
+                self.server.repo_root,
+                handoff_id=handoff_id,
+                status=status,
+                note=note,
+            )
+        except FileNotFoundError:
+            self.send_error(HTTPStatus.NOT_FOUND, "Unknown handoff")
+            return
+        except ValueError as exc:
+            self.send_error(HTTPStatus.BAD_REQUEST, str(exc))
             return
         self._send_json({"ok": True, "handoff": handoff})
 

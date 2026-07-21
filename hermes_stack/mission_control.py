@@ -55,6 +55,24 @@ def _improvement_dir(root_dir: str | Path | None = None) -> Path:
     return path
 
 
+def _read_json_file(path: Path) -> dict[str, Any] | None:
+    try:
+        value = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return None
+    return value if isinstance(value, dict) else None
+
+
+def _write_json_file(path: Path, payload: dict[str, Any]) -> None:
+    tmp_path = path.with_suffix(f"{path.suffix}.tmp")
+    tmp_path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+    tmp_path.replace(path)
+
+
+def _handoff_path(root_dir: str | Path | None, handoff_id: str) -> Path:
+    return _handoff_dir(root_dir) / f"{str(handoff_id or '').replace(':', '_')}.json"
+
+
 def mission_card(project: dict[str, Any]) -> dict[str, Any]:
     tracking = _tracking(project)
     delivery = _delivery(project)
@@ -170,6 +188,8 @@ def build_briefing(root_dir: str | Path | None, project_id: str, *, depth: str =
 
 def watch_digest(root_dir: str | Path | None = None, *, limit: int = 6) -> dict[str, Any]:
     cards = mission_cards(root_dir)
+    handoffs = list_handoffs(root_dir, limit=12)
+    open_handoffs = [row for row in handoffs if str(row.get("status") or "") in {"queued", "working", "blocked"}]
     alerts: list[dict[str, Any]] = []
     for card in cards:
         if card.get("blocked"):
@@ -178,12 +198,46 @@ def watch_digest(root_dir: str | Path | None = None, *, limit: int = 6) -> dict[
             alerts.append({"tone": "active", "project_id": card["project_id"], "title": card["title"], "message": str(card["next"])})
         elif int(card.get("progress_percent") or 0) >= 70:
             alerts.append({"tone": "proof", "project_id": card["project_id"], "title": card["title"], "message": "Close to packaging; verify proof and finish the handoff."})
+    for handoff in open_handoffs[: max(0, limit - len(alerts))]:
+        alerts.append(
+            {
+                "tone": "handoff",
+                "project_id": handoff.get("project_id") or "",
+                "title": f"{handoff.get('target', 'agent').title()} handoff",
+                "message": handoff.get("instruction") or "Queued specialist work needs a status update.",
+                "handoff_id": handoff.get("handoff_id") or "",
+            }
+        )
     return {
         "ok": True,
         "generated_at": _now(),
         "summary": "Nothing urgent." if not alerts else f"{len(alerts[:limit])} mission signal(s) need attention.",
         "alerts": alerts[:limit],
+        "handoffs": open_handoffs[:limit],
     }
+
+
+def list_handoffs(
+    root_dir: str | Path | None = None,
+    *,
+    project_id: str = "",
+    status: str = "",
+    limit: int = 24,
+) -> list[dict[str, Any]]:
+    handoffs: list[dict[str, Any]] = []
+    normalized_project_id = str(project_id or "").strip()
+    normalized_status = str(status or "").strip().lower()
+    for path in _handoff_dir(root_dir).glob("handoff_*.json"):
+        handoff = _read_json_file(path)
+        if not handoff:
+            continue
+        if normalized_project_id and handoff.get("project_id") != normalized_project_id:
+            continue
+        if normalized_status and str(handoff.get("status") or "").lower() != normalized_status:
+            continue
+        handoffs.append(handoff)
+    handoffs.sort(key=lambda row: str(row.get("updated_at") or row.get("created_at") or ""), reverse=True)
+    return handoffs[: max(1, limit)]
 
 
 def create_handoff(
@@ -210,10 +264,49 @@ def create_handoff(
         "source": source,
         "status": "queued",
         "created_at": _now(),
+        "updated_at": _now(),
         "mission_card": card,
+        "events": [
+            {
+                "at": _now(),
+                "status": "queued",
+                "note": "Handoff queued from mission control.",
+            }
+        ],
     }
-    path = _handoff_dir(root_dir) / f"{handoff['handoff_id'].replace(':', '_')}.json"
-    path.write_text(json.dumps(handoff, indent=2), encoding="utf-8")
+    _write_json_file(_handoff_path(root_dir, handoff["handoff_id"]), handoff)
+    return handoff
+
+
+def update_handoff_status(
+    root_dir: str | Path | None,
+    *,
+    handoff_id: str,
+    status: str,
+    note: str = "",
+) -> dict[str, Any]:
+    clean_status = str(status or "").strip().lower()
+    if clean_status not in {"queued", "working", "blocked", "done", "cancelled"}:
+        raise ValueError("status must be queued, working, blocked, done, or cancelled")
+    path = _handoff_path(root_dir, handoff_id)
+    handoff = _read_json_file(path)
+    if not handoff:
+        raise FileNotFoundError("Unknown handoff")
+    event = {
+        "at": _now(),
+        "status": clean_status,
+        "note": str(note or "").strip(),
+    }
+    events = handoff.get("events")
+    if not isinstance(events, list):
+        events = []
+    events.append(event)
+    handoff["status"] = clean_status
+    handoff["updated_at"] = event["at"]
+    handoff["events"] = events
+    if event["note"]:
+        handoff["last_note"] = event["note"]
+    _write_json_file(path, handoff)
     return handoff
 
 
