@@ -288,29 +288,56 @@
         </div>
         </div>
 
-        <section id="brain-page" class="portal-page brain-page" hidden>
-          <div class="brain-page-hero">
-            <div>
-              <p class="eyebrow">Sheldon Brain DB</p>
-              <h3>Memory, Synapses, Cognition</h3>
-              <p>Live read-only view into the Hermes database: agents, memory nodes, synapses, cognitive events, handoffs, and self-improvement proposals.</p>
-            </div>
-            <div class="brain-actions">
-              <input id="brain-search" class="brain-search" type="search" placeholder="Filter memories, agents, tables..." aria-label="Filter brain graph" />
-              <button id="brain-refresh" class="row-action" type="button">Refresh Brain</button>
-            </div>
-          </div>
-          <div id="brain-stats" class="brain-stats"></div>
+        <section id="brain-page" class="portal-page brain-page obsidian-page" hidden>
           <section class="brain-workbench" id="brain">
-            <div class="brain-map-shell">
-              <div id="brain-legend" class="brain-legend"></div>
-              <div id="brain-graph-canvas" class="brain-graph-canvas" role="img" aria-label="Hermes memory and synapse graph"></div>
-            </div>
-            <aside id="brain-inspector" class="brain-inspector">
-              <p class="eyebrow">Inspector</p>
-              <h4>Select a node</h4>
-              <p class="meta">Click any memory, synapse endpoint, agent, project, or cognitive record to inspect its database source.</p>
+            <aside class="brain-vault-pane" aria-label="Brain database vault">
+              <div class="brain-pane-head">
+                <span class="pane-dot"></span>
+                <div>
+                  <p class="eyebrow">Hermes Vault</p>
+                  <h3>Brain DB</h3>
+                </div>
+              </div>
+              <div class="brain-vault-summary">
+                <span id="brain-database-badge">postgres</span>
+                <strong id="brain-node-count">0 nodes</strong>
+                <p id="brain-edge-count">0 synapses</p>
+              </div>
+              <div class="brain-vault-section">
+                <p class="brain-section-title">Groups</p>
+                <div id="brain-group-filters" class="brain-group-filters"></div>
+              </div>
+              <div class="brain-vault-section">
+                <p class="brain-section-title">Tables</p>
+                <div id="brain-table-list" class="brain-table-list"></div>
+              </div>
             </aside>
+
+            <div class="brain-editor-pane">
+              <div class="brain-tabbar">
+                <div class="brain-tab active">
+                  <span></span>
+                  Global graph
+                </div>
+                <button id="brain-refresh" class="brain-icon-button" type="button" aria-label="Refresh brain graph">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.65 6.35A7.95 7.95 0 0 0 12 4V1L7 6l5 5V7a5 5 0 1 1-5 5H5a7 7 0 1 0 12.65-5.65Z"/></svg>
+                </button>
+              </div>
+              <div class="brain-toolbar">
+                <input id="brain-search" class="brain-search" type="search" placeholder="Search memory, table, agent, project..." aria-label="Filter brain graph" />
+                <div id="brain-legend" class="brain-legend"></div>
+              </div>
+              <div class="brain-map-shell">
+                <div id="brain-graph-canvas" class="brain-graph-canvas" role="img" aria-label="Hermes memory and synapse graph"></div>
+              </div>
+            </div>
+
+            <aside id="brain-inspector" class="brain-inspector">
+              <p class="eyebrow">Properties</p>
+              <h4>Select a node</h4>
+              <p class="meta">Click a memory, agent, project, cognitive record, handoff, or improvement node to inspect its database source.</p>
+            </aside>
+            <div id="brain-stats" class="brain-stats" hidden></div>
           </section>
         </section>
       </main>

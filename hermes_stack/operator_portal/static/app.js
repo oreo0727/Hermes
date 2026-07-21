@@ -5,6 +5,7 @@ const state = {
   alerts: [],
   brainGraph: null,
   selectedBrainNodeId: "",
+  brainGroupFilter: "all",
   chatMessages: [],
   chatSessionId: "",
   loading: false,
@@ -62,6 +63,11 @@ const elements = {
   activityFeed: document.querySelector("#activity-feed"),
   brainStats: document.querySelector("#brain-stats"),
   brainLegend: document.querySelector("#brain-legend"),
+  brainGroupFilters: document.querySelector("#brain-group-filters"),
+  brainTableList: document.querySelector("#brain-table-list"),
+  brainDatabaseBadge: document.querySelector("#brain-database-badge"),
+  brainNodeCount: document.querySelector("#brain-node-count"),
+  brainEdgeCount: document.querySelector("#brain-edge-count"),
   brainGraphCanvas: document.querySelector("#brain-graph-canvas"),
   brainInspector: document.querySelector("#brain-inspector"),
   brainSearch: document.querySelector("#brain-search"),
@@ -916,10 +922,14 @@ function brainNodeRadius(node) {
 function filteredBrainGraph() {
   const graph = state.brainGraph || { nodes: [], edges: [] };
   const query = String(elements.brainSearch?.value || "").trim().toLowerCase();
-  if (!query) {
-    return graph;
-  }
+  const groupFilter = state.brainGroupFilter || "all";
   const nodes = (graph.nodes || []).filter((node) => {
+    if (groupFilter !== "all" && node.group !== groupFilter) {
+      return false;
+    }
+    if (!query) {
+      return true;
+    }
     const haystack = [
       node.label,
       node.group,
@@ -939,36 +949,118 @@ function filteredBrainGraph() {
   };
 }
 
-function positionedBrainNodes(nodes, width, height) {
-  const clusters = {
-    agent: [width * 0.5, height * 0.48, Math.min(width, height) * 0.12],
-    memory: [width * 0.36, height * 0.48, Math.min(width, height) * 0.31],
-    cognitive: [width * 0.64, height * 0.48, Math.min(width, height) * 0.31],
-    project: [width * 0.5, height * 0.18, Math.min(width, height) * 0.18],
-    handoff: [width * 0.28, height * 0.78, Math.min(width, height) * 0.14],
-    improvement: [width * 0.72, height * 0.78, Math.min(width, height) * 0.14],
+function seededAngle(id) {
+  let hash = 0;
+  for (const char of String(id)) {
+    hash = (hash * 31 + char.charCodeAt(0)) >>> 0;
+  }
+  return (hash % 6283) / 1000;
+}
+
+function seededUnit(id, salt = "") {
+  let hash = 2166136261;
+  for (const char of `${id}:${salt}`) {
+    hash ^= char.charCodeAt(0);
+    hash = Math.imul(hash, 16777619);
+  }
+  return (hash >>> 0) / 4294967295;
+}
+
+function positionedBrainNodes(nodes, edges, width, height) {
+  const cx = width / 2;
+  const cy = height / 2;
+  const depth = 980;
+  const perspective = 920;
+  const groupPull = {
+    agent: [0, 0, 220],
+    project: [0, -height * 0.34, -140],
+    memory: [-width * 0.24, 0, 60],
+    cognitive: [width * 0.25, -height * 0.03, 40],
+    handoff: [-width * 0.2, height * 0.33, -120],
+    improvement: [width * 0.23, height * 0.32, 130],
   };
-  const byGroup = new Map();
-  for (const node of nodes) {
-    const rows = byGroup.get(node.group) || [];
-    rows.push(node);
-    byGroup.set(node.group, rows);
-  }
-  const result = new Map();
-  for (const [group, rows] of byGroup.entries()) {
-    const [cx, cy, radius] = clusters[group] || [width * 0.5, height * 0.5, Math.min(width, height) * 0.34];
-    rows.forEach((node, index) => {
-      const angle = (index / Math.max(1, rows.length)) * Math.PI * 2 - Math.PI / 2;
-      const ring = rows.length < 6 ? radius * 0.45 : radius * (0.58 + (index % 4) * 0.1);
-      const jitter = ((index % 7) - 3) * 4;
-      result.set(node.id, {
-        ...node,
-        x: Math.max(24, Math.min(width - 24, cx + Math.cos(angle) * ring + jitter)),
-        y: Math.max(24, Math.min(height - 24, cy + Math.sin(angle) * ring - jitter)),
-      });
+  const positioned = new Map();
+  nodes.forEach((node, index) => {
+    const angle = seededAngle(node.id);
+    const radius = Math.min(width, height) * (0.16 + (index % 11) * 0.027);
+    const z = (seededUnit(node.id, "z") - 0.5) * depth;
+    positioned.set(node.id, {
+      ...node,
+      sx: Math.cos(angle) * radius,
+      sy: Math.sin(angle) * radius,
+      z,
+      vx: 0,
+      vy: 0,
+      vz: 0,
     });
+  });
+
+  const graphEdges = (edges || []).filter((edge) => positioned.has(edge.source) && positioned.has(edge.target));
+  for (let step = 0; step < 92; step += 1) {
+    const rows = Array.from(positioned.values());
+    for (let index = 0; index < rows.length; index += 1) {
+      const left = rows[index];
+      for (let j = index + 1; j < rows.length; j += 1) {
+        const right = rows[j];
+        const dx = right.sx - left.sx || 0.01;
+        const dy = right.sy - left.sy || 0.01;
+        const dz = right.z - left.z || 0.01;
+        const distance = Math.max(38, Math.sqrt(dx * dx + dy * dy + dz * dz));
+        const force = 1400 / (distance * distance);
+        const fx = (dx / distance) * force;
+        const fy = (dy / distance) * force;
+        const fz = (dz / distance) * force * 0.8;
+        left.vx -= fx;
+        left.vy -= fy;
+        left.vz -= fz;
+        right.vx += fx;
+        right.vy += fy;
+        right.vz += fz;
+      }
+    }
+    for (const edge of graphEdges) {
+      const source = positioned.get(edge.source);
+      const target = positioned.get(edge.target);
+      const dx = target.sx - source.sx;
+      const dy = target.sy - source.sy;
+      const dz = target.z - source.z;
+      const distance = Math.max(1, Math.sqrt(dx * dx + dy * dy + dz * dz));
+      const preferred = 150 + (1 - Math.min(1, Number(edge.weight || 0.6))) * 120;
+      const force = (distance - preferred) * 0.0055;
+      const fx = (dx / distance) * force;
+      const fy = (dy / distance) * force;
+      const fz = (dz / distance) * force * 0.8;
+      source.vx += fx;
+      source.vy += fy;
+      source.vz += fz;
+      target.vx -= fx;
+      target.vy -= fy;
+      target.vz -= fz;
+    }
+    for (const node of positioned.values()) {
+      const [gx, gy, gz] = groupPull[node.group] || [0, 0, 0];
+      node.vx += (gx - node.sx) * 0.0024;
+      node.vy += (gy - node.sy) * 0.0024;
+      node.vz += (gz - node.z) * 0.002;
+      node.sx += node.vx;
+      node.sy += node.vy;
+      node.z += node.vz;
+      node.vx *= 0.72;
+      node.vy *= 0.72;
+      node.vz *= 0.74;
+      node.sx = Math.max(-width * 0.48, Math.min(width * 0.48, node.sx));
+      node.sy = Math.max(-height * 0.48, Math.min(height * 0.48, node.sy));
+      node.z = Math.max(-depth * 0.52, Math.min(depth * 0.52, node.z));
+    }
   }
-  return result;
+  for (const node of positioned.values()) {
+    const scale = perspective / (perspective - node.z);
+    node.depthScale = Math.max(0.54, Math.min(1.9, scale));
+    node.x = Math.max(24, Math.min(width - 24, cx + node.sx * node.depthScale));
+    node.y = Math.max(24, Math.min(height - 24, cy + node.sy * node.depthScale));
+    node.depthOpacity = Math.max(0.22, Math.min(1, 0.58 + node.depthScale * 0.28));
+  }
+  return positioned;
 }
 
 function renderBrainStats(graph) {
@@ -1015,6 +1107,42 @@ function renderBrainLegend(graph) {
       <b>${escapeHtml(String(groups[group] || 0))}</b>
     </span>
   `).join("");
+}
+
+function renderBrainVault(graph) {
+  const summary = graph?.summary || {};
+  const database = graph?.database || {};
+  const groups = summary.groups || {};
+  if (elements.brainDatabaseBadge) {
+    elements.brainDatabaseBadge.textContent = text(database.database, "unknown");
+  }
+  if (elements.brainNodeCount) {
+    elements.brainNodeCount.textContent = `${summary.nodes || 0} nodes`;
+  }
+  if (elements.brainEdgeCount) {
+    elements.brainEdgeCount.textContent = `${summary.edges || 0} synapses`;
+  }
+  if (elements.brainGroupFilters) {
+    const rows = [["all", "All", summary.nodes || 0], ...Object.entries(brainGroupMeta).map(([group, meta]) => [group, meta.label, groups[group] || 0])];
+    elements.brainGroupFilters.innerHTML = rows.map(([group, label, count]) => `
+      <button class="brain-group-filter ${state.brainGroupFilter === group ? "active" : ""}" type="button" data-brain-group="${escapeHtml(group)}">
+        <i style="background:${escapeHtml(group === "all" ? "#d6d6d6" : brainNodeColor(group))}"></i>
+        <span>${escapeHtml(label)}</span>
+        <b>${escapeHtml(String(count))}</b>
+      </button>
+    `).join("");
+  }
+  if (elements.brainTableList) {
+    const tables = database.tables || [];
+    elements.brainTableList.innerHTML = tables.length
+      ? tables.map((row) => `
+          <button class="brain-table-row" type="button" data-table-query="${escapeHtml(row.name.replace("hermes_", ""))}">
+            <span>${escapeHtml(row.name.replace("hermes_", ""))}</span>
+            <b>${escapeHtml(String(row.rows))}</b>
+          </button>
+        `).join("")
+      : `<p class="meta">File fallback graph. No table stats available.</p>`;
+  }
 }
 
 function renderBrainInspector(nodeId = state.selectedBrainNodeId) {
@@ -1065,6 +1193,7 @@ function renderBrainGraph() {
   }
   renderBrainStats(state.brainGraph);
   renderBrainLegend(state.brainGraph);
+  renderBrainVault(state.brainGraph);
   if (!graph.nodes?.length) {
     elements.brainGraphCanvas.innerHTML = `
       <article class="empty-state">
@@ -1079,7 +1208,7 @@ function renderBrainGraph() {
   const pageWidth = elements.brainPage?.hidden === false ? window.innerWidth - 340 : window.innerWidth - 520;
   const width = Math.max(900, Math.round(canvasRect.width || pageWidth || 980));
   const height = Math.max(620, Math.min(920, Math.round(window.innerHeight * (elements.brainPage?.hidden === false ? 0.72 : 0.62))));
-  const positioned = positionedBrainNodes(graph.nodes, width, height);
+  const positioned = positionedBrainNodes(graph.nodes, graph.edges, width, height);
   const selected = state.selectedBrainNodeId;
   const edgeMarkup = (graph.edges || []).slice(0, 420).map((edge) => {
     const source = positioned.get(edge.source);
@@ -1088,17 +1217,19 @@ function renderBrainGraph() {
       return "";
     }
     const active = selected && (edge.source === selected || edge.target === selected);
-    const opacity = active ? 0.82 : Math.max(0.12, Math.min(0.46, Number(edge.weight || 0.4) * 0.35));
-    const width = active ? 2.6 : Math.max(0.8, Math.min(2.1, Number(edge.weight || 1) * 1.2));
-    return `<line class="brain-edge ${active ? "active" : ""}" x1="${source.x}" y1="${source.y}" x2="${target.x}" y2="${target.y}" stroke-opacity="${opacity}" stroke-width="${width}"><title>${escapeHtml(edge.relation)}</title></line>`;
+    const depth = (source.depthScale + target.depthScale) / 2;
+    const opacity = active ? 0.92 : Math.max(0.08, Math.min(0.52, Number(edge.weight || 0.4) * 0.28 * depth));
+    const lineWidth = active ? 3.4 : Math.max(0.55, Math.min(2.3, Number(edge.weight || 1) * depth));
+    return `<line class="brain-edge ${active ? "active" : ""}" x1="${source.x}" y1="${source.y}" x2="${target.x}" y2="${target.y}" stroke-opacity="${opacity}" stroke-width="${lineWidth}"><title>${escapeHtml(edge.relation)}</title></line>`;
   }).join("");
-  const nodeMarkup = Array.from(positioned.values()).map((node) => {
-    const radius = brainNodeRadius(node);
+  const nodeMarkup = Array.from(positioned.values()).sort((left, right) => left.depthScale - right.depthScale).map((node) => {
+    const radius = brainNodeRadius(node) * node.depthScale;
     const active = node.id === selected;
     const label = node.group === "agent" || node.group === "project" || active;
+    const glow = active ? 0.33 : Math.max(0.05, Math.min(0.2, node.depthScale * 0.08));
     return `
-      <g class="brain-node ${active ? "active" : ""}" data-node-id="${escapeHtml(node.id)}" transform="translate(${node.x} ${node.y})" tabindex="0" role="button" aria-label="${escapeHtml(node.label)}">
-        <circle r="${radius + 8}" fill="${escapeHtml(brainNodeColor(node.group))}" opacity="${active ? "0.22" : "0.08"}"></circle>
+      <g class="brain-node ${active ? "active" : ""}" data-node-id="${escapeHtml(node.id)}" transform="translate(${node.x} ${node.y})" opacity="${node.depthOpacity}" tabindex="0" role="button" aria-label="${escapeHtml(node.label)}">
+        <circle r="${radius + 12}" fill="${escapeHtml(brainNodeColor(node.group))}" opacity="${glow}"></circle>
         <circle r="${radius}" fill="${escapeHtml(brainNodeColor(node.group))}"></circle>
         <text y="4" text-anchor="middle">${escapeHtml(node.label.slice(0, 1).toUpperCase())}</text>
         ${label ? `<text class="brain-node-label" y="${radius + 18}" text-anchor="middle">${escapeHtml(node.label.slice(0, 28))}</text>` : ""}
@@ -1109,11 +1240,24 @@ function renderBrainGraph() {
     <svg class="brain-svg" viewBox="0 0 ${width} ${height}" style="height:${height}px" aria-hidden="false">
       <defs>
         <radialGradient id="brainGlow" cx="50%" cy="50%" r="55%">
-          <stop offset="0%" stop-color="rgba(255,255,255,0.16)" />
+          <stop offset="0%" stop-color="rgba(168,139,250,0.18)" />
           <stop offset="100%" stop-color="rgba(255,255,255,0)" />
         </radialGradient>
+        <linearGradient id="brainTunnel" x1="0" x2="1" y1="0" y2="1">
+          <stop offset="0%" stop-color="rgba(168,139,250,0.18)" />
+          <stop offset="48%" stop-color="rgba(56,189,248,0.08)" />
+          <stop offset="100%" stop-color="rgba(15,23,42,0)" />
+        </linearGradient>
       </defs>
-      <rect width="${width}" height="${height}" fill="url(#brainGlow)" opacity="0.35"></rect>
+      <rect width="${width}" height="${height}" fill="url(#brainGlow)" opacity="0.7"></rect>
+      <g class="brain-depth-grid" opacity="0.34">
+        ${Array.from({ length: 9 }).map((_, index) => {
+          const rx = 80 + index * 90;
+          const ry = 50 + index * 58;
+          return `<ellipse cx="${width / 2}" cy="${height / 2}" rx="${rx}" ry="${ry}" fill="none"></ellipse>`;
+        }).join("")}
+      </g>
+      <rect width="${width}" height="${height}" fill="url(#brainTunnel)" opacity="0.45"></rect>
       ${edgeMarkup}
       ${nodeMarkup}
     </svg>
@@ -1259,6 +1403,23 @@ elements.blockedClose?.addEventListener("click", () => {
 elements.blockedList?.addEventListener("click", handleProjectAction);
 elements.brainRefresh?.addEventListener("click", loadBrainGraph);
 elements.brainSearch?.addEventListener("input", renderBrainGraph);
+elements.brainGroupFilters?.addEventListener("click", (event) => {
+  const button = event.target.closest("[data-brain-group]");
+  if (!button) {
+    return;
+  }
+  state.brainGroupFilter = button.dataset.brainGroup || "all";
+  renderBrainGraph();
+});
+elements.brainTableList?.addEventListener("click", (event) => {
+  const button = event.target.closest("[data-table-query]");
+  if (!button || !elements.brainSearch) {
+    return;
+  }
+  elements.brainSearch.value = button.dataset.tableQuery || "";
+  state.brainGroupFilter = "all";
+  renderBrainGraph();
+});
 elements.brainGraphCanvas?.addEventListener("click", (event) => {
   const node = event.target.closest("[data-node-id]");
   if (!node) {
