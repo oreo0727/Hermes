@@ -3,6 +3,8 @@ const state = {
   runs: [],
   dispatches: [],
   alerts: [],
+  brainGraph: null,
+  selectedBrainNodeId: "",
   chatMessages: [],
   chatSessionId: "",
   loading: false,
@@ -53,6 +55,12 @@ const elements = {
   agentTheater: document.querySelector("#agent-theater"),
   agentRadar: document.querySelector("#agent-radar"),
   activityFeed: document.querySelector("#activity-feed"),
+  brainStats: document.querySelector("#brain-stats"),
+  brainLegend: document.querySelector("#brain-legend"),
+  brainGraphCanvas: document.querySelector("#brain-graph-canvas"),
+  brainInspector: document.querySelector("#brain-inspector"),
+  brainSearch: document.querySelector("#brain-search"),
+  brainRefresh: document.querySelector("#brain-refresh"),
   emptyStateTemplate: document.querySelector("#empty-state-template"),
 };
 
@@ -843,6 +851,252 @@ function renderActivity() {
   elements.activityFeed.innerHTML = activities.map(activityRowMarkup).join("");
 }
 
+const brainGroupMeta = {
+  agent: { label: "Agents", color: "#f0a554" },
+  memory: { label: "Memories", color: "#8fb4ff" },
+  cognitive: { label: "Cognition", color: "#b694ff" },
+  project: { label: "Projects", color: "#78cc59" },
+  handoff: { label: "Handoffs", color: "#ff7782" },
+  improvement: { label: "Improvement", color: "#4fd1c5" },
+};
+
+function brainNodeColor(group) {
+  return brainGroupMeta[group]?.color || "#d8ddff";
+}
+
+function brainNodeRadius(node) {
+  const weight = Math.max(0.3, Math.min(1.8, Number(node.weight || 1)));
+  const base = node.group === "agent" ? 18 : node.group === "project" ? 14 : node.group === "memory" ? 10 : 8;
+  return Math.round(base + weight * 3);
+}
+
+function filteredBrainGraph() {
+  const graph = state.brainGraph || { nodes: [], edges: [] };
+  const query = String(elements.brainSearch?.value || "").trim().toLowerCase();
+  if (!query) {
+    return graph;
+  }
+  const nodes = (graph.nodes || []).filter((node) => {
+    const haystack = [
+      node.label,
+      node.group,
+      node.kind,
+      node.detail,
+      node.agent_slug,
+      node.project_id,
+      node.source,
+    ].join(" ").toLowerCase();
+    return haystack.includes(query);
+  });
+  const nodeIds = new Set(nodes.map((node) => node.id));
+  return {
+    ...graph,
+    nodes,
+    edges: (graph.edges || []).filter((edge) => nodeIds.has(edge.source) && nodeIds.has(edge.target)),
+  };
+}
+
+function positionedBrainNodes(nodes, width, height) {
+  const clusters = {
+    agent: [width * 0.5, height * 0.48, Math.min(width, height) * 0.12],
+    memory: [width * 0.36, height * 0.48, Math.min(width, height) * 0.31],
+    cognitive: [width * 0.64, height * 0.48, Math.min(width, height) * 0.31],
+    project: [width * 0.5, height * 0.18, Math.min(width, height) * 0.18],
+    handoff: [width * 0.28, height * 0.78, Math.min(width, height) * 0.14],
+    improvement: [width * 0.72, height * 0.78, Math.min(width, height) * 0.14],
+  };
+  const byGroup = new Map();
+  for (const node of nodes) {
+    const rows = byGroup.get(node.group) || [];
+    rows.push(node);
+    byGroup.set(node.group, rows);
+  }
+  const result = new Map();
+  for (const [group, rows] of byGroup.entries()) {
+    const [cx, cy, radius] = clusters[group] || [width * 0.5, height * 0.5, Math.min(width, height) * 0.34];
+    rows.forEach((node, index) => {
+      const angle = (index / Math.max(1, rows.length)) * Math.PI * 2 - Math.PI / 2;
+      const ring = rows.length < 6 ? radius * 0.45 : radius * (0.58 + (index % 4) * 0.1);
+      const jitter = ((index % 7) - 3) * 4;
+      result.set(node.id, {
+        ...node,
+        x: Math.max(24, Math.min(width - 24, cx + Math.cos(angle) * ring + jitter)),
+        y: Math.max(24, Math.min(height - 24, cy + Math.sin(angle) * ring - jitter)),
+      });
+    });
+  }
+  return result;
+}
+
+function renderBrainStats(graph) {
+  if (!elements.brainStats) {
+    return;
+  }
+  const summary = graph?.summary || {};
+  const database = graph?.database || {};
+  const tables = database.tables || [];
+  const tablePreview = tables.slice(0, 6).map((row) => `${row.name.replace("hermes_", "")}: ${row.rows}`).join(" • ");
+  elements.brainStats.innerHTML = `
+    <article class="brain-stat">
+      <span class="meta-label">Backend</span>
+      <strong>${escapeHtml(text(database.database, "unknown"))}</strong>
+      <p>${escapeHtml(text(database.backend, "n/a"))}</p>
+    </article>
+    <article class="brain-stat">
+      <span class="meta-label">Nodes</span>
+      <strong>${escapeHtml(String(summary.nodes || 0))}</strong>
+      <p>${escapeHtml(Object.entries(summary.groups || {}).map(([key, value]) => `${key}:${value}`).join(" • ") || "No nodes")}</p>
+    </article>
+    <article class="brain-stat">
+      <span class="meta-label">Synapses</span>
+      <strong>${escapeHtml(String(summary.edges || 0))}</strong>
+      <p>${escapeHtml(Object.keys(summary.relations || {}).slice(0, 4).join(" • ") || "No edges")}</p>
+    </article>
+    <article class="brain-stat wide">
+      <span class="meta-label">Tables</span>
+      <strong>${escapeHtml(String(tables.length || 0))}</strong>
+      <p>${escapeHtml(tablePreview || "File fallback graph")}</p>
+    </article>
+  `;
+}
+
+function renderBrainLegend(graph) {
+  if (!elements.brainLegend) {
+    return;
+  }
+  const groups = graph?.summary?.groups || {};
+  elements.brainLegend.innerHTML = Object.entries(brainGroupMeta).map(([group, meta]) => `
+    <span class="brain-legend-pill">
+      <i style="background:${escapeHtml(meta.color)}"></i>
+      ${escapeHtml(meta.label)}
+      <b>${escapeHtml(String(groups[group] || 0))}</b>
+    </span>
+  `).join("");
+}
+
+function renderBrainInspector(nodeId = state.selectedBrainNodeId) {
+  if (!elements.brainInspector) {
+    return;
+  }
+  const graph = state.brainGraph || { nodes: [], edges: [] };
+  const node = (graph.nodes || []).find((row) => row.id === nodeId);
+  if (!node) {
+    elements.brainInspector.innerHTML = `
+      <p class="eyebrow">Inspector</p>
+      <h4>Select a node</h4>
+      <p class="meta">Click any memory, synapse endpoint, agent, project, or cognitive record to inspect its database source.</p>
+    `;
+    return;
+  }
+  const connected = (graph.edges || []).filter((edge) => edge.source === node.id || edge.target === node.id);
+  const payloadPreview = JSON.stringify(node.payload || {}, null, 2);
+  elements.brainInspector.innerHTML = `
+    <p class="eyebrow">Inspector</p>
+    <h4>${escapeHtml(node.label)}</h4>
+    <div class="brain-inspector-badges">
+      <span>${escapeHtml(node.group)}</span>
+      <span>${escapeHtml(node.kind)}</span>
+      ${node.agent_slug ? `<span>${escapeHtml(node.agent_slug)}</span>` : ""}
+      ${node.project_id ? `<span>${escapeHtml(node.project_id)}</span>` : ""}
+    </div>
+    <p>${escapeHtml(text(node.detail, "No detail stored."))}</p>
+    <dl class="brain-record-meta">
+      <div><dt>Source</dt><dd>${escapeHtml(text(node.source, "unknown"))}</dd></div>
+      <div><dt>Weight</dt><dd>${escapeHtml(String(Number(node.weight || 0).toFixed(2)))}</dd></div>
+      <div><dt>Connections</dt><dd>${escapeHtml(String(connected.length))}</dd></div>
+    </dl>
+    <div class="brain-connections">
+      ${connected.slice(0, 8).map((edge) => `<span>${escapeHtml(edge.relation)}</span>`).join("") || "<span>isolated</span>"}
+    </div>
+    <details class="brain-payload">
+      <summary>Raw record preview</summary>
+      <pre>${escapeHtml(payloadPreview.slice(0, 2800))}</pre>
+    </details>
+  `;
+}
+
+function renderBrainGraph() {
+  const graph = filteredBrainGraph();
+  if (!elements.brainGraphCanvas) {
+    return;
+  }
+  renderBrainStats(state.brainGraph);
+  renderBrainLegend(state.brainGraph);
+  if (!graph.nodes?.length) {
+    elements.brainGraphCanvas.innerHTML = `
+      <article class="empty-state">
+        <strong>No brain records match.</strong>
+        <p class="meta">Clear the filter or seed memory to populate the graph.</p>
+      </article>
+    `;
+    renderBrainInspector("");
+    return;
+  }
+  const width = Math.max(760, elements.brainGraphCanvas.clientWidth || 920);
+  const height = 560;
+  const positioned = positionedBrainNodes(graph.nodes, width, height);
+  const selected = state.selectedBrainNodeId;
+  const edgeMarkup = (graph.edges || []).slice(0, 420).map((edge) => {
+    const source = positioned.get(edge.source);
+    const target = positioned.get(edge.target);
+    if (!source || !target) {
+      return "";
+    }
+    const active = selected && (edge.source === selected || edge.target === selected);
+    const opacity = active ? 0.82 : Math.max(0.12, Math.min(0.46, Number(edge.weight || 0.4) * 0.35));
+    const width = active ? 2.6 : Math.max(0.8, Math.min(2.1, Number(edge.weight || 1) * 1.2));
+    return `<line class="brain-edge ${active ? "active" : ""}" x1="${source.x}" y1="${source.y}" x2="${target.x}" y2="${target.y}" stroke-opacity="${opacity}" stroke-width="${width}"><title>${escapeHtml(edge.relation)}</title></line>`;
+  }).join("");
+  const nodeMarkup = Array.from(positioned.values()).map((node) => {
+    const radius = brainNodeRadius(node);
+    const active = node.id === selected;
+    const label = node.group === "agent" || node.group === "project" || active;
+    return `
+      <g class="brain-node ${active ? "active" : ""}" data-node-id="${escapeHtml(node.id)}" transform="translate(${node.x} ${node.y})" tabindex="0" role="button" aria-label="${escapeHtml(node.label)}">
+        <circle r="${radius + 8}" fill="${escapeHtml(brainNodeColor(node.group))}" opacity="${active ? "0.22" : "0.08"}"></circle>
+        <circle r="${radius}" fill="${escapeHtml(brainNodeColor(node.group))}"></circle>
+        <text y="4" text-anchor="middle">${escapeHtml(node.label.slice(0, 1).toUpperCase())}</text>
+        ${label ? `<text class="brain-node-label" y="${radius + 18}" text-anchor="middle">${escapeHtml(node.label.slice(0, 28))}</text>` : ""}
+      </g>
+    `;
+  }).join("");
+  elements.brainGraphCanvas.innerHTML = `
+    <svg class="brain-svg" viewBox="0 0 ${width} ${height}" aria-hidden="false">
+      <defs>
+        <radialGradient id="brainGlow" cx="50%" cy="50%" r="55%">
+          <stop offset="0%" stop-color="rgba(255,255,255,0.16)" />
+          <stop offset="100%" stop-color="rgba(255,255,255,0)" />
+        </radialGradient>
+      </defs>
+      <rect width="${width}" height="${height}" fill="url(#brainGlow)" opacity="0.35"></rect>
+      ${edgeMarkup}
+      ${nodeMarkup}
+    </svg>
+  `;
+  renderBrainInspector(selected);
+}
+
+async function loadBrainGraph() {
+  try {
+    state.brainGraph = await fetchJson("/api/brain-graph?cognitive_limit=28");
+    if (!state.selectedBrainNodeId && state.brainGraph.nodes?.length) {
+      const sheldon = state.brainGraph.nodes.find((node) => node.id === "agent:sheldon");
+      state.selectedBrainNodeId = sheldon?.id || state.brainGraph.nodes[0].id;
+    }
+    renderBrainGraph();
+  } catch (error) {
+    console.error(error);
+    if (elements.brainGraphCanvas) {
+      elements.brainGraphCanvas.innerHTML = `
+        <article class="empty-state">
+          <strong>Brain graph failed to load.</strong>
+          <p class="meta">${escapeHtml(String(error.message || error))}</p>
+        </article>
+      `;
+    }
+  }
+}
+
 async function focusProject(projectId) {
   await fetchJson("/api/projects/activate", {
     method: "POST",
@@ -873,17 +1127,23 @@ async function loadDashboard() {
   elements.refreshButton.disabled = true;
 
   try {
-    const [snapshotPayload, runsPayload, dispatchesPayload, alertsPayload] = await Promise.all([
+    const [snapshotPayload, runsPayload, dispatchesPayload, alertsPayload, brainPayload] = await Promise.all([
       fetchJson("/api/bootstrap"),
       fetchJson("/api/runs?limit=24"),
       fetchJson("/api/dispatches?limit=24"),
       fetchJson("/api/monitor?limit=24"),
+      fetchJson("/api/brain-graph?cognitive_limit=28"),
     ]);
 
     state.snapshot = snapshotPayload;
     state.runs = runsPayload.runs || [];
     state.dispatches = dispatchesPayload.dispatches || [];
     state.alerts = alertsPayload.alerts || [];
+    state.brainGraph = brainPayload;
+    if (!state.selectedBrainNodeId && state.brainGraph.nodes?.length) {
+      const sheldon = state.brainGraph.nodes.find((node) => node.id === "agent:sheldon");
+      state.selectedBrainNodeId = sheldon?.id || state.brainGraph.nodes[0].id;
+    }
 
     renderHeader();
     renderHero();
@@ -893,6 +1153,7 @@ async function loadDashboard() {
     renderTheater();
     renderRadar();
     renderActivity();
+    renderBrainGraph();
   } catch (error) {
     console.error(error);
     elements.operatorPresence.textContent = "Command deck failed to load";
@@ -944,6 +1205,28 @@ elements.blockedClose?.addEventListener("click", () => {
   setBlockedDetailsOpen(false);
 });
 elements.blockedList?.addEventListener("click", handleProjectAction);
+elements.brainRefresh?.addEventListener("click", loadBrainGraph);
+elements.brainSearch?.addEventListener("input", renderBrainGraph);
+elements.brainGraphCanvas?.addEventListener("click", (event) => {
+  const node = event.target.closest("[data-node-id]");
+  if (!node) {
+    return;
+  }
+  state.selectedBrainNodeId = node.dataset.nodeId || "";
+  renderBrainGraph();
+});
+elements.brainGraphCanvas?.addEventListener("keydown", (event) => {
+  if (event.key !== "Enter" && event.key !== " ") {
+    return;
+  }
+  const node = event.target.closest("[data-node-id]");
+  if (!node) {
+    return;
+  }
+  event.preventDefault();
+  state.selectedBrainNodeId = node.dataset.nodeId || "";
+  renderBrainGraph();
+});
 elements.chatForm?.addEventListener("submit", (event) => {
   event.preventDefault();
   sendChatMessage(elements.chatInput?.value || "");

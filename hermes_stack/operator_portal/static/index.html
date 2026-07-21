@@ -44,6 +44,12 @@
             </span>
             <span>Agents</span>
           </a>
+          <a class="nav-link" href="#brain">
+            <span class="nav-icon">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3a4 4 0 0 0-4 4v.22A4.5 4.5 0 0 0 6.4 16H8v2.25A2.75 2.75 0 0 0 10.75 21H12V3Zm3 0v18h1.25A2.75 2.75 0 0 0 16 18.25V16h1.6A4.5 4.5 0 0 0 19 7.22V7a4 4 0 0 0-4-4Zm-5 7h2v2H7Zm8 0h2v2h-2ZM7.5 6.5h2v2h-2Zm7 0h2v2h-2Z"/></svg>
+            </span>
+            <span>Brain DB</span>
+          </a>
           <a class="nav-link" href="#artifacts">
             <span class="nav-icon">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Zm2 3v12h10V6Zm2 2h6v4H9Zm0 6h6v2H9Z"/></svg>
@@ -231,6 +237,31 @@
               </div>
               <div id="queue-table" class="queue-table"></div>
             </section>
+
+            <section class="panel brain-panel" id="brain">
+              <div class="panel-head brain-head">
+                <div>
+                  <p class="eyebrow">Sheldon Brain DB</p>
+                  <h3>Memory & Synapse Graph</h3>
+                </div>
+                <div class="brain-actions">
+                  <input id="brain-search" class="brain-search" type="search" placeholder="Filter memories, agents, tables..." aria-label="Filter brain graph" />
+                  <button id="brain-refresh" class="row-action" type="button">Refresh Brain</button>
+                </div>
+              </div>
+              <div id="brain-stats" class="brain-stats"></div>
+              <div class="brain-workbench">
+                <div class="brain-map-shell">
+                  <div id="brain-legend" class="brain-legend"></div>
+                  <div id="brain-graph-canvas" class="brain-graph-canvas" role="img" aria-label="Hermes memory and synapse graph"></div>
+                </div>
+                <aside id="brain-inspector" class="brain-inspector">
+                  <p class="eyebrow">Inspector</p>
+                  <h4>Select a node</h4>
+                  <p class="meta">Click any memory, synapse endpoint, agent, project, or cognitive record to inspect its database source.</p>
+                </aside>
+              </div>
+            </section>
           </div>
 
           <div class="secondary-column">
@@ -330,6 +361,6 @@
       </article>
     </template>
 
-    <script src="/app.js?v=voice-visible-20260719"></script>
+    <script src="/app.js?v=brain-db-20260720"></script>
   </body>
 </html>

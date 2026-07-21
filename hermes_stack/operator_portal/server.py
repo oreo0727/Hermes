@@ -23,6 +23,7 @@ from urllib.error import HTTPError, URLError
 from urllib.parse import parse_qs, urlparse
 from urllib.request import Request, urlopen
 
+from hermes_stack.brain_graph import brain_graph
 from hermes_stack.fast_router import fast_route_chat
 from hermes_stack.mission_control import (
     build_briefing,
@@ -1627,6 +1628,17 @@ class PortalHandler(BaseHTTPRequestHandler):
                 limit = 12
             self._send_json(
                 self_improvement_snapshot(self.server.repo_root, limit=max(1, min(limit, 50))),
+                head_only=head_only,
+            )
+            return
+        if parsed.path == "/api/brain-graph":
+            query = parse_qs(parsed.query)
+            try:
+                cognitive_limit = int((query.get("cognitive_limit") or [28])[0])
+            except (TypeError, ValueError):
+                cognitive_limit = 28
+            self._send_json(
+                brain_graph(self.server.repo_root, cognitive_limit=max(1, min(cognitive_limit, 100))),
                 head_only=head_only,
             )
             return
