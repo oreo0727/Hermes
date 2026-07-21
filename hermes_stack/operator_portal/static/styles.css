@@ -547,12 +547,12 @@ svg {
 
 .obsidian-page .brain-workbench {
   display: grid;
-  grid-template-columns: 270px minmax(0, 1fr) 330px;
+  grid-template-columns: 236px minmax(0, 1fr) 300px;
   gap: 0;
   min-height: calc(100vh - 112px);
   overflow: hidden;
   border: 1px solid var(--obs-border);
-  border-radius: 18px;
+  border-radius: 14px;
   background: var(--obs-bg);
   box-shadow: 0 28px 80px rgba(0, 0, 0, 0.38);
 }
@@ -570,7 +570,7 @@ svg {
 }
 
 .brain-vault-pane {
-  padding: 14px;
+  padding: 11px;
   border-right: 1px solid var(--obs-border);
   overflow: auto;
 }
@@ -579,7 +579,7 @@ svg {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 8px 6px 14px;
+  padding: 7px 5px 12px;
 }
 
 .pane-dot {
@@ -597,8 +597,8 @@ svg {
 }
 
 .brain-vault-summary {
-  padding: 12px;
-  border-radius: 12px;
+  padding: 10px;
+  border-radius: 10px;
   background: #1b1b1b;
   border: 1px solid var(--obs-border-soft);
 }
@@ -627,7 +627,7 @@ svg {
 }
 
 .brain-vault-section {
-  margin-top: 16px;
+  margin-top: 14px;
 }
 
 .brain-section-title {
@@ -648,16 +648,16 @@ svg {
 .brain-group-filter,
 .brain-table-row {
   width: 100%;
-  min-height: 34px;
+  min-height: 30px;
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
   gap: 8px;
   align-items: center;
   border: 0;
-  border-radius: 8px;
+  border-radius: 7px;
   color: var(--obs-text);
   background: transparent;
-  padding: 0.35rem 0.45rem;
+  padding: 0.28rem 0.4rem;
   text-align: left;
   cursor: pointer;
 }
@@ -705,7 +705,7 @@ svg {
 .brain-tabbar {
   display: flex;
   align-items: center;
-  min-height: 42px;
+  min-height: 38px;
   background: #202020;
   border-bottom: 1px solid var(--obs-border);
 }
@@ -714,8 +714,8 @@ svg {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  min-height: 42px;
-  padding: 0 14px;
+  min-height: 38px;
+  padding: 0 12px;
   color: var(--obs-text);
   background: #2b2b2b;
   border-right: 1px solid var(--obs-border);
@@ -731,8 +731,8 @@ svg {
 }
 
 .brain-icon-button {
-  width: 34px;
-  height: 34px;
+  width: 30px;
+  height: 30px;
   margin-left: auto;
   margin-right: 6px;
   display: inline-flex;
@@ -754,20 +754,20 @@ svg {
   display: flex;
   align-items: center;
   gap: 10px;
-  min-height: 54px;
-  padding: 8px 10px;
+  min-height: 46px;
+  padding: 6px 9px;
   background: #1f1f1f;
   border-bottom: 1px solid var(--obs-border-soft);
 }
 
 .brain-search {
-  min-height: 34px;
-  width: min(380px, 44vw);
+  min-height: 31px;
+  width: min(340px, 42vw);
   border: 1px solid var(--obs-border);
   border-radius: 8px;
   background: #171717;
   color: var(--obs-text);
-  padding: 0.55rem 0.7rem;
+  padding: 0.46rem 0.64rem;
   outline: none;
 }
 
@@ -786,8 +786,8 @@ svg {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  min-height: 26px;
-  padding: 0.18rem 0.52rem;
+  min-height: 23px;
+  padding: 0.14rem 0.45rem;
   border-radius: 999px;
   background: #2a2a2a;
   color: var(--obs-muted);
@@ -809,11 +809,11 @@ svg {
   min-width: 0;
   overflow: hidden;
   position: relative;
-  min-height: calc(100vh - 210px);
+  min-height: calc(100vh - 194px);
   background:
-    radial-gradient(circle at 50% 52%, rgba(168, 139, 250, 0.14), transparent 26%),
-    radial-gradient(circle at 20% 22%, rgba(56, 189, 248, 0.11), transparent 24%),
-    radial-gradient(circle at 78% 76%, rgba(240, 165, 84, 0.08), transparent 26%),
+    radial-gradient(circle at 50% 52%, rgba(168, 139, 250, 0.1), transparent 28%),
+    radial-gradient(circle at 20% 22%, rgba(56, 189, 248, 0.07), transparent 24%),
+    radial-gradient(circle at 78% 76%, rgba(240, 165, 84, 0.045), transparent 26%),
     #101010;
 }
 
@@ -825,13 +825,13 @@ svg {
   background:
     radial-gradient(circle at center, transparent 0 14%, rgba(255, 255, 255, 0.03) 15%, transparent 16%),
     repeating-radial-gradient(circle at center, rgba(168, 139, 250, 0.08) 0 1px, transparent 1px 96px);
-  opacity: 0.42;
+  opacity: 0.3;
   transform: perspective(760px) rotateX(62deg) scale(1.42);
   transform-origin: center;
 }
 
 .brain-graph-canvas {
-  min-height: calc(100vh - 210px);
+  min-height: calc(100vh - 194px);
   overflow: hidden;
   position: relative;
 }
@@ -839,20 +839,20 @@ svg {
 .brain-canvas {
   width: 100%;
   min-width: 900px;
-  min-height: calc(100vh - 210px);
+  min-height: calc(100vh - 194px);
   display: block;
   cursor: crosshair;
 }
 
 .brain-field-hud {
   position: absolute;
-  left: 14px;
-  bottom: 14px;
+  left: 12px;
+  bottom: 12px;
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  min-height: 30px;
-  padding: 0.35rem 0.65rem;
+  min-height: 27px;
+  padding: 0.28rem 0.56rem;
   border-radius: 999px;
   color: rgba(226, 232, 255, 0.8);
   background: rgba(12, 12, 16, 0.72);
@@ -901,7 +901,7 @@ svg {
 
 .brain-inspector {
   min-width: 0;
-  padding: 14px;
+  padding: 12px;
   border-left: 1px solid var(--obs-border);
   max-height: calc(100vh - 112px);
   overflow: auto;
