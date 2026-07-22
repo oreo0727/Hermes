@@ -1775,12 +1775,14 @@ class PortalHandler(BaseHTTPRequestHandler):
             messages=prepared_messages,
         )
         requested_fast = bool(payload.get("fast") or str(payload.get("mode") or "").strip().lower() == "fast")
+        requested_voice = bool(payload.get("voice") or str(payload.get("mode") or "").strip().lower() == "voice")
         if requested_fast:
             fast_response = fast_route_chat(
                 self.server.repo_root,
                 profile_key=profile_key,
                 project_id=effective_project_id,
                 messages=[message for message in prepared_messages if isinstance(message, dict)],
+                voice_mode=requested_voice,
             )
             if fast_response is not None:
                 fast_response["prepared_updates"] = prepared_updates

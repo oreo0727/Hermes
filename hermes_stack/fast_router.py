@@ -162,10 +162,14 @@ def _project_lines(project: dict[str, Any] | None) -> list[str]:
     ]
 
 
-def _focus_reply(project: dict[str, Any], *, revived: bool) -> str:
+def _focus_reply(project: dict[str, Any], *, revived: bool, voice_mode: bool = False) -> str:
     title = str(project.get("title") or project.get("project_id") or "the project")
     blocked = [str(item).strip() for item in project.get("blocked") or [] if str(item).strip()]
     next_value = str(project.get("next") or "").strip()
+    if voice_mode:
+        blocker = f" First blocker: {blocked[0]}" if blocked else " No blocker is recorded."
+        next_line = f" Next: {next_value}" if next_value else ""
+        return f"Focused {title}.{next_line}{blocker}"
     lines = [
         f"Focused {title}.",
         "I revived it from archived state and made it the active project." if revived else "I made it the active project.",
@@ -186,7 +190,7 @@ def _resume_next_value(project: dict[str, Any]) -> str:
     return "Resume by refreshing the current milestone and choosing the next concrete production slice."
 
 
-def _project_followup_reply(project: dict[str, Any], *, kind: str) -> str:
+def _project_followup_reply(project: dict[str, Any], *, kind: str, voice_mode: bool = False) -> str:
     title = str(project.get("title") or project.get("project_id") or "the active project")
     next_value = str(project.get("next") or "").strip() or _resume_next_value(project)
     now_value = str(project.get("now") or "").strip()
@@ -197,6 +201,8 @@ def _project_followup_reply(project: dict[str, Any], *, kind: str) -> str:
 
     if kind == "blocker":
         if first_blocker:
+            if voice_mode:
+                return f"For {title}, the first blocker is {first_blocker}. Best move: bypass it with the free local proof path, then upgrade only if access is available."
             return "\n".join(
                 [
                     f"For {title}, the first blocker is:",
@@ -204,7 +210,11 @@ def _project_followup_reply(project: dict[str, Any], *, kind: str) -> str:
                     "Best move: run the video provider ladder. Prefer the free local motion pass first, then upgrade later through Hugging Face, OpenAI, Runway, or manual clip drop-in only if access is available.",
                 ]
             )
-        return f"For {title}, I do not have a blocker recorded. The next useful move is: {next_value}"
+        return f"For {title}, I do not have a blocker recorded. Next move: {next_value}"
+
+    if voice_mode:
+        blocker = f" First blocker: {first_blocker}" if first_blocker else ""
+        return f"Yes. We are on {title}. Next move: {next_value}.{blocker}"
 
     lines = [
         f"Yes. We are on {title}.",
@@ -257,6 +267,7 @@ def _compose_fast_reply(
     project: dict[str, Any] | None,
     activation: dict[str, Any],
     summary: dict[str, Any],
+    voice_mode: bool = False,
 ) -> str:
     normalized = query.lower()
     counts = summary.get("counts") if isinstance(summary.get("counts"), dict) else {}
@@ -266,9 +277,11 @@ def _compose_fast_reply(
     followup_kind = _project_followup_kind(query)
 
     if followup_kind and project is not None:
-        return _project_followup_reply(project, kind=followup_kind)
+        return _project_followup_reply(project, kind=followup_kind, voice_mode=voice_mode)
 
     if _is_small_talk(normalized):
+        if voice_mode:
+            return f"Going smoothly. I am listening, and I have {project_lines[0].removeprefix('Focus: ')}"
         return (
             "Going smoothly. The bubble is online, the fast route is behaving, "
             "and I am keeping one eye on the active project without turning every pleasantry into a quarterly report.\n"
@@ -276,6 +289,8 @@ def _compose_fast_reply(
         )
 
     if _has_intent(normalized, ("hi", "hello", "hey", "online", "ready")):
+        if voice_mode:
+            return f"I am online and listening. {project_lines[0]}"
         return (
             "I am online in fast-router mode. Tiny lab coat, very low latency.\n"
             f"{project_lines[0]}\n"
@@ -284,6 +299,12 @@ def _compose_fast_reply(
         )
 
     if _has_intent(normalized, ("memory", "cognition", "brain", "synapse")):
+        if voice_mode:
+            return (
+                "The cognitive layer is active. "
+                f"I have {counts.get('facts', 0)} facts, {counts.get('procedures', 0)} procedures, "
+                f"and the latest route chose {chosen_action}."
+            )
         return (
             "Cognitive layer is active.\n"
             f"Storage: {summary.get('storage') or 'unknown'}.\n"
@@ -293,17 +314,26 @@ def _compose_fast_reply(
         )
 
     if _has_intent(normalized, ("who", "agent", "team", "route")):
+        if voice_mode:
+            return "Sheldon handles control, Penny handles creative QA, Raj handles app and backend, and Leonard handles game/runtime proof."
         return (
             f"{_team_line()}\n"
             f"For this message, my cognitive router chose `{chosen_action}` at confidence {confidence:.2f}."
         )
 
     if _has_intent(normalized, ("slow", "portal", "chat", "gateway")):
+        if voice_mode:
+            return "The fast route is answering lightweight questions locally. Build or fix requests still escalate to deep Sheldon so we do not fake progress."
         return (
             "The portal now has a reflex path: lightweight status/routing questions answer locally first. "
             "Heavier build/fix requests still go through the full operator gateway so we do not fake work.\n"
             f"Current route: `{chosen_action}`, confidence {confidence:.2f}."
         )
+
+    if voice_mode:
+        blocker = project_lines[3].removeprefix("Blocked: ") if len(project_lines) > 3 else "none recorded."
+        next_value = project_lines[2].removeprefix("Next: ") if len(project_lines) > 2 else "No next step recorded."
+        return f"Status: {project_lines[0].removeprefix('Focus: ')} Next: {next_value} Blocked: {blocker}"
 
     return "\n".join(
         [
@@ -322,6 +352,7 @@ def fast_route_chat(
     profile_key: str,
     project_id: str = "",
     messages: list[dict[str, object]],
+    voice_mode: bool = False,
 ) -> dict[str, Any] | None:
     """Return a local response when a portal message is safe to answer without the LLM gateway."""
     query = _latest_user_content(messages)
@@ -354,7 +385,7 @@ def fast_route_chat(
             "project_id": focus_project_id,
             "label": "Operator",
             "session_id": "",
-            "content": _focus_reply(project, revived=revived),
+            "content": _focus_reply(project, revived=revived, voice_mode=voice_mode),
             "structured_result": {},
             "work_order": {
                 "action_type": "focus_project",
@@ -391,6 +422,7 @@ def fast_route_chat(
         project=project,
         activation=activation,
         summary=summary,
+        voice_mode=voice_mode,
     )
     session_id = f"fast:{_stable_id(effective_project_id, query, _now()[:13])}"
     return {
