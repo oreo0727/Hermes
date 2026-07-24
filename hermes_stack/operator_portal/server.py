@@ -27,9 +27,11 @@ from hermes_stack.brain_graph import brain_graph
 from hermes_stack.fast_router import fast_route_chat
 from hermes_stack.mission_control import (
     build_briefing,
+    creative_foreman_snapshot,
     create_reality_capture,
     create_repair_from_capture,
     create_handoff,
+    launch_creative_foreman,
     list_handoffs,
     mission_cards,
     reality_layer_snapshot,
@@ -1671,6 +1673,17 @@ class PortalHandler(BaseHTTPRequestHandler):
                 head_only=head_only,
             )
             return
+        if parsed.path == "/api/creative-foreman":
+            query = parse_qs(parsed.query)
+            try:
+                limit = int((query.get("limit") or [12])[0])
+            except (TypeError, ValueError):
+                limit = 12
+            self._send_json(
+                creative_foreman_snapshot(self.server.repo_root, limit=max(1, min(limit, 50))),
+                head_only=head_only,
+            )
+            return
         if parsed.path == "/api/brain-graph":
             query = parse_qs(parsed.query)
             try:
@@ -1742,6 +1755,9 @@ class PortalHandler(BaseHTTPRequestHandler):
             return
         if parsed.path == "/api/repair-bay/run":
             self._handle_repair_run(payload)
+            return
+        if parsed.path == "/api/creative-foreman/launch":
+            self._handle_creative_foreman(payload)
             return
 
         self.send_error(HTTPStatus.NOT_FOUND, "Unknown route")
@@ -2059,6 +2075,35 @@ class PortalHandler(BaseHTTPRequestHandler):
             self.send_error(HTTPStatus.NOT_FOUND, "Unknown repair")
             return
         self._send_json({"ok": True, "repair": repair, "snapshot": repair_bay_snapshot(self.server.repo_root)})
+
+    def _handle_creative_foreman(self, payload: dict[str, object]) -> None:
+        project_id = str(payload.get("project_id") or "").strip()
+        note = str(payload.get("note") or payload.get("prompt") or "").strip()
+        mode = str(payload.get("mode") or "voice").strip() or "voice"
+        source = str(payload.get("source") or "portal").strip() or "portal"
+        try:
+            order = launch_creative_foreman(
+                self.server.repo_root,
+                project_id=project_id,
+                note=note,
+                mode=mode,
+                source=source,
+            )
+        except FileNotFoundError:
+            self.send_error(HTTPStatus.NOT_FOUND, "Unknown project")
+            return
+        self._send_json(
+            {
+                "ok": True,
+                "order": order,
+                "snapshot": creative_foreman_snapshot(self.server.repo_root),
+                "handoffs": list_handoffs(
+                    self.server.repo_root,
+                    project_id=str(order.get("project_id") or ""),
+                    limit=12,
+                ),
+            }
+        )
 
     def _handle_run_create(self, payload: dict[str, object]) -> None:
         profile_key = str(payload.get("profile") or "").strip()

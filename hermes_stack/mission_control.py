@@ -75,6 +75,12 @@ def _repair_dir(root_dir: str | Path | None = None) -> Path:
     return path
 
 
+def _foreman_dir(root_dir: str | Path | None = None) -> Path:
+    path = _mission_dir(root_dir) / "creative_foreman"
+    path.mkdir(parents=True, exist_ok=True)
+    return path
+
+
 def _read_json_file(path: Path) -> dict[str, Any] | None:
     try:
         value = json.loads(path.read_text(encoding="utf-8"))
@@ -109,6 +115,10 @@ def _repair_path(root_dir: str | Path | None, repair_id: str) -> Path:
     return _repair_dir(root_dir) / f"{str(repair_id or '').replace(':', '_')}.json"
 
 
+def _foreman_path(root_dir: str | Path | None, order_id: str) -> Path:
+    return _foreman_dir(root_dir) / f"{str(order_id or '').replace(':', '_')}.json"
+
+
 def _active_or_requested_card(root_dir: str | Path | None, project_id: str = "") -> dict[str, Any] | None:
     normalized = str(project_id or "").strip()
     cards = mission_cards(root_dir)
@@ -139,6 +149,101 @@ def _classify_repair(note: str, mode: str) -> dict[str, str]:
     if any(token in haystack for token in ("blocked", "stuck", "handoff", "agent", "listening")):
         return {"kind": "workflow", "risk": "low", "diagnostic": "mission_state"}
     return {"kind": "triage", "risk": "low", "diagnostic": "mission_state"}
+
+
+def _creative_foreman_lanes(note: str, mode: str) -> list[dict[str, str]]:
+    haystack = f"{note} {mode}".lower()
+    lanes: list[dict[str, str]] = []
+    if any(token in haystack for token in ("story", "script", "visual", "image", "shot", "style", "prompt", "video", "scene", "teen", "spooky", "design", "ui", "creative", "brief")):
+        lanes.append(
+            {
+                "agent": "penny",
+                "role": "creative shape and visual QA",
+                "verb": "shape",
+            }
+        )
+    if any(token in haystack for token in ("app", "portal", "api", "database", "postgres", "mobile", "ios", "backend", "integration", "button", "screen")):
+        lanes.append(
+            {
+                "agent": "raj",
+                "role": "app, portal, and backend implementation path",
+                "verb": "wire",
+            }
+        )
+    if any(token in haystack for token in ("game", "runtime", "build", "testflight", "xcode", "apk", "export", "crash", "playable", "motion")):
+        lanes.append(
+            {
+                "agent": "leonard",
+                "role": "runtime proof and build validation",
+                "verb": "prove",
+            }
+        )
+    if any(token in haystack for token in ("plan", "coordinate", "blocked", "status", "scope", "schedule", "strategy", "receipt", "team", "agents", "foreman")):
+        lanes.append(
+            {
+                "agent": "sheldon",
+                "role": "operator coordination and proof receipts",
+                "verb": "coordinate",
+            }
+        )
+
+    if not lanes:
+        lanes.append(
+            {
+                "agent": "sheldon",
+                "role": "operator triage and next-proof selection",
+                "verb": "triage",
+            }
+        )
+
+    deduped: list[dict[str, str]] = []
+    seen: set[str] = set()
+    for lane in lanes:
+        agent = lane["agent"]
+        if agent in seen:
+            continue
+        deduped.append(lane)
+        seen.add(agent)
+    return deduped[:4]
+
+
+def _normalize_project_match(value: object) -> str:
+    import re
+
+    normalized = re.sub(r"[^a-z0-9]+", " ", str(value or "").lower())
+    return " ".join(normalized.split())
+
+
+def _requested_card_from_note(root_dir: str | Path | None, note: str) -> dict[str, Any] | None:
+    normalized_note = _normalize_project_match(note)
+    if not normalized_note:
+        return None
+    note_tokens = set(normalized_note.split())
+    scored: list[tuple[float, dict[str, Any]]] = []
+    for card in mission_cards(root_dir):
+        project_id = str(card.get("project_id") or "")
+        title = str(card.get("title") or "")
+        candidates = (
+            _normalize_project_match(project_id),
+            _normalize_project_match(project_id.replace("-", " ")),
+            _normalize_project_match(title),
+        )
+        best = 0.0
+        for candidate in candidates:
+            if not candidate:
+                continue
+            if candidate in normalized_note:
+                best = max(best, 1.0)
+                continue
+            candidate_tokens = set(candidate.split())
+            if candidate_tokens:
+                overlap_count = len(note_tokens & candidate_tokens)
+                if overlap_count >= 2:
+                    best = max(best, overlap_count / max(1, len(candidate_tokens)), 0.72)
+        if best >= 0.55:
+            scored.append((best, card))
+    scored.sort(key=lambda row: row[0], reverse=True)
+    return scored[0][1] if scored else None
 
 
 def mission_card(project: dict[str, Any]) -> dict[str, Any]:
@@ -404,6 +509,134 @@ def update_handoff_status(
         handoff["last_note"] = event["note"]
     _write_json_file(path, handoff)
     return handoff
+
+
+def list_creative_foreman_orders(root_dir: str | Path | None = None, *, limit: int = 12) -> list[dict[str, Any]]:
+    orders: list[dict[str, Any]] = []
+    for path in _foreman_dir(root_dir).glob("foreman_*.json"):
+        order = _read_json_file(path)
+        if order:
+            orders.append(order)
+    orders.sort(key=lambda row: str(row.get("updated_at") or row.get("created_at") or ""), reverse=True)
+    return orders[: max(1, limit)]
+
+
+def creative_foreman_snapshot(root_dir: str | Path | None = None, *, limit: int = 12) -> dict[str, Any]:
+    orders = list_creative_foreman_orders(root_dir, limit=limit)
+    latest = orders[0] if orders else {}
+    open_count = sum(1 for row in orders if str(row.get("status") or "") in {"queued", "working"})
+    return {
+        "ok": True,
+        "generated_at": _now(),
+        "summary": (
+            str(latest.get("spoken_briefing") or latest.get("summary") or "")
+            if latest
+            else "Creative Foreman is ready. Give Sheldon a messy idea and he will convert it into scoped agent work."
+        ),
+        "open_count": open_count,
+        "latest": latest or None,
+        "orders": orders,
+        "next_move": (
+            "Launch a foreman pass from a voice note or typed idea."
+            if not latest
+            else "Check the latest handoff receipts, then ask Sheldon to tighten or execute the next lane."
+        ),
+    }
+
+
+def launch_creative_foreman(
+    root_dir: str | Path | None = None,
+    *,
+    project_id: str = "",
+    note: str = "",
+    mode: str = "voice",
+    source: str = "sheldon",
+) -> dict[str, Any]:
+    root = repo_root(root_dir)
+    clean_note = str(note or "").strip()
+    clean_mode = str(mode or "voice").strip().lower() or "voice"
+
+    card = _active_or_requested_card(root, project_id)
+    if not project_id:
+        card = _requested_card_from_note(root, clean_note) or card
+    if not card:
+        raise FileNotFoundError("Unknown project")
+
+    if not clean_note:
+        clean_note = f"Move {card['title']} forward with the next useful proof receipt."
+
+    order_id = f"foreman:{_stable_id(card['project_id'], clean_mode, clean_note, _now())}"
+    lanes = _creative_foreman_lanes(clean_note, clean_mode)
+    lane_receipts: list[dict[str, Any]] = []
+    for lane in lanes:
+        instruction = (
+            f"Creative Foreman work order {order_id}. "
+            f"Project: {card['title']}. "
+            f"Operator voice note: {clean_note}. "
+            f"Your lane: {lane['role']}. "
+            "Return one concrete artifact, blocker, or proof receipt. Keep scope narrow and do not claim completion without evidence."
+        )
+        handoff = create_handoff(
+            root,
+            project_id=str(card["project_id"]),
+            target=lane["agent"],
+            instruction=instruction,
+            source="creative-foreman",
+        )
+        lane_receipts.append(
+            {
+                **lane,
+                "instruction": instruction,
+                "handoff_id": handoff.get("handoff_id") or "",
+                "status": handoff.get("status") or "queued",
+            }
+        )
+
+    lane_names = ", ".join(str(row.get("agent") or "").title() for row in lane_receipts)
+    spoken = (
+        f"Foreman pass queued for {card['title']}. "
+        f"I routed {len(lane_receipts)} lane{'s' if len(lane_receipts) != 1 else ''}: {lane_names}. "
+        "Next, I will watch for receipts instead of accepting theatrical hand-waving."
+    )
+    order = {
+        "order_id": order_id,
+        "created_at": _now(),
+        "updated_at": _now(),
+        "status": "queued",
+        "source": source,
+        "mode": clean_mode,
+        "project_id": card["project_id"],
+        "project_title": card["title"],
+        "operator_note": clean_note,
+        "summary": f"Creative Foreman routed {len(lane_receipts)} lane(s) for {card['title']}.",
+        "spoken_briefing": spoken,
+        "lanes": lane_receipts,
+        "handoff_ids": [str(row.get("handoff_id") or "") for row in lane_receipts if row.get("handoff_id")],
+        "mission_card": card,
+        "guardrails": [
+            "Route messy ideas into scoped lanes before execution.",
+            "Every lane must produce an artifact, blocker, or receipt.",
+            "No impersonation or protected-character voice cloning; Sheldon Drive uses an original precise operator voice.",
+        ],
+    }
+    _write_json_file(_foreman_path(root, order_id), order)
+    upsert_cognitive_record(
+        root,
+        "events",
+        {
+            "event_id": f"event:creative-foreman:{_stable_id(order_id)}",
+            "agent_slug": "sheldon",
+            "project_id": str(card["project_id"]),
+            "event_type": "creative_foreman",
+            "title": "Creative Foreman routed a spoken work order",
+            "content": spoken,
+            "source_ref": f"mission_control/creative_foreman/{order_id.replace(':', '_')}.json",
+            "salience": 0.92,
+            "occurred_at": _now(),
+            "payload": order,
+        },
+    )
+    return order
 
 
 def self_improvement_proposal(root_dir: str | Path | None, *, focus: str = "") -> dict[str, Any]:
